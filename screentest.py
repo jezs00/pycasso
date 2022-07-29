@@ -7,8 +7,8 @@ import sys
 import os
 
 contentDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
-#libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
-#if os.path.exists(libdir):
+# libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+# if os.path.exists(libdir):
 #    sys.path.append(libdir)
 
 import logging
@@ -27,7 +27,7 @@ try:
     epd.init()
     epd.Clear()
 
-    #temp logging to understand how content directory is being handled
+    # temp logging to understand how content directory is being handled
     logging.info(os.path.join(contentDirectory))
 
     font24 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 24)
@@ -36,8 +36,15 @@ try:
     logging.info("Displaying Test Image")
     logging.info(os.path.join(contentDirectory))
     imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
+
+    # TODO: fix hard coded tuple to dynamic
+    imageBase = imageBase.crop(0, 800, 0, 450)
     draw = ImageDraw.Draw(imageBase)
+
+    # TODO: do we need the rectangle? place it elsewhere maybe
     draw.rectangle((80, 50, 130, 100), fill=0)
+
+    # TODO: place text dynamically
     draw.text((2, 0), 'Cool Bird Wearing Glasses', font=font24, fill=0)
     draw.text((2, 0), 'Lichtenstein', font=font24, fill=0)
     epd.display(epd.getbuffer(imageBase))
