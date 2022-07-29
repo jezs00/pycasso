@@ -38,7 +38,7 @@ try:
     imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
 
     # TODO: fix hard coded tuple to dynamic
-    imageBase = imageBase.crop(0, 800, 0, 450)
+    imageBase = imageBase.crop((0, 800, 0, 450))
     draw = ImageDraw.Draw(imageBase)
 
     # TODO: do we need the rectangle? place it elsewhere maybe
