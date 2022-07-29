@@ -23,15 +23,18 @@ try:
     logging.info("pycasso test image display")
     epd = epd7in5_V2.EPD()
 
-    logging.info("init and Clear")
+    logging.info("init and clear")
     epd.init()
     epd.Clear()
+
+    #temp logging to understand how content directory is being handled
+    logging.info(os.path.join(contentDirectory))
 
     font24 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 24)
     font18 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 18)
 
     logging.info("Displaying Test Image")
-    logging.info(os.path.join(contentDirectory, 'test.png'))
+    logging.info(os.path.join(contentDirectory))
     imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
     draw = ImageDraw.Draw(imageBase)
     draw.rectangle((80, 50, 130, 100), fill=0)
