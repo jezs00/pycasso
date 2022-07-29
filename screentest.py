@@ -31,7 +31,8 @@ try:
     font18 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 18)
 
     logging.info("Displaying Test Image")
-    imageBase = Image.open(os.path.join(contentDirectory, "DALL·E 2022-07-11 07.31.17 - cool bird wearing glasses in the style of lichtenstein, digital art.png"))
+    logging.info(os.path.join(contentDirectory, 'test.png'))
+    imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
     draw = ImageDraw.Draw(imageBase)
     draw.rectangle((80, 50, 130, 100), fill=0)
     draw.text((2, 0), 'Cool Bird Wearing Glasses', font=font24, fill=0)
