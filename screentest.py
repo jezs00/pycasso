@@ -36,9 +36,12 @@ try:
     logging.info("Displaying Test Image")
     logging.info(os.path.join(contentDirectory))
     imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
+    logging.info(imageBase.width)
 
     # TODO: fix hard coded tuple to dynamic
-    imageBase = imageBase.crop((0, 800, 0, 450))
+    imageBase = imageBase.crop((0, 0, 800, 480))
+    logging.info(imageBase.width)
+    logging.info(imageBase.height)
     draw = ImageDraw.Draw(imageBase)
 
     # TODO: do we need the rectangle? place it elsewhere maybe
