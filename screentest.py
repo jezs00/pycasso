@@ -64,6 +64,8 @@ try:
     draw.text((2, 0), 'Cool Bird Wearing Glasses', font=font24, fill=0)
     draw.text((2, 0), 'Lichtenstein', font=font24, fill=0)
     epd.display(epd.getbuffer(imageBase))
+
+    # TODO: remove image test or config it out
     ImageShow.show(imageBase)
     time.sleep(2)
 
