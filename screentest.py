@@ -34,12 +34,16 @@ try:
     font18 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 18)
 
     logging.info("Displaying Test Image")
-    logging.info(os.path.join(contentDirectory))
     imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
     logging.info(imageBase.width)
 
-    # TODO: fix hard coded tuple to dynamic
-    imageBase = imageBase.crop((0, 0, 800, 480))
+    # Resize to thumbnail size based on epd resolution
+    epdResolution = (epd.width, epd.height)
+    logging.info(epdResolution)
+    imageBase.thumbnail(epdResolution)
+
+    # Make sure image is correct size after thumbnail set
+    #imageBase.crop((0,0,epd.width, epd.height))
     logging.info(imageBase.width)
     logging.info(imageBase.height)
     draw = ImageDraw.Draw(imageBase)
@@ -50,7 +54,7 @@ try:
     # TODO: place text dynamically
     draw.text((2, 0), 'Cool Bird Wearing Glasses', font=font24, fill=0)
     draw.text((2, 0), 'Lichtenstein', font=font24, fill=0)
-    epd.display(epd.getbuffer(imageBase))
+    epd.display(imageBase)
     time.sleep(2)
 
     logging.info("Goto Sleep...")
