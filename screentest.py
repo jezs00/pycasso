@@ -45,6 +45,7 @@ try:
     imageBase.thumbnail(epdResolution)
 
     # Make sure image is correct size and centered after thumbnail set
+    # Define locations and crop settings
     widthDiff = (epd.width - imageBase.width)/2
     heightDiff = (epd.height - imageBase.height)/2
     leftPixel = 0 - widthDiff
@@ -52,17 +53,25 @@ try:
     rightPixel = imageBase.width + widthDiff
     bottomPixel = imageBase.height + heightDiff
     imageCrop = (leftPixel, topPixel, rightPixel, bottomPixel)
+
+    # Crop and prepare image
     imageBase = imageBase.crop(imageCrop)
     logging.info(imageBase.width)
     logging.info(imageBase.height)
     draw = ImageDraw.Draw(imageBase)
 
-    # TODO: do we need the rectangle? place it elsewhere maybe
+    # Add text to image
+    artistText = 'Lichtenstein'
+    titleText = 'Cool Bird Wearing Glasses'
+    artistLoc = 15
+    titleLoc = 35
+
+    draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=1)
+    draw.text((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb', fill=1)
+
+    # TODO: create rectangle background
     #draw.rectangle((80, 50, 130, 100), fill=0)
 
-    # TODO: place text dynamically
-    draw.text((2, 0), 'Cool Bird Wearing Glasses', font=font24, fill=0)
-    draw.text((2, 0), 'Lichtenstein', font=font24, fill=0)
     epd.display(epd.getbuffer(imageBase))
 
     # TODO: remove image test or config it out
