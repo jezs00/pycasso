@@ -94,8 +94,9 @@ try:
 
     # TODO: create option to draw box across whole image width or all the way down
     drawBox = tuple(numpy.add(drawBox, (-padding, -padding, padding, padding)))
-    # TODO: config variable for opacity
-    draw.rectangle(drawBox, fill=(255, 255, 255, 150))
+
+    opacity = 150
+    draw.rectangle(drawBox, fill=(255, 255, 255, opacity))
     draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=0)
     draw.text((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb', fill=0)
 
