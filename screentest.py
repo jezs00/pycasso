@@ -6,6 +6,8 @@
 import sys
 import os
 
+import numpy
+
 contentDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
 # libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 # if os.path.exists(libdir):
@@ -18,6 +20,24 @@ import time
 # TODO: remove ImageShow testing once ready for SIT
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 import traceback
+
+
+# Takes an array of tuples and returns the largest area within them
+# (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
+def maxArea(areaList):
+    # initialise
+    a, b, c, d = areaList[0]
+
+    # find max for each element
+    for t in areaList:
+        at, bt, ct, dt = t
+        a = min(a, at)
+        b = min(b, bt)
+        c = max(c, ct)
+        d = max(d, dt)
+    tup = (a, b, c, d)
+    return tup
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -46,8 +66,8 @@ try:
 
     # Make sure image is correct size and centered after thumbnail set
     # Define locations and crop settings
-    widthDiff = (epd.width - imageBase.width)/2
-    heightDiff = (epd.height - imageBase.height)/2
+    widthDiff = (epd.width - imageBase.width) / 2
+    heightDiff = (epd.height - imageBase.height) / 2
     leftPixel = 0 - widthDiff
     topPixel = 0 - heightDiff
     rightPixel = imageBase.width + widthDiff
@@ -58,19 +78,26 @@ try:
     imageBase = imageBase.crop(imageCrop)
     logging.info(imageBase.width)
     logging.info(imageBase.height)
-    draw = ImageDraw.Draw(imageBase)
+    draw = ImageDraw.Draw(imageBase, 'RGBA')
 
     # Add text to image
     artistText = 'Lichtenstein'
     titleText = 'Cool Bird Wearing Glasses'
     artistLoc = 15
     titleLoc = 35
+    # TODO: config variable for padding
+    padding = 5
 
-    draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=1)
-    draw.text((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb', fill=1)
+    artistBox = draw.textbbox((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb')
+    titleBox = draw.textbbox((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb')
+    drawBox = maxArea([artistBox, titleBox])
 
-    # TODO: create rectangle background
-    #draw.rectangle((80, 50, 130, 100), fill=0)
+    # TODO: create option to draw box across whole image width or all the way down
+    drawBox = tuple(numpy.add(drawBox, (-padding, -padding, padding, padding)))
+    # TODO: config variable for opacity
+    draw.rectangle(drawBox, fill=(255, 255, 255, 150))
+    draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=0)
+    draw.text((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb', fill=0)
 
     epd.display(epd.getbuffer(imageBase))
 
