@@ -21,7 +21,6 @@ import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 import traceback
 
-
 # Takes an array of tuples and returns the largest area within them
 # (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
 def maxArea(areaList):
@@ -38,6 +37,19 @@ def maxArea(areaList):
     tup = (a, b, c, d)
     return tup
 
+# Helper to set fourth element in four element tuple
+# In context of application, sets the bottom coordinate of the box
+def setTupleBottom(tup, bottom):
+    a, b, c, d = tup
+    tup = (a, b, c, bottom)
+    return tup
+
+# Helper to set first and third element in four element tuple
+# In context of application, sets the left and right coordinates of the box
+def setTupleSides(tup, left, right):
+    a, b, c, d = tup
+    tup = (left, b, right, d)
+    return tup
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -87,14 +99,24 @@ try:
     titleLoc = 35
     # TODO: config variable for padding
     padding = 5
+    # TODO: config variable for box
+    boxToFloor = True
+    boxToEdge = True
 
     artistBox = draw.textbbox((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb')
     titleBox = draw.textbbox((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb')
-    drawBox = maxArea([artistBox, titleBox])
 
-    # TODO: create option to draw box across whole image width or all the way down
+    drawBox = maxArea([artistBox, titleBox])
     drawBox = tuple(numpy.add(drawBox, (-padding, -padding, padding, padding)))
 
+    # Modify depending on box type
+    if boxToFloor:
+        drawBox = setTupleBottom(drawBox, bottomPixel)
+
+    if boxToEdge:
+        drawBox = setTupleSides(drawBox, widthDiff, rightPixel)
+
+    # TODO: config variable for opacity
     opacity = 150
     draw.rectangle(drawBox, fill=(255, 255, 255, opacity))
     draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=0)
