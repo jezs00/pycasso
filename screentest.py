@@ -95,10 +95,10 @@ try:
     # Add text to image
     artistText = 'Lichtenstein'
     titleText = 'Cool Bird Wearing Glasses'
-    artistLoc = 15
-    titleLoc = 35
+    artistLoc = 10
+    titleLoc = 30
     # TODO: config variable for padding
-    padding = 5
+    padding = 10
     # TODO: config variable for box
     boxToFloor = True
     boxToEdge = True
