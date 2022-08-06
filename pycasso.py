@@ -7,11 +7,6 @@ import sys
 import os
 import numpy
 
-import file_loader
-
-# TODO: move this file operation to file_loader
-image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
-font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts\\Font.ttc')
 # libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 # if os.path.exists(libdir):
 #    sys.path.append(libdir)
@@ -20,8 +15,8 @@ import logging
 # TODO: refactor with omni-epd https://github.com/robweber/omni-epd
 from waveshare_epd import epd7in5_V2
 import time
-# TODO: remove ImageShow testing once ready for SIT
 from PIL import Image, ImageDraw, ImageFont, ImageShow
+from file_loader import FileLoader
 import traceback
 
 
@@ -60,6 +55,10 @@ def set_tuple_sides(tup, left, right):
     return tup
 
 
+# TODO: move this file operation to file_loader
+image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
+font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts\\Font.ttc')
+
 logging.basicConfig(level=logging.DEBUG)
 
 try:
@@ -72,7 +71,7 @@ try:
 
     # Get random image from folder
 
-    file = file_loader.FileLoader(image_directory)
+    file = FileLoader(image_directory)
     image_path = file.get_random_file_of_type('png')
     logging.info(image_path)
 
@@ -105,9 +104,17 @@ try:
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
     # TODO: Add text parser for DALLE images
+    parse_text = True
+
     # Add text to image
-    artist_text = 'Lichtenstein'
-    title_text = 'Cool Bird Wearing Glasses'
+    image_name = os.path.basename(image_path)
+
+    artist_text = ''
+    title_text = image_name
+
+    if parse_text:
+        title_text, artist_text = FileLoader.get_title_and_artist(image_name, ".* - ", " in the style of ", 'png')
+
     artist_loc = 10
     title_loc = 30
     # TODO: config variable for padding
