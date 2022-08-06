@@ -130,3 +130,6 @@ dmypy.json
 
 # Ignore pycharm project folder
 .idea/
+
+# Ignore image folder contents
+images/*
