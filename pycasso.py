@@ -28,7 +28,7 @@ import traceback
 
 # Takes an array of tuples and returns the largest area within them
 # (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
-def maxArea(areaList):
+def max_area(areaList):
     # initialise
     a, b, c, d = areaList[0]
 
@@ -44,14 +44,14 @@ def maxArea(areaList):
 
 # Helper to set fourth element in four element tuple
 # In context of application, sets the bottom coordinate of the box
-def setTupleBottom(tup, bottom):
+def set_tuple_bottom(tup, bottom):
     a, b, c, d = tup
     tup = (a, b, c, bottom)
     return tup
 
 # Helper to set first and third element in four element tuple
 # In context of application, sets the left and right coordinates of the box
-def setTupleSides(tup, left, right):
+def set_tuple_sides(tup, left, right):
     a, b, c, d = tup
     tup = (left, b, right, d)
     return tup
@@ -76,65 +76,65 @@ try:
     font18 = ImageFont.truetype(font_path, 18)
 
     logging.info("Displaying Test Image")
-    imageBase = Image.open(image_path)
-    logging.info(imageBase.width)
+    image_base = Image.open(image_path)
+    logging.info(image_base.width)
 
     # Resize to thumbnail size based on epd resolution
-    epdResolution = (epd.width, epd.height)
-    logging.info(epdResolution)
-    imageBase.thumbnail(epdResolution)
+    epd_res = (epd.width, epd.height)
+    logging.info(epd_res)
+    image_base.thumbnail(epd_res)
 
     # Make sure image is correct size and centered after thumbnail set
     # Define locations and crop settings
-    widthDiff = (epd.width - imageBase.width) / 2
-    heightDiff = (epd.height - imageBase.height) / 2
-    leftPixel = 0 - widthDiff
-    topPixel = 0 - heightDiff
-    rightPixel = imageBase.width + widthDiff
-    bottomPixel = imageBase.height + heightDiff
-    imageCrop = (leftPixel, topPixel, rightPixel, bottomPixel)
+    width_diff = (epd.width - image_base.width) / 2
+    height_diff = (epd.height - image_base.height) / 2
+    left_pixel = 0 - width_diff
+    top_pixel = 0 - height_diff
+    right_pixel = image_base.width + width_diff
+    bottom_pixel = image_base.height + height_diff
+    image_crop = (left_pixel, top_pixel, right_pixel, bottom_pixel)
 
     # Crop and prepare image
-    imageBase = imageBase.crop(imageCrop)
-    logging.info(imageBase.width)
-    logging.info(imageBase.height)
-    draw = ImageDraw.Draw(imageBase, 'RGBA')
+    image_base = image_base.crop(image_crop)
+    logging.info(image_base.width)
+    logging.info(image_base.height)
+    draw = ImageDraw.Draw(image_base, 'RGBA')
 
     # TODO: Add text parser for DALLE images
     # Add text to image
-    artistText = 'Lichtenstein'
-    titleText = 'Cool Bird Wearing Glasses'
-    artistLoc = 10
-    titleLoc = 30
+    artist_text = 'Lichtenstein'
+    title_text = 'Cool Bird Wearing Glasses'
+    artist_loc = 10
+    title_loc = 30
     # TODO: config variable for padding
     padding = 10
     # TODO: config variable for box
-    boxToFloor = True
-    boxToEdge = True
+    box_to_floor = True
+    box_to_edge = True
 
-    artistBox = draw.textbbox((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb')
-    titleBox = draw.textbbox((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb')
+    artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb')
+    title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb')
 
-    drawBox = maxArea([artistBox, titleBox])
-    drawBox = tuple(numpy.add(drawBox, (-padding, -padding, padding, padding)))
+    draw_box = max_area([artist_box, title_box])
+    draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
 
     # Modify depending on box type
-    if boxToFloor:
-        drawBox = setTupleBottom(drawBox, bottomPixel)
+    if box_to_floor:
+        draw_box = set_tuple_bottom(draw_box, bottom_pixel)
 
-    if boxToEdge:
-        drawBox = setTupleSides(drawBox, widthDiff, rightPixel)
+    if box_to_edge:
+        draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
 
     # TODO: config variable for opacity
     opacity = 150
-    draw.rectangle(drawBox, fill=(255, 255, 255, opacity))
-    draw.text((epd.width / 2, epd.height - artistLoc), artistText, font=font18, anchor='mb', fill=0)
-    draw.text((epd.width / 2, epd.height - titleLoc), titleText, font=font24, anchor='mb', fill=0)
+    draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
+    draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
+    draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
 
-    epd.display(epd.getbuffer(imageBase))
+    epd.display(epd.getbuffer(image_base))
 
     # TODO: remove image test or config it out
-    ImageShow.show(imageBase)
+    ImageShow.show(image_base)
     time.sleep(2)
 
     logging.info("Goto Sleep...")
