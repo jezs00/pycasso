@@ -24,16 +24,17 @@ import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 import traceback
 
-#TODO: fix names of functions to meet formatting standards
+
+# TODO: fix names of functions to meet formatting standards
 
 # Takes an array of tuples and returns the largest area within them
 # (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
-def max_area(areaList):
+def max_area(area_list):
     # initialise
-    a, b, c, d = areaList[0]
+    a, b, c, d = area_list[0]
 
     # find max for each element
-    for t in areaList:
+    for t in area_list:
         at, bt, ct, dt = t
         a = min(a, at)
         b = min(b, bt)
@@ -42,6 +43,7 @@ def max_area(areaList):
     tup = (a, b, c, d)
     return tup
 
+
 # Helper to set fourth element in four element tuple
 # In context of application, sets the bottom coordinate of the box
 def set_tuple_bottom(tup, bottom):
@@ -49,12 +51,14 @@ def set_tuple_bottom(tup, bottom):
     tup = (a, b, c, bottom)
     return tup
 
+
 # Helper to set first and third element in four element tuple
 # In context of application, sets the left and right coordinates of the box
 def set_tuple_sides(tup, left, right):
     a, b, c, d = tup
     tup = (left, b, right, d)
     return tup
+
 
 logging.basicConfig(level=logging.DEBUG)
 
