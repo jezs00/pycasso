@@ -100,6 +100,7 @@ try:
     logging.info(imageBase.height)
     draw = ImageDraw.Draw(imageBase, 'RGBA')
 
+    # TODO: Add text parser for DALLE images
     # Add text to image
     artistText = 'Lichtenstein'
     titleText = 'Cool Bird Wearing Glasses'
