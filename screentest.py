@@ -4,19 +4,17 @@
 # Simple screen test based on epd_7in5_V2_test.py
 
 import os
-
-contentDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
-
 import logging
+import time
 # TODO: refactor with omni-epd https://github.com/robweber/omni-epd
 from waveshare_epd import epd7in5_V2
-import time
 from PIL import Image, ImageShow
-import traceback
 
 logging.basicConfig(level=logging.DEBUG)
 
 try:
+    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
+
     logging.info("pycasso test image display")
     epd = epd7in5_V2.EPD()
 
@@ -24,35 +22,35 @@ try:
     epd.init()
     epd.Clear()
 
-    fileLocation = os.path.join(contentDirectory, 'test.png')
+    fileLocation = os.path.join(content_directory, 'test.png')
 
     logging.info("Loading " + fileLocation)
-    imageBase = Image.open(fileLocation)
+    image_base = Image.open(fileLocation)
 
     logging.info("Resizing image")
     # Resize to thumbnail size based on epd resolution
-    epdResolution = (epd.width, epd.height)
-    logging.info(epdResolution)
-    imageBase.thumbnail(epdResolution)
+    epd_res = (epd.width, epd.height)
+    logging.info(epd_res)
+    image_base.thumbnail(epd_res)
 
     # Make sure image is correct size and centered after thumbnail set
     # Define locations and crop settings
-    widthDiff = (epd.width - imageBase.width) / 2
-    heightDiff = (epd.height - imageBase.height) / 2
-    leftPixel = 0 - widthDiff
-    topPixel = 0 - heightDiff
-    rightPixel = imageBase.width + widthDiff
-    bottomPixel = imageBase.height + heightDiff
-    imageCrop = (leftPixel, topPixel, rightPixel, bottomPixel)
+    width_diff = (epd.width - image_base.width) / 2
+    height_diff = (epd.height - image_base.height) / 2
+    left_pixel = 0 - width_diff
+    top_pixel = 0 - height_diff
+    right_pixel = image_base.width + width_diff
+    bottom_pixel = image_base.height + height_diff
+    image_crop = (left_pixel, top_pixel, right_pixel, bottom_pixel)
 
     # Crop and prepare image
-    imageBase = imageBase.crop(imageCrop)
+    image_base = image_base.crop(image_crop)
 
     logging.info("Displaying image")
-    epd.display(epd.getbuffer(imageBase))
+    epd.display(epd.getbuffer(image_base))
 
     # Show image if OS has an image viewer
-    ImageShow.show(imageBase)
+    ImageShow.show(image_base)
     time.sleep(2)
 
     logging.info("Go to sleep...")
