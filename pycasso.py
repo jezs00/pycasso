@@ -114,6 +114,9 @@ try:
 
     if parse_text:
         title_text, artist_text = FileLoader.get_title_and_artist(image_name, ".* - ", " in the style of ", 'png')
+        remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ")
+        title_text = FileLoader.remove_text(title_text, remove_text)
+        artist_text = FileLoader.remove_text(artist_text, remove_text)
 
     artist_loc = 10
     title_loc = 30

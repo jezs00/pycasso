@@ -87,5 +87,16 @@ class FileLoader:
         tup = (split[1], split[2])
         return tup
 
+    @staticmethod
+    def remove_text(text, remove):
+        # removes text from string for all strings in 'remove'
+        regex = ""
+        for r in remove:
+            regex = regex + r + "|"
+        # remove last |
+        regex = regex.rstrip('|')
+        text = re.sub(regex, "", text)
+        return text
+
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex
