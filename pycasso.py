@@ -9,7 +9,9 @@ import numpy
 
 import file_loader
 
-contentDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
+# TODO: move this file operation to file_loader
+image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
+font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts\\Font.ttc')
 # libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 # if os.path.exists(libdir):
 #    sys.path.append(libdir)
@@ -21,6 +23,8 @@ import time
 # TODO: remove ImageShow testing once ready for SIT
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 import traceback
+
+#TODO: fix names of functions to meet formatting standards
 
 # Takes an array of tuples and returns the largest area within them
 # (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
@@ -62,14 +66,17 @@ try:
     epd.init()
     epd.Clear()
 
-    # temp logging to understand how content directory is being handled
-    logging.info(os.path.join(contentDirectory))
+    # Get random image from folder
 
-    font24 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 24)
-    font18 = ImageFont.truetype(os.path.join(contentDirectory, 'Font.ttc'), 18)
+    file = file_loader.FileLoader(image_directory)
+    image_path = file.get_random_file_of_type('png')
+    logging.info(image_path)
+
+    font24 = ImageFont.truetype(font_path, 24)
+    font18 = ImageFont.truetype(font_path, 18)
 
     logging.info("Displaying Test Image")
-    imageBase = Image.open(os.path.join(contentDirectory, 'test.png'))
+    imageBase = Image.open(image_path)
     logging.info(imageBase.width)
 
     # Resize to thumbnail size based on epd resolution
