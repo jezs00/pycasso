@@ -73,7 +73,7 @@ try:
 
     file = FileLoader(image_directory)
     image_path = file.get_random_file_of_type('png')
-    logging.info(image_path)
+    logging.info("file path: " + image_path)
 
     font24 = ImageFont.truetype(font_path, 24)
     font18 = ImageFont.truetype(font_path, 18)
