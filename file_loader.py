@@ -34,12 +34,12 @@ class FileLoader:
 
     def get_all_files(self):
         # returns path of all files in folder
-        print(self.path + "\\*")
         return glob.glob(self.path + "\\*")
 
     def get_all_files_of_type(self, type):
         # returns path of all files in folder with extension 'type'
         # type value 'png' would include cat.png
+        logging.info(glob.glob(self.path + "\\*." + type))
         return glob.glob(self.path + "\\*." + type)
 
     def get_random_file(self):
