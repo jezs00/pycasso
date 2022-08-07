@@ -55,6 +55,8 @@ class FileLoader:
         # type value 'png' could return cat.png
         all_files = self.get_all_files_of_type(type)
         size = len(all_files)
+        if size == 0:
+            return
         random.seed
         r = random.randint(0, size - 1)
         return all_files[r]
