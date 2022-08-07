@@ -55,25 +55,24 @@ def set_tuple_sides(tup, left, right):
     return tup
 
 
-# TODO: move this file operation to file_loader
-image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
-font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts\\Font.ttc')
+
+
 
 logging.basicConfig(level=logging.DEBUG)
 
 try:
+    # TODO: move this file operation to file_loader
+    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
+    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts/Font.ttc')
+
     logging.info("pycasso test image display")
     epd = epd7in5_V2.EPD()
-
-    logging.info("init and clear")
-    epd.init()
-    epd.Clear()
 
     # Get random image from folder
 
     file = FileLoader(image_directory)
     image_path = file.get_random_file_of_type('png')
-    logging.info("file path: " + image_path)
+    logging.info(image_path)
 
     font24 = ImageFont.truetype(font_path, 24)
     font18 = ImageFont.truetype(font_path, 18)
@@ -144,6 +143,10 @@ try:
     draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
     draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
     draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
+
+    logging.info("init and clear")
+    epd.init()
+    epd.Clear()
 
     epd.display(epd.getbuffer(image_base))
 
