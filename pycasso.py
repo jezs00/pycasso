@@ -64,8 +64,10 @@ try:
     # TODO: move this file operation to file_loader
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts/Font.ttc')
+    logging.info(image_directory)
+    logging.info(font_path)
 
-    logging.info("pycasso test image display")
+    logging.info("pycasso")
     epd = epd7in5_V2.EPD()
 
     # Get random image from folder
