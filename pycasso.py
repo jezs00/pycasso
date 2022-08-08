@@ -62,8 +62,28 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     config = config_wrapper.read_config()
     logging.info('Loading config')
-    image_location = config.get('FILE', 'image_location')
 
+    # File Settings
+    image_location = config.get('FILE', 'image_location')
+    image_format = config.get('FILE', 'image_format')
+    font_file = config.get('FILE', 'font_file')
+
+    # Text Settings
+    add_text = config.getboolean('TEXT', 'add_text')
+    parse_text = config.getboolean('TEXT', 'parse_text')
+    preamble_regex = config.get('TEXT', 'preamble_regex')
+    artist_regex = config.get('TEXT', 'artist_regex')
+    #TODO: handle remove_text into tuple
+    remove_text = ", digital art;A painting of ;an oil painting of ;a surrealist oil painting of ;graffiti of"
+    box_to_floor = config.getboolean('TEXT', 'box_to_floor')
+    box_to_edge = config.getboolean('TEXT', 'box_to_edge')
+    artist_loc = config.getint('TEXT', 'artist_loc')
+    title_loc = config.getint('TEXT', 'title_loc')
+    padding = config.getint('TEXT', 'padding')
+    opacity = config.getint('TEXT', 'opacity')
+
+    # Debug Settings
+    image_viewer = config.getboolean('DEBUG', 'image_viewer')
 
 except IOError as e:
     logging.error(e)
@@ -76,7 +96,7 @@ except KeyboardInterrupt:
 
 try:
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
-    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts/Font.ttc')
+    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     logging.info(image_directory)
     logging.info(font_path)
 
@@ -86,7 +106,7 @@ try:
     # Get random image from folder
 
     file = FileLoader(image_directory)
-    image_path = file.get_random_file_of_type('png')
+    image_path = file.get_random_file_of_type(image_format)
     logging.info(image_path)
 
     font24 = ImageFont.truetype(font_path, 24)
@@ -117,8 +137,6 @@ try:
     logging.info(image_base.height)
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
-    parse_text = True
-
     # Add text to image
     image_name = os.path.basename(image_path)
 
@@ -126,7 +144,8 @@ try:
     title_text = image_name
 
     if parse_text:
-        title_text, artist_text = FileLoader.get_title_and_artist(image_name, ".* - ", " in the style of ", 'png')
+
+        title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex, image_format)
         remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ",
                        "graffiti of ")
         title_text = FileLoader.remove_text(title_text, remove_text)
@@ -134,15 +153,7 @@ try:
         title_text = title_text.title()
         artist_text = artist_text.title()
 
-    add_text = True
-
     if add_text:
-        artist_loc = 10
-        title_loc = 30
-        padding = 10
-        box_to_floor = True
-        box_to_edge = True
-
         artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb')
         title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb')
 
@@ -156,7 +167,6 @@ try:
         if box_to_edge:
             draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
 
-        opacity = 150
         draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
         draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
         draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
@@ -167,8 +177,6 @@ try:
 
     epd.display(epd.getbuffer(image_base))
 
-    # TODO: remove image test or config it out
-    image_viewer = True
     if image_viewer:
         ImageShow.show(image_base)
         time.sleep(2)
