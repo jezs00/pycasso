@@ -6,7 +6,7 @@
 import sys
 import os
 import numpy
-import configparser
+import config_wrapper
 
 # libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 # if os.path.exists(libdir):
@@ -56,14 +56,26 @@ def set_tuple_sides(tup, left, right):
     return tup
 
 
-
-
-
 logging.basicConfig(level=logging.DEBUG)
 
+# Load config or set defaults
 try:
-    # TODO: move this file operation to file_loader
-    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
+    config = config_wrapper.read_config()
+    logging.info('Loading config')
+    image_location = config.get('FILE', 'image_location')
+
+
+except IOError as e:
+    logging.error(e)
+    logging.info('Setting defaults:')
+    # TODO: set up defaults on IO exception
+
+except KeyboardInterrupt:
+    logging.info("ctrl + c:")
+    exit()
+
+try:
+    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fonts/Font.ttc')
     logging.info(image_directory)
     logging.info(font_path)
