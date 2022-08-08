@@ -127,9 +127,7 @@ try:
     if add_text:
         artist_loc = 10
         title_loc = 30
-        # TODO: config variable for padding
         padding = 10
-        # TODO: config variable for box
         box_to_floor = True
         box_to_edge = True
 
@@ -146,7 +144,6 @@ try:
         if box_to_edge:
             draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
 
-        # TODO: config variable for opacity
         opacity = 150
         draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
         draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
@@ -159,8 +156,10 @@ try:
     epd.display(epd.getbuffer(image_base))
 
     # TODO: remove image test or config it out
-    ImageShow.show(image_base)
-    time.sleep(2)
+    image_viewer = True
+    if image_viewer:
+        ImageShow.show(image_base)
+        time.sleep(2)
 
     logging.info("Goto Sleep...")
     epd.sleep()
