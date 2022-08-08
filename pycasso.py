@@ -6,6 +6,7 @@
 import sys
 import os
 import numpy
+import configparser
 
 # libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 # if os.path.exists(libdir):
@@ -121,32 +122,35 @@ try:
         title_text = title_text.title()
         artist_text = artist_text.title()
 
-    artist_loc = 10
-    title_loc = 30
-    # TODO: config variable for padding
-    padding = 10
-    # TODO: config variable for box
-    box_to_floor = True
-    box_to_edge = True
+    add_text = True
 
-    artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb')
-    title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb')
+    if add_text:
+        artist_loc = 10
+        title_loc = 30
+        # TODO: config variable for padding
+        padding = 10
+        # TODO: config variable for box
+        box_to_floor = True
+        box_to_edge = True
 
-    draw_box = max_area([artist_box, title_box])
-    draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
+        artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb')
+        title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb')
 
-    # Modify depending on box type
-    if box_to_floor:
-        draw_box = set_tuple_bottom(draw_box, bottom_pixel)
+        draw_box = max_area([artist_box, title_box])
+        draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
 
-    if box_to_edge:
-        draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
+        # Modify depending on box type
+        if box_to_floor:
+            draw_box = set_tuple_bottom(draw_box, bottom_pixel)
 
-    # TODO: config variable for opacity
-    opacity = 150
-    draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
-    draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
-    draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
+        if box_to_edge:
+            draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
+
+        # TODO: config variable for opacity
+        opacity = 150
+        draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
+        draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
+        draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
 
     logging.info("init and clear")
     epd.init()
