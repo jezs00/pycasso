@@ -104,7 +104,6 @@ try:
     logging.info(image_base.height)
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
-    # TODO: Add text parser for DALLE images
     parse_text = True
 
     # Add text to image
@@ -115,9 +114,12 @@ try:
 
     if parse_text:
         title_text, artist_text = FileLoader.get_title_and_artist(image_name, ".* - ", " in the style of ", 'png')
-        remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ")
+        remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ",
+                       "graffiti of ")
         title_text = FileLoader.remove_text(title_text, remove_text)
         artist_text = FileLoader.remove_text(artist_text, remove_text)
+        title_text = title_text.title()
+        artist_text = artist_text.title()
 
     artist_loc = 10
     title_loc = 30
