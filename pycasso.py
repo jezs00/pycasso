@@ -33,7 +33,7 @@ DEFAULT_ADD_TEXT = False
 DEFAULT_PARSE_TEXT = False
 DEFAULT_PREAMBLE_REGEX = '.*- '
 DEFAULT_ARTIST_REGEX = ' by '
-DEFAULT_REMOVE_TEXT = ""
+DEFAULT_REMOVE_TEXT = numpy.array([", digital art", "A painting of"])
 DEFAULT_BOX_TO_FLOOR = True
 DEFAULT_BOX_TO_EDGE = True
 DEFAULT_ARTIST_LOC = 10
@@ -119,8 +119,8 @@ try:
         parse_text = config.getboolean('TEXT', 'parse_text')
         preamble_regex = config.get('TEXT', 'preamble_regex')
         artist_regex = config.get('TEXT', 'artist_regex')
-        # TODO: handle remove_text into tuple
-        remove_text = ", digital art;A painting of ;an oil painting of ;a surrealist oil painting of ;graffiti of"
+        remove_text = config.get('TEXT', 'remove_text').split('\n')
+        logging.info(remove_text)
         box_to_floor = config.getboolean('TEXT', 'box_to_floor')
         box_to_edge = config.getboolean('TEXT', 'box_to_edge')
         artist_loc = config.getint('TEXT', 'artist_loc')
@@ -133,21 +133,23 @@ try:
 
 except IOError as e:
     logging.error(e)
-    logging.info('Setting defaults:')
-    # TODO: set up defaults on IO exception
 
 except KeyboardInterrupt:
     logging.info("ctrl + c:")
     exit()
 
 try:
-    # TODO: Put file not found handling here
+    logging.info("pycasso has begun")
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
-    logging.info(image_directory)
-    logging.info(font_path)
+    if not os.path.exists(image_directory):
+        logging.info("Image directory path does not exist: '" + image_directory + "'")
+        exit()
 
-    logging.info("pycasso")
+    if not os.path.exists(font_path):
+        logging.info("font file path does not exist: '" + font_file + "'")
+        exit()
+
     epd = epd7in5_V2.EPD()
 
     # Get random image from folder
@@ -193,8 +195,6 @@ try:
     if parse_text:
         title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex,
                                                                   image_format)
-        remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ",
-                       "graffiti of ")
         title_text = FileLoader.remove_text(title_text, remove_text)
         artist_text = FileLoader.remove_text(artist_text, remove_text)
         title_text = title_text.title()
