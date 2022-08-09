@@ -7,11 +7,6 @@ import sys
 import os
 import numpy
 import config_wrapper
-
-# libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
-# if os.path.exists(libdir):
-#    sys.path.append(libdir)
-
 import logging
 # TODO: refactor with omni-epd https://github.com/robweber/omni-epd
 from waveshare_epd import epd7in5_V2
@@ -19,6 +14,10 @@ import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 from file_loader import FileLoader
 import traceback
+
+lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+if os.path.exists(lib_dir):
+    sys.path.append(lib_dir)
 
 # Relative path to config
 CONFIG_PATH = '.config'
@@ -45,8 +44,6 @@ DEFAULT_OPACITY = 150
 # Debug Settings
 DEFAULT_IMAGE_VIEWER = False
 
-
-# TODO: fix names of functions to meet formatting standards
 
 # Takes an array of tuples and returns the largest area within them
 # (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
@@ -83,33 +80,31 @@ def set_tuple_sides(tup, left, right):
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Load config or set defaults
+# Set Defaults
+
+# File Settings
+image_location = DEFAULT_IMAGE_LOCATION
+image_format = DEFAULT_IMAGE_FORMAT
+font_file = DEFAULT_FONT_FILE
+
+# Text Settings
+add_text = DEFAULT_ADD_TEXT
+parse_text = DEFAULT_PARSE_TEXT
+preamble_regex = DEFAULT_PREAMBLE_REGEX
+artist_regex = DEFAULT_ARTIST_REGEX
+remove_text = DEFAULT_REMOVE_TEXT
+box_to_floor = DEFAULT_BOX_TO_FLOOR
+box_to_edge = DEFAULT_BOX_TO_EDGE
+artist_loc = DEFAULT_ARTIST_LOC
+title_loc = DEFAULT_TITLE_LOC
+padding = DEFAULT_PADDING
+opacity = DEFAULT_OPACITY
+
+# Debug Settings
+image_viewer = DEFAULT_IMAGE_VIEWER
+
 try:
-    # Set Defaults
-
-    # File Settings
-    image_location = DEFAULT_IMAGE_LOCATION
-    image_format = DEFAULT_IMAGE_FORMAT
-    font_file = DEFAULT_FONT_FILE
-
-    # Text Settings
-    add_text = DEFAULT_ADD_TEXT
-    parse_text = DEFAULT_PARSE_TEXT
-    preamble_regex = DEFAULT_PREAMBLE_REGEX
-    artist_regex = DEFAULT_ARTIST_REGEX
-    remove_text = DEFAULT_REMOVE_TEXT
-    box_to_floor = DEFAULT_BOX_TO_FLOOR
-    box_to_edge = DEFAULT_BOX_TO_EDGE
-    artist_loc = DEFAULT_ARTIST_LOC
-    title_loc = DEFAULT_TITLE_LOC
-    padding = DEFAULT_PADDING
-    opacity = DEFAULT_OPACITY
-
-    # Debug Settings
-    image_viewer = DEFAULT_IMAGE_VIEWER
-
     # Load config
-
     if os.path.exists(CONFIG_PATH):
         config = config_wrapper.read_config(CONFIG_PATH)
         logging.info('Loading config')
@@ -124,7 +119,7 @@ try:
         parse_text = config.getboolean('TEXT', 'parse_text')
         preamble_regex = config.get('TEXT', 'preamble_regex')
         artist_regex = config.get('TEXT', 'artist_regex')
-        #TODO: handle remove_text into tuple
+        # TODO: handle remove_text into tuple
         remove_text = ", digital art;A painting of ;an oil painting of ;a surrealist oil painting of ;graffiti of"
         box_to_floor = config.getboolean('TEXT', 'box_to_floor')
         box_to_edge = config.getboolean('TEXT', 'box_to_edge')
@@ -196,8 +191,8 @@ try:
     title_text = image_name
 
     if parse_text:
-
-        title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex, image_format)
+        title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex,
+                                                                  image_format)
         remove_text = (", digital art", "A painting of ", "an oil painting of ", "a surrealist oil painting of ",
                        "graffiti of ")
         title_text = FileLoader.remove_text(title_text, remove_text)
