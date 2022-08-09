@@ -2,7 +2,7 @@ import configparser
 
 
 # Method to read config file settings
-def read_config():
+def read_config(path):
     config = configparser.ConfigParser()
-    config.read('.config')
+    config.read(path)
     return config

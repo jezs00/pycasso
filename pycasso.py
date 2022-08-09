@@ -20,6 +20,31 @@ from PIL import Image, ImageDraw, ImageFont, ImageShow
 from file_loader import FileLoader
 import traceback
 
+# Relative path to config
+CONFIG_PATH = '.config'
+
+# Defaults
+# File Settings
+DEFAULT_IMAGE_LOCATION = 'images'
+DEFAULT_IMAGE_FORMAT = 'png'
+DEFAULT_FONT_FILE = 'fonts/Font.ttc'
+
+# Text Settings
+DEFAULT_ADD_TEXT = False
+DEFAULT_PARSE_TEXT = False
+DEFAULT_PREAMBLE_REGEX = '.*- '
+DEFAULT_ARTIST_REGEX = ' by '
+DEFAULT_REMOVE_TEXT = ""
+DEFAULT_BOX_TO_FLOOR = True
+DEFAULT_BOX_TO_EDGE = True
+DEFAULT_ARTIST_LOC = 10
+DEFAULT_TITLE_LOC = 30
+DEFAULT_PADDING = 10
+DEFAULT_OPACITY = 150
+
+# Debug Settings
+DEFAULT_IMAGE_VIEWER = False
+
 
 # TODO: fix names of functions to meet formatting standards
 
@@ -60,30 +85,56 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Load config or set defaults
 try:
-    config = config_wrapper.read_config()
-    logging.info('Loading config')
+    # Set Defaults
 
     # File Settings
-    image_location = config.get('FILE', 'image_location')
-    image_format = config.get('FILE', 'image_format')
-    font_file = config.get('FILE', 'font_file')
+    image_location = DEFAULT_IMAGE_LOCATION
+    image_format = DEFAULT_IMAGE_FORMAT
+    font_file = DEFAULT_FONT_FILE
 
     # Text Settings
-    add_text = config.getboolean('TEXT', 'add_text')
-    parse_text = config.getboolean('TEXT', 'parse_text')
-    preamble_regex = config.get('TEXT', 'preamble_regex')
-    artist_regex = config.get('TEXT', 'artist_regex')
-    #TODO: handle remove_text into tuple
-    remove_text = ", digital art;A painting of ;an oil painting of ;a surrealist oil painting of ;graffiti of"
-    box_to_floor = config.getboolean('TEXT', 'box_to_floor')
-    box_to_edge = config.getboolean('TEXT', 'box_to_edge')
-    artist_loc = config.getint('TEXT', 'artist_loc')
-    title_loc = config.getint('TEXT', 'title_loc')
-    padding = config.getint('TEXT', 'padding')
-    opacity = config.getint('TEXT', 'opacity')
+    add_text = DEFAULT_ADD_TEXT
+    parse_text = DEFAULT_PARSE_TEXT
+    preamble_regex = DEFAULT_PREAMBLE_REGEX
+    artist_regex = DEFAULT_ARTIST_REGEX
+    remove_text = DEFAULT_REMOVE_TEXT
+    box_to_floor = DEFAULT_BOX_TO_FLOOR
+    box_to_edge = DEFAULT_BOX_TO_EDGE
+    artist_loc = DEFAULT_ARTIST_LOC
+    title_loc = DEFAULT_TITLE_LOC
+    padding = DEFAULT_PADDING
+    opacity = DEFAULT_OPACITY
 
     # Debug Settings
-    image_viewer = config.getboolean('DEBUG', 'image_viewer')
+    image_viewer = DEFAULT_IMAGE_VIEWER
+
+    # Load config
+
+    if os.path.exists(CONFIG_PATH):
+        config = config_wrapper.read_config(CONFIG_PATH)
+        logging.info('Loading config')
+
+        # File Settings
+        image_location = config.get('FILE', 'image_location')
+        image_format = config.get('FILE', 'image_format')
+        font_file = config.get('FILE', 'font_file')
+
+        # Text Settings
+        add_text = config.getboolean('TEXT', 'add_text')
+        parse_text = config.getboolean('TEXT', 'parse_text')
+        preamble_regex = config.get('TEXT', 'preamble_regex')
+        artist_regex = config.get('TEXT', 'artist_regex')
+        #TODO: handle remove_text into tuple
+        remove_text = ", digital art;A painting of ;an oil painting of ;a surrealist oil painting of ;graffiti of"
+        box_to_floor = config.getboolean('TEXT', 'box_to_floor')
+        box_to_edge = config.getboolean('TEXT', 'box_to_edge')
+        artist_loc = config.getint('TEXT', 'artist_loc')
+        title_loc = config.getint('TEXT', 'title_loc')
+        padding = config.getint('TEXT', 'padding')
+        opacity = config.getint('TEXT', 'opacity')
+
+        # Debug Settings
+        image_viewer = config.getboolean('DEBUG', 'image_viewer')
 
 except IOError as e:
     logging.error(e)
@@ -95,6 +146,7 @@ except KeyboardInterrupt:
     exit()
 
 try:
+    # TODO: Put file not found handling here
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     logging.info(image_directory)
