@@ -35,10 +35,10 @@ class FileLoader:
         # returns path of all files in folder
         return glob.glob(self.path + "/*")
 
-    def get_all_files_of_type(self, type):
+    def get_all_files_of_type(self, file_type):
         # returns path of all files in folder with extension 'type'
         # type value 'png' would include cat.png
-        return glob.glob(self.path + "/*." + type)
+        return glob.glob(self.path + "/*." + file_type)
 
     def get_random_file(self):
         # returns path for a random file in the current path
@@ -48,10 +48,10 @@ class FileLoader:
         r = random.randint(0, size - 1)
         return all_files[r]
 
-    def get_random_file_of_type(self, type):
+    def get_random_file_of_type(self, file_type):
         # returns path for a random file in the current path with extension 'type'
         # type value 'png' could return cat.png
-        all_files = self.get_all_files_of_type(type)
+        all_files = self.get_all_files_of_type(file_type)
         size = len(all_files)
         if size == 0:
             return
