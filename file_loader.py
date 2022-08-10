@@ -64,11 +64,11 @@ class FileLoader:
     def get_artist_name(text, regex):
         # returns artist name within a string from a file name based on 'regex'
         # assumes artist name comes LAST
-        split = re.split(text, regex)
+        split = re.split(regex, text)
         # handle list
-        if len(split) < 1:
+        if len(split) < 2:
             return text
-        return split[1]  # TODO: test this method
+        return split[1]
 
     @staticmethod
     def get_title_and_artist(text, preamble_regex, artist_regex, file_extension):
