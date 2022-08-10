@@ -6,21 +6,48 @@
 import os
 import logging
 import time
-# TODO: refactor with omni-epd https://github.com/robweber/omni-epd
-from waveshare_epd import epd7in5_V2
+import config_wrapper
+from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageShow
 
+# Relative path to config
+CONFIG_PATH = '.config'
+
+# Display Settings
+display_type = "omni_epd.mock"
+
 logging.basicConfig(level=logging.DEBUG)
+
+try:
+    # Load config
+    if os.path.exists(CONFIG_PATH):
+        config = config_wrapper.read_config(CONFIG_PATH)
+        logging.info('Loading config')
+
+        # Display Settings
+        display_type = config.get('DISPLAY', 'display_type')
+
+except IOError as e:
+    logging.error(e)
+
+except KeyboardInterrupt:
+    logging.info("ctrl + c:")
+    exit()
+
+try:
+    # epd = epd7in5_V2.EPD()
+    epd = displayfactory.load_display_driver(display_type)
+except EPDNotFoundError:
+    logging.info(f"Couldn't find {display_type}")
+    exit()
 
 try:
     content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
 
     logging.info("pycasso test image display")
-    epd = epd7in5_V2.EPD()
 
     logging.info("Init and clear screen")
-    epd.init()
-    epd.Clear()
+    epd.prepare()
 
     fileLocation = os.path.join(content_directory, 'test.png')
 
@@ -47,14 +74,14 @@ try:
     image_base = image_base.crop(image_crop)
 
     logging.info("Displaying image")
-    epd.display(epd.getbuffer(image_base))
+    epd.display(image_base)
 
     # Show image if OS has an image viewer
     ImageShow.show(image_base)
     time.sleep(2)
 
     logging.info("Go to sleep...")
-    epd.sleep()
+    epd.close()
 
     logging.info("Check the screen to see if it worked")
 
@@ -63,5 +90,5 @@ except IOError as e:
 
 except KeyboardInterrupt:
     logging.info("ctrl + c:")
-    epd7in5_V2.epdconfig.module_exit()
+    epd.close()
     exit()
