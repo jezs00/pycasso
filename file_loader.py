@@ -45,7 +45,7 @@ class FileLoader:
         # returns path for a random file in the current path
         all_files = self.get_all_files()
         size = len(all_files)
-        random.seed
+        random.seed()
         r = random.randint(0, size - 1)
         return all_files[r]
 
@@ -56,7 +56,7 @@ class FileLoader:
         size = len(all_files)
         if size == 0:
             return
-        random.seed
+        random.seed()
         r = random.randint(0, size - 1)
         return all_files[r]
 
