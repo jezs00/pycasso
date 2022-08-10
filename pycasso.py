@@ -9,7 +9,6 @@ import numpy
 import config_wrapper
 import logging
 from omni_epd import displayfactory, EPDNotFoundError
-from waveshare_epd import epd7in5_V2
 import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 from file_loader import FileLoader
@@ -257,5 +256,5 @@ except IOError as e:
 
 except KeyboardInterrupt:
     logging.info("ctrl + c:")
-    epd7in5_V2.epdconfig.module_exit()
+    epd.close()
     exit()
