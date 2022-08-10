@@ -8,7 +8,7 @@ import os
 import numpy
 import config_wrapper
 import logging
-# TODO: refactor with omni-epd https://github.com/robweber/omni-epd
+from omni_epd import displayfactory, EPDNotFoundError
 from waveshare_epd import epd7in5_V2
 import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
@@ -42,6 +42,9 @@ DEFAULT_TITLE_LOC = 30
 DEFAULT_TITLE_SIZE = 20
 DEFAULT_PADDING = 10
 DEFAULT_OPACITY = 150
+
+# Display Settings
+DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
 
 # Debug Settings
 DEFAULT_IMAGE_VIEWER = False
@@ -104,6 +107,9 @@ title_size = DEFAULT_TITLE_SIZE
 padding = DEFAULT_PADDING
 opacity = DEFAULT_OPACITY
 
+# Display Settings
+display_type = DEFAULT_DISPLAY_TYPE
+
 # Debug Settings
 image_viewer = DEFAULT_IMAGE_VIEWER
 
@@ -134,6 +140,9 @@ try:
         padding = config.getint('TEXT', 'padding')
         opacity = config.getint('TEXT', 'opacity')
 
+        # Display Settings
+        display_type = config.get('DISPLAY', 'display_type')
+
         # Debug Settings
         image_viewer = config.getboolean('DEBUG', 'image_viewer')
 
@@ -144,8 +153,17 @@ except KeyboardInterrupt:
     logging.info("ctrl + c:")
     exit()
 
+logging.info("pycasso has begun")
+
 try:
-    logging.info("pycasso has begun")
+    # epd = epd7in5_V2.EPD()
+    epd = displayfactory.load_display_driver(display_type)
+except EPDNotFoundError:
+    print(f"Couldn't find {display_type}")
+    exit()
+
+try:
+
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     if not os.path.exists(image_directory):
@@ -155,8 +173,6 @@ try:
     if not os.path.exists(font_path):
         logging.info("font file path does not exist: '" + font_file + "'")
         exit()
-
-    epd = epd7in5_V2.EPD()
 
     # Get random image from folder
 
@@ -224,18 +240,17 @@ try:
         draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb', fill=0)
         draw.text((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb', fill=0)
 
-    logging.info("init and clear")
-    epd.init()
-    epd.Clear()
+    logging.info("Prepare")
+    epd.prepare()
 
-    epd.display(epd.getbuffer(image_base))
+    epd.display(image_base)
 
     if image_viewer:
         ImageShow.show(image_base)
         time.sleep(2)
 
-    logging.info("Goto Sleep...")
-    epd.sleep()
+    logging.info("Go To Sleep...")
+    epd.close()
 
 except IOError as e:
     logging.info(e)
