@@ -156,7 +156,7 @@ try:
     # epd = epd7in5_V2.EPD()
     epd = displayfactory.load_display_driver(display_type)
 except EPDNotFoundError:
-    print(f"Couldn't find {display_type}")
+    logging.info(f"Couldn't find {display_type}")
     exit()
 
 try:
@@ -246,7 +246,7 @@ try:
         ImageShow.show(image_base)
         time.sleep(2)
 
-    logging.info("Go To Sleep...")
+    logging.info("Go to sleep...")
     epd.close()
 
 except IOError as e:
