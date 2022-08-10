@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-# Screen test based on epd_7in5_V2_test.py
-
 import sys
 import os
 import numpy
