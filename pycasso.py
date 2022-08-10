@@ -37,7 +37,9 @@ DEFAULT_REMOVE_TEXT = numpy.array([", digital art", "A painting of"])
 DEFAULT_BOX_TO_FLOOR = True
 DEFAULT_BOX_TO_EDGE = True
 DEFAULT_ARTIST_LOC = 10
+DEFAULT_ARTIST_SIZE = 14
 DEFAULT_TITLE_LOC = 30
+DEFAULT_TITLE_SIZE = 20
 DEFAULT_PADDING = 10
 DEFAULT_OPACITY = 150
 
@@ -96,7 +98,9 @@ remove_text = DEFAULT_REMOVE_TEXT
 box_to_floor = DEFAULT_BOX_TO_FLOOR
 box_to_edge = DEFAULT_BOX_TO_EDGE
 artist_loc = DEFAULT_ARTIST_LOC
+artist_size = DEFAULT_ARTIST_SIZE
 title_loc = DEFAULT_TITLE_LOC
+title_size = DEFAULT_TITLE_SIZE
 padding = DEFAULT_PADDING
 opacity = DEFAULT_OPACITY
 
@@ -124,7 +128,9 @@ try:
         box_to_floor = config.getboolean('TEXT', 'box_to_floor')
         box_to_edge = config.getboolean('TEXT', 'box_to_edge')
         artist_loc = config.getint('TEXT', 'artist_loc')
+        artist_size = config.getint('TEXT', 'artist_size')
         title_loc = config.getint('TEXT', 'title_loc')
+        title_size = config.getint('TEXT', 'title_size')
         padding = config.getint('TEXT', 'padding')
         opacity = config.getint('TEXT', 'opacity')
 
@@ -158,8 +164,8 @@ try:
     image_path = file.get_random_file_of_type(image_format)
     logging.info(image_path)
 
-    font24 = ImageFont.truetype(font_path, 24)
-    font18 = ImageFont.truetype(font_path, 18)
+    title_font = ImageFont.truetype(font_path, title_size)
+    artist_font = ImageFont.truetype(font_path, artist_size)
 
     logging.info("Displaying Test Image")
     image_base = Image.open(image_path)
@@ -201,8 +207,8 @@ try:
         artist_text = artist_text.title()
 
     if add_text:
-        artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb')
-        title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb')
+        artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
+        title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
 
         draw_box = max_area([artist_box, title_box])
         draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
@@ -215,8 +221,8 @@ try:
             draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
 
         draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
-        draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=font18, anchor='mb', fill=0)
-        draw.text((epd.width / 2, epd.height - title_loc), title_text, font=font24, anchor='mb', fill=0)
+        draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb', fill=0)
+        draw.text((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb', fill=0)
 
     logging.info("init and clear")
     epd.init()
