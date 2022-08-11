@@ -42,7 +42,7 @@ except EPDNotFoundError:
     exit()
 
 try:
-    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'testcontent')
+    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/test_content')
 
     logging.info("pycasso test image display")
 
