@@ -77,7 +77,7 @@ class FileLoader:
         # assumes title comes after some preamble, artist name comes LAST
         # returns (text, "") on failure
 
-        split = re.split(preamble_regex + "|" + artist_regex + "|\." + file_extension, text)
+        split = re.split(preamble_regex + "|" + artist_regex + "|\\." + file_extension, text)
         # handle list
         logging.info(split)
         if len(split) < 4:
