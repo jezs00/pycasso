@@ -10,7 +10,6 @@ from omni_epd import displayfactory, EPDNotFoundError
 import time
 from PIL import Image, ImageDraw, ImageFont, ImageShow
 from file_loader import FileLoader
-import traceback
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(lib_dir):
@@ -152,14 +151,11 @@ except KeyboardInterrupt:
 
 logging.info("pycasso has begun")
 
-try:
-    # epd = epd7in5_V2.EPD()
-    epd = displayfactory.load_display_driver(display_type)
-except EPDNotFoundError:
-    logging.info(f"Couldn't find {display_type}")
-    exit()
+# init epd
+epd = displayfactory.load_display_driver(DEFAULT_DISPLAY_TYPE)
 
 try:
+    epd = displayfactory.load_display_driver(display_type)
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
@@ -248,6 +244,10 @@ try:
 
     logging.info("Go to sleep...")
     epd.close()
+
+except EPDNotFoundError:
+    logging.info(f"Couldn't find {display_type}")
+    exit()
 
 except IOError as e:
     logging.info(e)
