@@ -5,4 +5,4 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('config.html', text_test='Hello World')
+    return render_template('index.html', text_test='Hello World')
