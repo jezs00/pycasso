@@ -151,9 +151,6 @@ except KeyboardInterrupt:
 
 logging.info("pycasso has begun")
 
-# init epd
-epd = displayfactory.load_display_driver(DEFAULT_DISPLAY_TYPE)
-
 try:
     epd = displayfactory.load_display_driver(display_type)
 
