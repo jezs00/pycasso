@@ -14,9 +14,11 @@ from PIL import Image, ImageShow
 CONFIG_PATH = '.config'
 
 # Display Settings
-display_type = "omni_epd.mock"
+DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
 
 logging.basicConfig(level=logging.DEBUG)
+
+display_type = DEFAULT_DISPLAY_TYPE
 
 try:
     # Load config
@@ -35,13 +37,8 @@ except KeyboardInterrupt:
     exit()
 
 try:
-    # epd = epd7in5_V2.EPD()
     epd = displayfactory.load_display_driver(display_type)
-except EPDNotFoundError:
-    logging.info(f"Couldn't find {display_type}")
-    exit()
 
-try:
     content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/test_content')
 
     logging.info("pycasso test image display")
@@ -84,6 +81,10 @@ try:
     epd.close()
 
     logging.info("Check the screen to see if it worked")
+
+except EPDNotFoundError:
+    logging.info(f"Couldn't find {display_type}")
+    exit()
 
 except IOError as e:
     logging.info(e)
