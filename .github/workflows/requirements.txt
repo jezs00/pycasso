@@ -1,1 +1,2 @@
 git+https://github.com/robweber/omni-epd.git#egg=omni-epd
+git+https://github.com/Stability-AI/stability-sdk.git
