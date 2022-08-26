@@ -40,7 +40,7 @@ DEFAULT_PADDING = 10
 DEFAULT_OPACITY = 150
 
 # Display Settings
-DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
+DEFAULT_DISPLAY_TYPE = 'omni_epd.mock'
 
 # Debug Settings
 DEFAULT_IMAGE_VIEWER = False
@@ -152,7 +152,8 @@ except KeyboardInterrupt:
 logging.info("pycasso has begun")
 
 try:
-    epd = displayfactory.load_display_driver(display_type)
+    logging.info(displayfactory.list_supported_displays())
+    epd = displayfactory.load_display_driver()
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
