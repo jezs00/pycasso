@@ -74,7 +74,6 @@ try:
     epd.display(image_base)
 
     # Show image if OS has an image viewer
-    ImageShow.show(image_base)
     time.sleep(2)
 
     logging.info("Go to sleep...")
