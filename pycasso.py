@@ -152,7 +152,7 @@ except KeyboardInterrupt:
 logging.info("pycasso has begun")
 
 try:
-    logging.info(displayfactory.list_supported_displays())
+    logging.info(displayfactory.list_supported_displays()) ##TODO: Remove this debug line
     epd = displayfactory.load_display_driver()
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
@@ -235,10 +235,6 @@ try:
     epd.prepare()
 
     epd.display(image_base)
-
-    if image_viewer:
-        ImageShow.show(image_base)
-        time.sleep(2)
 
     logging.info("Go to sleep...")
     epd.close()
