@@ -1,5 +1,9 @@
 # Provider class to wrap APIs for web operations
 
+from stability_sdk import client
+import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
+
+
 class Provider:
     """
     A class used to wrap APIs for web operations from pycasso.
