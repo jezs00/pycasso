@@ -163,7 +163,6 @@ try:
     epd_config_dict['Image Enhancements']['brightness'] = 1
     epd_config_dict['Image Enhancements']['sharpness'] = 1
 
-    logging.info(displayfactory.list_supported_displays()) ##TODO: Remove this debug line
     epd = displayfactory.load_display_driver(display_type, epd_config_dict)
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
