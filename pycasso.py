@@ -152,8 +152,19 @@ except KeyboardInterrupt:
 logging.info("pycasso has begun")
 
 try:
+    # Set up dict to be loaded into omni-epd
+    epd_config_dict = {'EPD': {}, 'Display': {}, 'Image Enhancements': {}}
+    epd_config_dict['EPD']['type'] = 'omni_epd.mock'
+    epd_config_dict['EPD']['mode'] = 'color'
+    epd_config_dict['Display']['rotate'] = '0'
+    epd_config_dict['Display']['flip_horizontal'] = False
+    epd_config_dict['Display']['flip_vertical'] = False
+    epd_config_dict['Image Enhancements']['contrast'] = 1
+    epd_config_dict['Image Enhancements']['brightness'] = 1
+    epd_config_dict['Image Enhancements']['sharpness'] = 1
+
     logging.info(displayfactory.list_supported_displays()) ##TODO: Remove this debug line
-    epd = displayfactory.load_display_driver()
+    epd = displayfactory.load_display_driver(display_type, epd_config_dict)
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
