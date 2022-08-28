@@ -7,8 +7,7 @@ import numpy
 import config_wrapper
 import logging
 from omni_epd import displayfactory, EPDNotFoundError
-import time
-from PIL import Image, ImageDraw, ImageFont, ImageShow
+from PIL import Image, ImageDraw, ImageFont
 from file_loader import FileLoader
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
@@ -40,7 +39,7 @@ DEFAULT_PADDING = 10
 DEFAULT_OPACITY = 150
 
 # Display Settings
-DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
+DEFAULT_DISPLAY_TYPE = 'omni_epd.mock'
 
 # Debug Settings
 DEFAULT_IMAGE_VIEWER = False
@@ -109,6 +108,7 @@ display_type = DEFAULT_DISPLAY_TYPE
 # Debug Settings
 image_viewer = DEFAULT_IMAGE_VIEWER
 
+config = {}
 try:
     # Load config
     if os.path.exists(CONFIG_PATH):
@@ -116,31 +116,32 @@ try:
         logging.info('Loading config')
 
         # File Settings
-        image_location = config.get('FILE', 'image_location')
-        image_format = config.get('FILE', 'image_format')
-        font_file = config.get('FILE', 'font_file')
+
+        image_location = config.get('File', 'image_location', fallback=DEFAULT_IMAGE_LOCATION)
+        image_format = config.get('File', 'image_format', fallback=DEFAULT_IMAGE_LOCATION)
+        font_file = config.get('File', 'font_file', fallback=DEFAULT_FONT_FILE)
 
         # Text Settings
-        add_text = config.getboolean('TEXT', 'add_text')
-        parse_text = config.getboolean('TEXT', 'parse_text')
-        preamble_regex = config.get('TEXT', 'preamble_regex')
-        artist_regex = config.get('TEXT', 'artist_regex')
-        remove_text = config.get('TEXT', 'remove_text').split('\n')
+        add_text = config.getboolean('Text', 'add_text', fallback=DEFAULT_ADD_TEXT)
+        parse_text = config.getboolean('Text', 'parse_text', fallback=DEFAULT_PARSE_TEXT)
+        preamble_regex = config.get('Text', 'preamble_regex', fallback=DEFAULT_PREAMBLE_REGEX)
+        artist_regex = config.get('Text', 'artist_regex', fallback=DEFAULT_ARTIST_REGEX)
+        remove_text = config.get('Text', 'remove_text', fallback=DEFAULT_REMOVE_TEXT).split('\n')
         logging.info(remove_text)
-        box_to_floor = config.getboolean('TEXT', 'box_to_floor')
-        box_to_edge = config.getboolean('TEXT', 'box_to_edge')
-        artist_loc = config.getint('TEXT', 'artist_loc')
-        artist_size = config.getint('TEXT', 'artist_size')
-        title_loc = config.getint('TEXT', 'title_loc')
-        title_size = config.getint('TEXT', 'title_size')
-        padding = config.getint('TEXT', 'padding')
-        opacity = config.getint('TEXT', 'opacity')
+        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=DEFAULT_BOX_TO_FLOOR)
+        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=DEFAULT_BOX_TO_EDGE)
+        artist_loc = config.getint('Text', 'artist_loc', fallback=DEFAULT_ARTIST_LOC)
+        artist_size = config.getint('Text', 'artist_size', fallback=DEFAULT_ARTIST_SIZE)
+        title_loc = config.getint('Text', 'title_loc', fallback=DEFAULT_TITLE_LOC)
+        title_size = config.getint('Text', 'title_size', fallback=DEFAULT_TITLE_SIZE)
+        padding = config.getint('Text', 'padding', fallback=DEFAULT_PADDING)
+        opacity = config.getint('Text', 'opacity', fallback=DEFAULT_OPACITY)
 
-        # Display Settings
-        display_type = config.get('DISPLAY', 'display_type')
+        # Display (rest of EPD config is just passed straight into displayfactory
+        display_type = config.get('EPD', 'type', fallback=DEFAULT_DISPLAY_TYPE)
 
         # Debug Settings
-        image_viewer = config.getboolean('DEBUG', 'image_viewer')
+        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=DEFAULT_IMAGE_VIEWER)
 
 except IOError as e:
     logging.error(e)
@@ -152,8 +153,17 @@ except KeyboardInterrupt:
 logging.info("pycasso has begun")
 
 try:
-    epd = displayfactory.load_display_driver(display_type)
+    epd = displayfactory.load_display_driver(display_type, config)
 
+except EPDNotFoundError:
+    logging.info(f"Couldn't find {display_type}")
+    exit()
+
+except KeyboardInterrupt:
+    logging.info("ctrl + c:")
+    exit()
+
+try:
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     if not os.path.exists(image_directory):
@@ -234,10 +244,6 @@ try:
     epd.prepare()
 
     epd.display(image_base)
-
-    if image_viewer:
-        ImageShow.show(image_base)
-        time.sleep(2)
 
     logging.info("Go to sleep...")
     epd.close()
