@@ -113,38 +113,36 @@ try:
     # Load config
     config = {}
     if os.path.exists(CONFIG_PATH):
-        # TODO: set up to wrap each option in handling if option does not exist
-
         config = config_wrapper.read_config(CONFIG_PATH)
         logging.info('Loading config')
 
         # File Settings
 
-        image_location = config.get('File', 'image_location')
-        image_format = config.get('File', 'image_format')
-        font_file = config.get('File', 'font_file')
+        image_location = config.get('File', 'image_location', fallback=DEFAULT_IMAGE_LOCATION)
+        image_format = config.get('File', 'image_format', fallback=DEFAULT_IMAGE_LOCATION)
+        font_file = config.get('File', 'font_file', fallback=DEFAULT_FONT_FILE)
 
         # Text Settings
-        add_text = config.getboolean('Text', 'add_text')
-        parse_text = config.getboolean('Text', 'parse_text')
-        preamble_regex = config.get('Text', 'preamble_regex')
-        artist_regex = config.get('Text', 'artist_regex')
-        remove_text = config.get('Text', 'remove_text').split('\n')
+        add_text = config.getboolean('Text', 'add_text', fallback=DEFAULT_ADD_TEXT)
+        parse_text = config.getboolean('Text', 'parse_text', fallback=DEFAULT_PARSE_TEXT)
+        preamble_regex = config.get('Text', 'preamble_regex', fallback=DEFAULT_PREAMBLE_REGEX)
+        artist_regex = config.get('Text', 'artist_regex', fallback=DEFAULT_ARTIST_REGEX)
+        remove_text = config.get('Text', 'remove_text', fallback=DEFAULT_REMOVE_TEXT).split('\n')
         logging.info(remove_text)
-        box_to_floor = config.getboolean('Text', 'box_to_floor')
-        box_to_edge = config.getboolean('Text', 'box_to_edge')
-        artist_loc = config.getint('Text', 'artist_loc')
-        artist_size = config.getint('Text', 'artist_size')
-        title_loc = config.getint('Text', 'title_loc')
-        title_size = config.getint('Text', 'title_size')
-        padding = config.getint('Text', 'padding')
-        opacity = config.getint('Text', 'opacity')
+        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=DEFAULT_BOX_TO_FLOOR)
+        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=DEFAULT_BOX_TO_EDGE)
+        artist_loc = config.getint('Text', 'artist_loc', fallback=DEFAULT_ARTIST_LOC)
+        artist_size = config.getint('Text', 'artist_size', fallback=DEFAULT_ARTIST_SIZE)
+        title_loc = config.getint('Text', 'title_loc', fallback=DEFAULT_TITLE_LOC)
+        title_size = config.getint('Text', 'title_size', fallback=DEFAULT_TITLE_SIZE)
+        padding = config.getint('Text', 'padding', fallback=DEFAULT_PADDING)
+        opacity = config.getint('Text', 'opacity', fallback=DEFAULT_OPACITY)
 
         # Display (rest of EPD config is just passed straight into displayfactory
-        display_type = config.get('EPD', 'type')
+        display_type = config.get('EPD', 'type', fallback=DEFAULT_DISPLAY_TYPE)
 
         # Debug Settings
-        image_viewer = config.getboolean('DEBUG', 'image_viewer')
+        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=DEFAULT_IMAGE_VIEWER)
 
 except IOError as e:
     logging.error(e)
