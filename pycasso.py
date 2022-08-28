@@ -111,33 +111,37 @@ image_viewer = DEFAULT_IMAGE_VIEWER
 
 try:
     # Load config
+    config = {}
     if os.path.exists(CONFIG_PATH):
+        # TODO: set up to wrap each option in handling if option does not exist
+
         config = config_wrapper.read_config(CONFIG_PATH)
         logging.info('Loading config')
 
         # File Settings
-        image_location = config.get('FILE', 'image_location')
-        image_format = config.get('FILE', 'image_format')
-        font_file = config.get('FILE', 'font_file')
+
+        image_location = config.get('File', 'image_location')
+        image_format = config.get('File', 'image_format')
+        font_file = config.get('File', 'font_file')
 
         # Text Settings
-        add_text = config.getboolean('TEXT', 'add_text')
-        parse_text = config.getboolean('TEXT', 'parse_text')
-        preamble_regex = config.get('TEXT', 'preamble_regex')
-        artist_regex = config.get('TEXT', 'artist_regex')
-        remove_text = config.get('TEXT', 'remove_text').split('\n')
+        add_text = config.getboolean('Text', 'add_text')
+        parse_text = config.getboolean('Text', 'parse_text')
+        preamble_regex = config.get('Text', 'preamble_regex')
+        artist_regex = config.get('Text', 'artist_regex')
+        remove_text = config.get('Text', 'remove_text').split('\n')
         logging.info(remove_text)
-        box_to_floor = config.getboolean('TEXT', 'box_to_floor')
-        box_to_edge = config.getboolean('TEXT', 'box_to_edge')
-        artist_loc = config.getint('TEXT', 'artist_loc')
-        artist_size = config.getint('TEXT', 'artist_size')
-        title_loc = config.getint('TEXT', 'title_loc')
-        title_size = config.getint('TEXT', 'title_size')
-        padding = config.getint('TEXT', 'padding')
-        opacity = config.getint('TEXT', 'opacity')
+        box_to_floor = config.getboolean('Text', 'box_to_floor')
+        box_to_edge = config.getboolean('Text', 'box_to_edge')
+        artist_loc = config.getint('Text', 'artist_loc')
+        artist_size = config.getint('Text', 'artist_size')
+        title_loc = config.getint('Text', 'title_loc')
+        title_size = config.getint('Text', 'title_size')
+        padding = config.getint('Text', 'padding')
+        opacity = config.getint('Text', 'opacity')
 
-        # Display Settings
-        display_type = config.get('DISPLAY', 'display_type')
+        # Display (rest of EPD config is just passed straight into displayfactory
+        display_type = config.get('EPD', 'type')
 
         # Debug Settings
         image_viewer = config.getboolean('DEBUG', 'image_viewer')
@@ -152,18 +156,7 @@ except KeyboardInterrupt:
 logging.info("pycasso has begun")
 
 try:
-    # Set up dict to be loaded into omni-epd
-    epd_config_dict = {'EPD': {}, 'Display': {}, 'Image Enhancements': {}}
-    epd_config_dict['EPD']['type'] = 'omni_epd.mock'
-    epd_config_dict['EPD']['mode'] = 'color'
-    epd_config_dict['Display']['rotate'] = '0'
-    epd_config_dict['Display']['flip_horizontal'] = False
-    epd_config_dict['Display']['flip_vertical'] = False
-    epd_config_dict['Image Enhancements']['contrast'] = 1
-    epd_config_dict['Image Enhancements']['brightness'] = 1
-    epd_config_dict['Image Enhancements']['sharpness'] = 1
-
-    epd = displayfactory.load_display_driver(display_type, epd_config_dict)
+    epd = displayfactory.load_display_driver(display_type, config)
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
