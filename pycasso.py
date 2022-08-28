@@ -7,8 +7,7 @@ import numpy
 import config_wrapper
 import logging
 from omni_epd import displayfactory, EPDNotFoundError
-import time
-from PIL import Image, ImageDraw, ImageFont, ImageShow
+from PIL import Image, ImageDraw, ImageFont
 from file_loader import FileLoader
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
@@ -109,9 +108,9 @@ display_type = DEFAULT_DISPLAY_TYPE
 # Debug Settings
 image_viewer = DEFAULT_IMAGE_VIEWER
 
+config = {}
 try:
     # Load config
-    config = {}
     if os.path.exists(CONFIG_PATH):
         config = config_wrapper.read_config(CONFIG_PATH)
         logging.info('Loading config')
@@ -156,6 +155,15 @@ logging.info("pycasso has begun")
 try:
     epd = displayfactory.load_display_driver(display_type, config)
 
+except EPDNotFoundError:
+    logging.info(f"Couldn't find {display_type}")
+    exit()
+
+except KeyboardInterrupt:
+    logging.info("ctrl + c:")
+    exit()
+
+try:
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     if not os.path.exists(image_directory):
