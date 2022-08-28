@@ -9,6 +9,6 @@ class Providers(Enum):
 
 
 class StabilityVariables(Enum):
-    ENVIRONMENT = "STABILITY_KEY"
+    KEY = "STABILITY_KEY"
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "grpc.stability.ai:443"
