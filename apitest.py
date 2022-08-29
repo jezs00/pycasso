@@ -7,7 +7,9 @@ import os
 
 from provider import StabilityProvider
 
-# Get API Key and Endpoint
+logging.basicConfig(level=logging.DEBUG)
+
+# Get prompt, API Key and Endpoint
 
 prompt = input('Prompt:\n')
 os.environ["STABILITY_KEY"] = input('API key:\n')
@@ -17,5 +19,4 @@ logging.info("Loading Stability API")
 stability_provider = StabilityProvider()
 logging.info("Getting Image")
 image = stability_provider.get_image_from_string(prompt)
-image.show()
 image.save('api_output.png')
