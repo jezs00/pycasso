@@ -9,7 +9,7 @@ from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from constants import Providers, Stability
 
-
+# TODO: Unit tests for this
 class Provider(object):
     """
     A superclass used to wrap APIs for web operations from pycasso.
@@ -48,7 +48,7 @@ class StabilityProvider(Provider):
     stability_api = object
 
     # inherits from Provider
-    def __init__(self, key="", host=""):
+    def __init__(self, key=None, host=None):
         # Get the inputs if necessary
         super().__init__()
         if key is None:
@@ -60,7 +60,7 @@ class StabilityProvider(Provider):
             stability_key = key
 
         if host is None:
-            host = Stability.DEFAULT_HOST
+            host = Stability.DEFAULT_HOST.value
             logging.info(f"Using {host} as stability host")
 
         self.stability_api = client.StabilityInference(
