@@ -27,6 +27,8 @@ class FileLoader:
         type value 'png' could return cat.png
     get_lines(path)
         returns every line as a separate item in an array from a text file located at 'path'
+    get_random_line(path)
+        returns a random line from file located at 'path'
     """
 
     def __init__(self, path):
@@ -107,6 +109,16 @@ class FileLoader:
             for line in file:
                 lines.append(line)
         return lines
+
+    @staticmethod
+    def get_random_line(path):  # TODO: more unit tests!
+        lines = FileLoader.get_lines(path)
+        size = len(lines)
+        if size == 0:
+            return
+        random.seed()
+        r = random.randint(0, size - 1)
+        return lines[r]
 
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex

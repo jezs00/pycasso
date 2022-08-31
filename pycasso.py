@@ -3,6 +3,8 @@
 
 import sys
 import os
+import random
+
 import numpy
 
 import logging
@@ -58,6 +60,9 @@ logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 image_location = ConfigConst.FILE_IMAGE_LOCATION.value
 image_format = ConfigConst.FILE_IMAGE_FORMAT.value
 font_file = ConfigConst.FILE_FONT_FILE.value
+subjects_file = ConfigConst.FILE_SUBJECTS_FILE.value
+artists_file = ConfigConst.FILE_ARTISTS_FILE.value
+prompts_file = ConfigConst.FILE_PROMPTS_FILE.value
 
 # Text Settings
 add_text = ConfigConst.TEXT_ADD_TEXT.value
@@ -95,10 +100,12 @@ try:
         logging.info('Loading config')
 
         # File Settings
-
         image_location = config.get('File', 'image_location', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
         image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
         font_file = config.get('File', 'font_file', fallback=ConfigConst.FILE_FONT_FILE.value)
+        subjects_file = config.get('File', 'subjects_file', fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
+        artists_file = config.get('File', 'artists_file', fallback=ConfigConst.FILE_ARTISTS_FILE.value)
+        prompts_file = config.get('File', 'prompts_file', fallback=ConfigConst.FILE_PROMPTS_FILE.value)
 
         # Text Settings
         add_text = config.getboolean('Text', 'add_text', fallback=ConfigConst.TEXT_ADD_TEXT.value)
@@ -115,6 +122,12 @@ try:
         padding = config.getint('Text', 'padding', fallback=ConfigConst.TEXT_PADDING.value)
         opacity = config.getint('Text', 'opacity', fallback=ConfigConst.TEXT_OPACITY.value)
 
+        # Prompt
+        prompt_mode = config.getint('Prompt', 'mode', fallback=ConfigConst.PROMPT_MODE.value)
+        preamble = config.get('Prompt', 'preamble', fallback=ConfigConst.PROMPT_PREAMBLE.value)
+        connector = config.get('Prompt', 'connector', fallback=ConfigConst.PROMPT_CONNECTOR.value)
+        postscript = config.get('Prompt', 'postscript', fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+
         # Display (rest of EPD config is just passed straight into displayfactory
         display_type = config.get('EPD', 'type', fallback=ConfigConst.DISPLAY_TYPE.value)
 
@@ -124,7 +137,7 @@ try:
         dalle_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
 
         # Debug Settings
-        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=ConfigConst.DEBUG_IMAGE_VIEWER.value)
+        image_viewer = config.getboolean('Debug', 'image_viewer', fallback=ConfigConst.DEBUG_IMAGE_VIEWER.value)
 
 except IOError as e:
     logging.error(e)
@@ -147,7 +160,26 @@ except KeyboardInterrupt:
     exit()
 
 try:
-    # request key if it doesn't already exist. TODO: put this into config_wrapper.py
+    # TODO: This can be put into a function or external class
+    # TODO: Fix so that newlines don't come into prompt building
+    # Build prompt
+    if prompt_mode == 0:
+        # Pick random type of building
+        random.seed()
+        prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT)
+
+    if prompt_mode == 1:
+        # Build prompt from artist/subject
+        artist_text = FileLoader.get_random_line(artists_file)
+        title_text = FileLoader.get_random_line(subjects_file)
+        prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
+        logging.info(prompt) # TODO: Temporary, remove
+
+    elif prompt_mode == 2:
+        # Build prompt from artist/subject
+        title_text = FileLoader.get_random_line(prompts_file)
+        prompt = preamble + title_text + postscript
+        logging.info(prompt) # TODO: Temporary, remove
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)

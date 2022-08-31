@@ -15,7 +15,7 @@ class ConfigConst(Enum):
     FILE_IMAGE_LOCATION = 'images'
     FILE_IMAGE_FORMAT = 'png'
     FILE_FONT_FILE = 'fonts/Font.ttc'
-    FILE_SUBJECT_FILE = 'prompts/subjects.txt'
+    FILE_SUBJECTS_FILE = 'prompts/subjects.txt'
     FILE_ARTISTS_FILE = 'prompts/artists.txt'
     FILE_PROMPTS_FILE = 'prompts/prompts.txt'
 
@@ -35,6 +35,7 @@ class ConfigConst(Enum):
     TEXT_OPACITY = 150
 
     # Automatic prompt construction
+    PROMPT_MODES_COUNT = 2
     PROMPT_MODE = 1
     PROMPT_PREAMBLE = ''
     PROMPT_CONNECTOR = ' by '
