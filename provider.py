@@ -9,6 +9,7 @@ from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from constants import Providers, Stability
 
+
 # TODO: Unit tests for this
 class Provider(object):
     """
