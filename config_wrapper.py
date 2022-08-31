@@ -24,7 +24,7 @@ class Configs:
         Sets config file via terminal prompts
     """
 
-    def __init__(self, path=ConfigConst.DEFAULT_CONFIG_PATH.value):
+    def __init__(self, path=ConfigConst.CONFIG_PATH.value):
         # TODO: Set up class to fully wrap config
         self.path = path
         return

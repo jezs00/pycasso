@@ -55,27 +55,27 @@ logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 # Set Defaults
 
 # File Settings
-image_location = ConfigConst.DEFAULT_IMAGE_LOCATION.value
-image_format = ConfigConst.DEFAULT_IMAGE_FORMAT.value
-font_file = ConfigConst.DEFAULT_FONT_FILE.value
+image_location = ConfigConst.FILE_IMAGE_LOCATION.value
+image_format = ConfigConst.FILE_IMAGE_FORMAT.value
+font_file = ConfigConst.FILE_FONT_FILE.value
 
 # Text Settings
-add_text = ConfigConst.DEFAULT_ADD_TEXT.value
-parse_text = ConfigConst.DEFAULT_PARSE_TEXT.value
-preamble_regex = ConfigConst.DEFAULT_PREAMBLE_REGEX.value
-artist_regex = ConfigConst.DEFAULT_ARTIST_REGEX.value
-remove_text = ConfigConst.DEFAULT_REMOVE_TEXT.value
-box_to_floor = ConfigConst.DEFAULT_BOX_TO_FLOOR.value
-box_to_edge = ConfigConst.DEFAULT_BOX_TO_EDGE.value
-artist_loc = ConfigConst.DEFAULT_ARTIST_LOC.value
-artist_size = ConfigConst.DEFAULT_ARTIST_SIZE.value
-title_loc = ConfigConst.DEFAULT_TITLE_LOC.value
-title_size = ConfigConst.DEFAULT_TITLE_SIZE.value
-padding = ConfigConst.DEFAULT_PADDING.value
-opacity = ConfigConst.DEFAULT_OPACITY.value
+add_text = ConfigConst.TEXT_ADD_TEXT.value
+parse_text = ConfigConst.TEXT_PARSE_TEXT.value
+preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
+artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
+remove_text = ConfigConst.TEXT_REMOVE_TEXT.value
+box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
+box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
+artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
+artist_size = ConfigConst.TEXT_ARTIST_SIZE.value
+title_loc = ConfigConst.TEXT_TITLE_LOC.value
+title_size = ConfigConst.TEXT_TITLE_SIZE.value
+padding = ConfigConst.TEXT_PADDING.value
+opacity = ConfigConst.TEXT_OPACITY.value
 
 # Display Settings
-display_type = ConfigConst.DEFAULT_DISPLAY_TYPE.value
+display_type = ConfigConst.DISPLAY_TYPE.value
 
 # Provider Settings
 historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
@@ -83,40 +83,40 @@ stability_ai_amount = ProvidersConst.STABLE_AMOUNT.value
 dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 
 # Debug Settings
-image_viewer = ConfigConst.DEFAULT_IMAGE_VIEWER.value
+image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
 
 # TODO: pull this out and put into config_wrapper.py
 config = {}
 try:
     # Load config
     config_load = Configs()
-    if os.path.exists(ConfigConst.DEFAULT_CONFIG_PATH.value):
-        config = config_load.read_config(ConfigConst.DEFAULT_CONFIG_PATH.value)
+    if os.path.exists(ConfigConst.CONFIG_PATH.value):
+        config = config_load.read_config(ConfigConst.CONFIG_PATH.value)
         logging.info('Loading config')
 
         # File Settings
 
-        image_location = config.get('File', 'image_location', fallback=ConfigConst.DEFAULT_IMAGE_LOCATION.value)
-        image_format = config.get('File', 'image_format', fallback=ConfigConst.DEFAULT_IMAGE_LOCATION.value)
-        font_file = config.get('File', 'font_file', fallback=ConfigConst.DEFAULT_FONT_FILE.value)
+        image_location = config.get('File', 'image_location', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
+        image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
+        font_file = config.get('File', 'font_file', fallback=ConfigConst.FILE_FONT_FILE.value)
 
         # Text Settings
-        add_text = config.getboolean('Text', 'add_text', fallback=ConfigConst.DEFAULT_ADD_TEXT.value)
-        parse_text = config.getboolean('Text', 'parse_text', fallback=ConfigConst.DEFAULT_PARSE_TEXT.value)
-        preamble_regex = config.get('Text', 'preamble_regex', fallback=ConfigConst.DEFAULT_PREAMBLE_REGEX.value)
-        artist_regex = config.get('Text', 'artist_regex', fallback=ConfigConst.DEFAULT_ARTIST_REGEX.value)
-        remove_text = config.get('Text', 'remove_text', fallback=ConfigConst.DEFAULT_REMOVE_TEXT.value).split('\n')
-        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=ConfigConst.DEFAULT_BOX_TO_FLOOR.value)
-        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=ConfigConst.DEFAULT_BOX_TO_EDGE.value)
-        artist_loc = config.getint('Text', 'artist_loc', fallback=ConfigConst.DEFAULT_ARTIST_LOC.value)
-        artist_size = config.getint('Text', 'artist_size', fallback=ConfigConst.DEFAULT_ARTIST_SIZE.value)
-        title_loc = config.getint('Text', 'title_loc', fallback=ConfigConst.DEFAULT_TITLE_LOC.value)
-        title_size = config.getint('Text', 'title_size', fallback=ConfigConst.DEFAULT_TITLE_SIZE.value)
-        padding = config.getint('Text', 'padding', fallback=ConfigConst.DEFAULT_PADDING.value)
-        opacity = config.getint('Text', 'opacity', fallback=ConfigConst.DEFAULT_OPACITY.value)
+        add_text = config.getboolean('Text', 'add_text', fallback=ConfigConst.TEXT_ADD_TEXT.value)
+        parse_text = config.getboolean('Text', 'parse_text', fallback=ConfigConst.TEXT_PARSE_TEXT.value)
+        preamble_regex = config.get('Text', 'preamble_regex', fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
+        artist_regex = config.get('Text', 'artist_regex', fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
+        remove_text = config.get('Text', 'remove_text', fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split('\n')
+        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
+        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
+        artist_loc = config.getint('Text', 'artist_loc', fallback=ConfigConst.TEXT_ARTIST_LOC.value)
+        artist_size = config.getint('Text', 'artist_size', fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
+        title_loc = config.getint('Text', 'title_loc', fallback=ConfigConst.TEXT_TITLE_LOC.value)
+        title_size = config.getint('Text', 'title_size', fallback=ConfigConst.TEXT_TITLE_SIZE.value)
+        padding = config.getint('Text', 'padding', fallback=ConfigConst.TEXT_PADDING.value)
+        opacity = config.getint('Text', 'opacity', fallback=ConfigConst.TEXT_OPACITY.value)
 
         # Display (rest of EPD config is just passed straight into displayfactory
-        display_type = config.get('EPD', 'type', fallback=ConfigConst.DEFAULT_DISPLAY_TYPE.value)
+        display_type = config.get('EPD', 'type', fallback=ConfigConst.DISPLAY_TYPE.value)
 
         # Provider
         historic_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
@@ -124,7 +124,7 @@ try:
         dalle_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
 
         # Debug Settings
-        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=ConfigConst.DEFAULT_IMAGE_VIEWER.value)
+        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=ConfigConst.DEBUG_IMAGE_VIEWER.value)
 
 except IOError as e:
     logging.error(e)
@@ -147,7 +147,7 @@ except KeyboardInterrupt:
     exit()
 
 try:
-    # request key if it doesn't already exist. TODO: put this into a new configure.py
+    # request key if it doesn't already exist. TODO: put this into config_wrapper.py
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)

@@ -8,34 +8,40 @@ import numpy
 class ConfigConst(Enum):
     # Default settings that are loaded from config
     # Relative path to config
-    DEFAULT_CONFIG_PATH = '.config'
+    CONFIG_PATH = '.config'
 
     # Defaults
     # File Settings
-    DEFAULT_IMAGE_LOCATION = 'images'
-    DEFAULT_IMAGE_FORMAT = 'png'
-    DEFAULT_FONT_FILE = 'fonts/Font.ttc'
+    FILE_IMAGE_LOCATION = 'images'
+    FILE_IMAGE_FORMAT = 'png'
+    FILE_FONT_FILE = 'fonts/Font.ttc'
 
     # Text Settings
-    DEFAULT_ADD_TEXT = False
-    DEFAULT_PARSE_TEXT = False
-    DEFAULT_PREAMBLE_REGEX = '.*- '
-    DEFAULT_ARTIST_REGEX = ' by '
-    DEFAULT_REMOVE_TEXT = [", digital art", "A painting of"]
-    DEFAULT_BOX_TO_FLOOR = True
-    DEFAULT_BOX_TO_EDGE = True
-    DEFAULT_ARTIST_LOC = 10
-    DEFAULT_ARTIST_SIZE = 14
-    DEFAULT_TITLE_LOC = 30
-    DEFAULT_TITLE_SIZE = 20
-    DEFAULT_PADDING = 10
-    DEFAULT_OPACITY = 150
+    TEXT_ADD_TEXT = False
+    TEXT_PARSE_TEXT = False
+    TEXT_PREAMBLE_REGEX = '.*- '
+    TEXT_ARTIST_REGEX = ' by '
+    TEXT_REMOVE_TEXT = [", digital art", "A painting of"]
+    TEXT_BOX_TO_FLOOR = True
+    TEXT_BOX_TO_EDGE = True
+    TEXT_ARTIST_LOC = 10
+    TEXT_ARTIST_SIZE = 14
+    TEXT_TITLE_LOC = 30
+    TEXT_TITLE_SIZE = 20
+    TEXT_PADDING = 10
+    TEXT_OPACITY = 150
+
+    # Automatic prompt construction
+    PROMPT_MODE = 1
+    PROMPT_PREAMBLE = ''
+    PROMPT_CONNECTOR = ' by '
+    PROMPT_POSTSCRIPT = ', digital art, trending on artstation'
 
     # Display Settings
-    DEFAULT_DISPLAY_TYPE = 'omni_epd.mock'
+    DISPLAY_TYPE = 'omni_epd.mock'
 
     # Debug Settings
-    DEFAULT_IMAGE_VIEWER = False
+    DEBUG_IMAGE_VIEWER = False
 
 
 class ProvidersConst(Enum):
