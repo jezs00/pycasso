@@ -15,6 +15,9 @@ class ConfigConst(Enum):
     FILE_IMAGE_LOCATION = 'images'
     FILE_IMAGE_FORMAT = 'png'
     FILE_FONT_FILE = 'fonts/Font.ttc'
+    FILE_SUBJECT_FILE = 'prompts/subjects.txt'
+    FILE_ARTISTS_FILE = 'prompts/artists.txt'
+    FILE_PROMPTS_FILE = 'prompts/prompts.txt'
 
     # Text Settings
     TEXT_ADD_TEXT = False
