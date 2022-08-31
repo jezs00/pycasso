@@ -1,8 +1,8 @@
+# TODO: Unit tests
+
 import configparser
 from constants import ConfigConst
 
-
-# Method to read config file settings
 
 class Configs:
     """
@@ -24,11 +24,12 @@ class Configs:
     """
 
     def __init__(self, path=ConfigConst.DEFAULT_CONFIG_PATH.value):
-        #TODO: Set up class to fully wrap config
+        # TODO: Set up class to fully wrap config
         self.path = path
         return
 
     def read_config(self, path):
+        # Method to read config file settings
         config = configparser.ConfigParser()
         config.read(path)
         return config

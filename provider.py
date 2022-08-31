@@ -1,4 +1,5 @@
 # Provider class to wrap APIs for web operations
+# TODO: Unit tests
 import io
 import logging
 import warnings
@@ -72,11 +73,17 @@ class StabilityProvider(Provider):
 
         return
 
-    def get_image_from_string(self, text):
-        # the object returned is a python generator
-        answers = self.stability_api.generate(
-            prompt=text
-        )
+    def get_image_from_string(self, text, height=0, width=0):
+        if height == 0 or width == 0:
+            answers = self.stability_api.generate(
+                prompt=text,
+            )
+        else:
+            answers = self.stability_api.generate(
+                prompt=text,
+                height=height,
+                width=width
+            )
 
         # iterating over the generator produces the api response
         for resp in answers:
