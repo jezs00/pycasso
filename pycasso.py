@@ -9,11 +9,12 @@ import logging
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont
 from file_loader import FileLoader
+from constants import Providers, Stability
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(lib_dir):
     sys.path.append(lib_dir)
-
+# TODO: put all of these constants into constants.py
 # Relative path to config
 CONFIG_PATH = '.config'
 
@@ -78,7 +79,7 @@ def set_tuple_sides(tup, left, right):
     return tup
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 
 # Set Defaults
 
@@ -105,9 +106,15 @@ opacity = DEFAULT_OPACITY
 # Display Settings
 display_type = DEFAULT_DISPLAY_TYPE
 
+# Provider Settings
+historic_amount = Providers.HISTORIC_AMOUNT.value
+stability_ai_amount = Providers.STABLE_AMOUNT.value
+dalle_amount = Providers.DALLE_AMOUNT.value
+
 # Debug Settings
 image_viewer = DEFAULT_IMAGE_VIEWER
 
+# TODO: pull this out and put into configure.py
 config = {}
 try:
     # Load config
@@ -127,7 +134,6 @@ try:
         preamble_regex = config.get('Text', 'preamble_regex', fallback=DEFAULT_PREAMBLE_REGEX)
         artist_regex = config.get('Text', 'artist_regex', fallback=DEFAULT_ARTIST_REGEX)
         remove_text = config.get('Text', 'remove_text', fallback=DEFAULT_REMOVE_TEXT).split('\n')
-        logging.info(remove_text)
         box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=DEFAULT_BOX_TO_FLOOR)
         box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=DEFAULT_BOX_TO_EDGE)
         artist_loc = config.getint('Text', 'artist_loc', fallback=DEFAULT_ARTIST_LOC)
@@ -139,6 +145,11 @@ try:
 
         # Display (rest of EPD config is just passed straight into displayfactory
         display_type = config.get('EPD', 'type', fallback=DEFAULT_DISPLAY_TYPE)
+
+        # Provider
+        historic_amount = config.get('Providers', 'historic_amount', fallback=Providers.HISTORIC_AMOUNT.value)
+        stability_ai_amount = config.get('Providers', 'historic_amount', fallback=Providers.STABLE_AMOUNT.value)
+        dalle_amount = config.get('Providers', 'historic_amount', fallback=Providers.DALLE_AMOUNT.value)
 
         # Debug Settings
         image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=DEFAULT_IMAGE_VIEWER)
@@ -164,6 +175,8 @@ except KeyboardInterrupt:
     exit()
 
 try:
+    # request key if it doesn't already exist. TODO: put this into a new configure.py
+
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     if not os.path.exists(image_directory):
@@ -189,7 +202,6 @@ try:
 
     # Resize to thumbnail size based on epd resolution
     epd_res = (epd.width, epd.height)
-    logging.info(epd_res)
     image_base.thumbnail(epd_res)
 
     # Make sure image is correct size and centered after thumbnail set
