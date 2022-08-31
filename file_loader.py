@@ -25,6 +25,8 @@ class FileLoader:
     get_random_file_of_type(type):
         returns path for a random file in the current path with extension 'type'
         type value 'png' could return cat.png
+    get_lines(path)
+        returns every line as a separate item in an array from a text file located at 'path'
     """
 
     def __init__(self, path):
@@ -97,6 +99,14 @@ class FileLoader:
         regex = regex.rstrip('|')
         text = re.sub(regex, "", text)
         return text
+
+    @staticmethod
+    def get_lines(path):
+        lines = []
+        with open(path) as file:
+            for line in file:
+                lines.append(line)
+        return lines
 
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex
