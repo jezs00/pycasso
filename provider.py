@@ -7,7 +7,7 @@ import keyring
 from PIL import Image
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-from constants import Providers, Stability
+from constants import ProvidersConst, StabilityConst
 
 
 # TODO: Unit tests for this
@@ -61,7 +61,7 @@ class StabilityProvider(Provider):
             stability_key = key
 
         if host is None:
-            host = Stability.DEFAULT_HOST.value
+            host = StabilityConst.DEFAULT_HOST.value
             logging.info(f"Using {host} as stability host")
 
         self.stability_api = client.StabilityInference(
@@ -91,9 +91,9 @@ class StabilityProvider(Provider):
 
     @staticmethod
     def add_secret(text):
-        keyring.set_password(Providers.KEYCHAIN.value, Providers.STABLE_KEYNAME.value, text)
+        keyring.set_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text)
         return
 
     @staticmethod
     def get_secret():
-        return keyring.get_password(Providers.KEYCHAIN.value, Providers.STABLE_KEYNAME.value)
+        return keyring.get_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value)
