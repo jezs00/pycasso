@@ -4,46 +4,17 @@
 import sys
 import os
 import numpy
-import config_wrapper
+
 import logging
+from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont
 from file_loader import FileLoader
-from constants import Providers, Stability
+from constants import ProvidersConst, StabilityConst, ConfigConst
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(lib_dir):
     sys.path.append(lib_dir)
-# TODO: put all of these constants into constants.py
-# Relative path to config
-CONFIG_PATH = '.config'
-
-# Defaults
-# File Settings
-DEFAULT_IMAGE_LOCATION = 'images'
-DEFAULT_IMAGE_FORMAT = 'png'
-DEFAULT_FONT_FILE = 'fonts/Font.ttc'
-
-# Text Settings
-DEFAULT_ADD_TEXT = False
-DEFAULT_PARSE_TEXT = False
-DEFAULT_PREAMBLE_REGEX = '.*- '
-DEFAULT_ARTIST_REGEX = ' by '
-DEFAULT_REMOVE_TEXT = numpy.array([", digital art", "A painting of"])
-DEFAULT_BOX_TO_FLOOR = True
-DEFAULT_BOX_TO_EDGE = True
-DEFAULT_ARTIST_LOC = 10
-DEFAULT_ARTIST_SIZE = 14
-DEFAULT_TITLE_LOC = 30
-DEFAULT_TITLE_SIZE = 20
-DEFAULT_PADDING = 10
-DEFAULT_OPACITY = 150
-
-# Display Settings
-DEFAULT_DISPLAY_TYPE = 'omni_epd.mock'
-
-# Debug Settings
-DEFAULT_IMAGE_VIEWER = False
 
 
 # Takes an array of tuples and returns the largest area within them
@@ -84,75 +55,76 @@ logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 # Set Defaults
 
 # File Settings
-image_location = DEFAULT_IMAGE_LOCATION
-image_format = DEFAULT_IMAGE_FORMAT
-font_file = DEFAULT_FONT_FILE
+image_location = ConfigConst.DEFAULT_IMAGE_LOCATION.value
+image_format = ConfigConst.DEFAULT_IMAGE_FORMAT.value
+font_file = ConfigConst.DEFAULT_FONT_FILE.value
 
 # Text Settings
-add_text = DEFAULT_ADD_TEXT
-parse_text = DEFAULT_PARSE_TEXT
-preamble_regex = DEFAULT_PREAMBLE_REGEX
-artist_regex = DEFAULT_ARTIST_REGEX
-remove_text = DEFAULT_REMOVE_TEXT
-box_to_floor = DEFAULT_BOX_TO_FLOOR
-box_to_edge = DEFAULT_BOX_TO_EDGE
-artist_loc = DEFAULT_ARTIST_LOC
-artist_size = DEFAULT_ARTIST_SIZE
-title_loc = DEFAULT_TITLE_LOC
-title_size = DEFAULT_TITLE_SIZE
-padding = DEFAULT_PADDING
-opacity = DEFAULT_OPACITY
+add_text = ConfigConst.DEFAULT_ADD_TEXT.value
+parse_text = ConfigConst.DEFAULT_PARSE_TEXT.value
+preamble_regex = ConfigConst.DEFAULT_PREAMBLE_REGEX.value
+artist_regex = ConfigConst.DEFAULT_ARTIST_REGEX.value
+remove_text = ConfigConst.DEFAULT_REMOVE_TEXT.value
+box_to_floor = ConfigConst.DEFAULT_BOX_TO_FLOOR.value
+box_to_edge = ConfigConst.DEFAULT_BOX_TO_EDGE.value
+artist_loc = ConfigConst.DEFAULT_ARTIST_LOC.value
+artist_size = ConfigConst.DEFAULT_ARTIST_SIZE.value
+title_loc = ConfigConst.DEFAULT_TITLE_LOC.value
+title_size = ConfigConst.DEFAULT_TITLE_SIZE.value
+padding = ConfigConst.DEFAULT_PADDING.value
+opacity = ConfigConst.DEFAULT_OPACITY.value
 
 # Display Settings
-display_type = DEFAULT_DISPLAY_TYPE
+display_type = ConfigConst.DEFAULT_DISPLAY_TYPE.value
 
 # Provider Settings
-historic_amount = Providers.HISTORIC_AMOUNT.value
-stability_ai_amount = Providers.STABLE_AMOUNT.value
-dalle_amount = Providers.DALLE_AMOUNT.value
+historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
+stability_ai_amount = ProvidersConst.STABLE_AMOUNT.value
+dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 
 # Debug Settings
-image_viewer = DEFAULT_IMAGE_VIEWER
+image_viewer = ConfigConst.DEFAULT_IMAGE_VIEWER.value
 
-# TODO: pull this out and put into configure.py
+# TODO: pull this out and put into config_wrapper.py
 config = {}
 try:
     # Load config
-    if os.path.exists(CONFIG_PATH):
-        config = config_wrapper.read_config(CONFIG_PATH)
+    config_load = Configs()
+    if os.path.exists(ConfigConst.DEFAULT_CONFIG_PATH.value):
+        config = config_load.read_config(ConfigConst.DEFAULT_CONFIG_PATH.value)
         logging.info('Loading config')
 
         # File Settings
 
-        image_location = config.get('File', 'image_location', fallback=DEFAULT_IMAGE_LOCATION)
-        image_format = config.get('File', 'image_format', fallback=DEFAULT_IMAGE_LOCATION)
-        font_file = config.get('File', 'font_file', fallback=DEFAULT_FONT_FILE)
+        image_location = config.get('File', 'image_location', fallback=ConfigConst.DEFAULT_IMAGE_LOCATION.value)
+        image_format = config.get('File', 'image_format', fallback=ConfigConst.DEFAULT_IMAGE_LOCATION.value)
+        font_file = config.get('File', 'font_file', fallback=ConfigConst.DEFAULT_FONT_FILE.value)
 
         # Text Settings
-        add_text = config.getboolean('Text', 'add_text', fallback=DEFAULT_ADD_TEXT)
-        parse_text = config.getboolean('Text', 'parse_text', fallback=DEFAULT_PARSE_TEXT)
-        preamble_regex = config.get('Text', 'preamble_regex', fallback=DEFAULT_PREAMBLE_REGEX)
-        artist_regex = config.get('Text', 'artist_regex', fallback=DEFAULT_ARTIST_REGEX)
-        remove_text = config.get('Text', 'remove_text', fallback=DEFAULT_REMOVE_TEXT).split('\n')
-        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=DEFAULT_BOX_TO_FLOOR)
-        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=DEFAULT_BOX_TO_EDGE)
-        artist_loc = config.getint('Text', 'artist_loc', fallback=DEFAULT_ARTIST_LOC)
-        artist_size = config.getint('Text', 'artist_size', fallback=DEFAULT_ARTIST_SIZE)
-        title_loc = config.getint('Text', 'title_loc', fallback=DEFAULT_TITLE_LOC)
-        title_size = config.getint('Text', 'title_size', fallback=DEFAULT_TITLE_SIZE)
-        padding = config.getint('Text', 'padding', fallback=DEFAULT_PADDING)
-        opacity = config.getint('Text', 'opacity', fallback=DEFAULT_OPACITY)
+        add_text = config.getboolean('Text', 'add_text', fallback=ConfigConst.DEFAULT_ADD_TEXT.value)
+        parse_text = config.getboolean('Text', 'parse_text', fallback=ConfigConst.DEFAULT_PARSE_TEXT.value)
+        preamble_regex = config.get('Text', 'preamble_regex', fallback=ConfigConst.DEFAULT_PREAMBLE_REGEX.value)
+        artist_regex = config.get('Text', 'artist_regex', fallback=ConfigConst.DEFAULT_ARTIST_REGEX.value)
+        remove_text = config.get('Text', 'remove_text', fallback=ConfigConst.DEFAULT_REMOVE_TEXT.value).split('\n')
+        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=ConfigConst.DEFAULT_BOX_TO_FLOOR.value)
+        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=ConfigConst.DEFAULT_BOX_TO_EDGE.value)
+        artist_loc = config.getint('Text', 'artist_loc', fallback=ConfigConst.DEFAULT_ARTIST_LOC.value)
+        artist_size = config.getint('Text', 'artist_size', fallback=ConfigConst.DEFAULT_ARTIST_SIZE.value)
+        title_loc = config.getint('Text', 'title_loc', fallback=ConfigConst.DEFAULT_TITLE_LOC.value)
+        title_size = config.getint('Text', 'title_size', fallback=ConfigConst.DEFAULT_TITLE_SIZE.value)
+        padding = config.getint('Text', 'padding', fallback=ConfigConst.DEFAULT_PADDING.value)
+        opacity = config.getint('Text', 'opacity', fallback=ConfigConst.DEFAULT_OPACITY.value)
 
         # Display (rest of EPD config is just passed straight into displayfactory
-        display_type = config.get('EPD', 'type', fallback=DEFAULT_DISPLAY_TYPE)
+        display_type = config.get('EPD', 'type', fallback=ConfigConst.DEFAULT_DISPLAY_TYPE.value)
 
         # Provider
-        historic_amount = config.get('Providers', 'historic_amount', fallback=Providers.HISTORIC_AMOUNT.value)
-        stability_ai_amount = config.get('Providers', 'historic_amount', fallback=Providers.STABLE_AMOUNT.value)
-        dalle_amount = config.get('Providers', 'historic_amount', fallback=Providers.DALLE_AMOUNT.value)
+        historic_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
+        stability_ai_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
+        dalle_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
 
         # Debug Settings
-        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=DEFAULT_IMAGE_VIEWER)
+        image_viewer = config.getboolean('DEBUG', 'image_viewer', fallback=ConfigConst.DEFAULT_IMAGE_VIEWER.value)
 
 except IOError as e:
     logging.error(e)
