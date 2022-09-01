@@ -4,6 +4,7 @@
 import sys
 import os
 import random
+import warnings
 
 import numpy
 
@@ -176,42 +177,64 @@ try:
     ]
 
     # Pick random provider based on weight
-    provider_type = random.choices(provider_types, weights=(
+    random.seed()
+    provider_type = random.choices(provider_types, k=1, weights=(
         historic_amount,
         stability_amount,
         dalle_amount
-    ))
+    ))[0]
 
     logging.info(provider_type)
 
+    if provider_type == ProvidersConst.HISTORIC.value:
+        warnings.warn('Historic images not yet implemented. Exiting application.')
+        exit()
+    else:
+        # Build prompt
+        if prompt_mode == 0:
+            # Pick random type of building
+            random.seed()
+            prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
+
+        if prompt_mode == 1:
+            # Build prompt from artist/subject
+            artist_text = FileLoader.get_random_line(artists_file)
+            title_text = FileLoader.get_random_line(subjects_file)
+            prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
+            logging.info(prompt)  # TODO: Temporary, remove
+
+        elif prompt_mode == 2:
+            # Build prompt from artist/subject
+            title_text = FileLoader.get_random_line(prompts_file)
+            prompt = preamble + title_text + postscript
+            logging.info(prompt)  # TODO: Temporary, remove
+
+        else:
+            warnings.warn('Invalid mode chosen. Exiting application.')
+            exit()
+
+        if provider_type == ProvidersConst.STABLE.value:
+            # Request image for Stability
+            warnings.warn('Stability not yet implemented. Exiting application.')
+            exit()
+
+        if provider_type == ProvidersConst.DALLE.value:
+            # Request image for DALLE
+            warnings.warn('DALLE not yet implemented. Exiting application.')
+            exit()
+
     # TODO: This can be put into a function or external class
-    # Build prompt
-    if prompt_mode == 0:
-        # Pick random type of building
-        random.seed()
-        prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
-    if prompt_mode == 1:
-        # Build prompt from artist/subject
-        artist_text = FileLoader.get_random_line(artists_file)
-        title_text = FileLoader.get_random_line(subjects_file)
-        prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
-        logging.info(prompt)  # TODO: Temporary, remove
-
-    elif prompt_mode == 2:
-        # Build prompt from artist/subject
-        title_text = FileLoader.get_random_line(prompts_file)
-        prompt = preamble + title_text + postscript
-        logging.info(prompt)  # TODO: Temporary, remove
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
+    # TODO: Move font loading to only run if text required
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
     if not os.path.exists(image_directory):
         logging.info("Image directory path does not exist: '" + image_directory + "'")
         exit()
 
     if not os.path.exists(font_path):
-        logging.info("font file path does not exist: '" + font_file + "'")
+        logging.info("Font file path does not exist: '" + font_file + "'")
         exit()
 
     # Get random image from folder
