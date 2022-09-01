@@ -166,7 +166,7 @@ try:
     if prompt_mode == 0:
         # Pick random type of building
         random.seed()
-        prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT)
+        prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
     if prompt_mode == 1:
         # Build prompt from artist/subject
