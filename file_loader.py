@@ -107,7 +107,7 @@ class FileLoader:
         lines = []
         with open(path) as file:
             for line in file:
-                lines.append(line)
+                lines.append(line.strip())
         return lines
 
     @staticmethod
