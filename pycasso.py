@@ -228,13 +228,9 @@ try:
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     # TODO: Move font loading to only run if text required
-    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
+
     if not os.path.exists(image_directory):
         logging.info("Image directory path does not exist: '" + image_directory + "'")
-        exit()
-
-    if not os.path.exists(font_path):
-        logging.info("Font file path does not exist: '" + font_file + "'")
         exit()
 
     # Get random image from folder
@@ -242,9 +238,6 @@ try:
     file = FileLoader(image_directory)
     image_path = file.get_random_file_of_type(image_format)
     logging.info(image_path)
-
-    title_font = ImageFont.truetype(font_path, title_size)
-    artist_font = ImageFont.truetype(font_path, artist_size)
 
     logging.info("Displaying Test Image")
     image_base = Image.open(image_path)
@@ -285,6 +278,14 @@ try:
         artist_text = artist_text.title()
 
     if add_text:
+        font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
+        if not os.path.exists(font_path):
+            logging.info("Font file path does not exist: '" + font_file + "'")
+            exit()
+
+        title_font = ImageFont.truetype(font_path, title_size)
+        artist_font = ImageFont.truetype(font_path, artist_size)
+
         artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
         title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
 
