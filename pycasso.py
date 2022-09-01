@@ -52,6 +52,21 @@ def set_tuple_sides(tup, left, right):
     tup = (left, b, right, d)
     return tup
 
+# TODO: Functions to run to clean up switching the modes
+def load_historic_image():
+    return
+
+def load_stability_image():
+    return
+
+def load_dalle_image():
+    return
+
+def load_historic_text():
+    return
+
+def prep_prompt_text():
+    return
 
 logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 
@@ -186,9 +201,37 @@ try:
 
     logging.info(provider_type)
 
+    # TODO: Code starting to look a little spaghetti. Clean up once API works.
+
     if provider_type == ProvidersConst.HISTORIC.value:
-        warnings.warn('Historic images not yet implemented. Exiting application.')
-        exit()
+        image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
+
+        if not os.path.exists(image_directory):
+            logging.info("Image directory path does not exist: '" + image_directory + "'")
+            exit()
+
+        # Get random image from folder
+
+        file = FileLoader(image_directory)
+        image_path = file.get_random_file_of_type(image_format)
+        logging.info(image_path)
+
+        image_base = Image.open(image_path)
+        logging.info(image_base.width)
+
+        # Add text to via parsing if necessary
+        image_name = os.path.basename(image_path)
+
+        artist_text = ''
+        title_text = image_name
+
+        if parse_text:
+            title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex,
+                                                                      image_format)
+            title_text = FileLoader.remove_text(title_text, remove_text)
+            artist_text = FileLoader.remove_text(artist_text, remove_text)
+            title_text = title_text.title()
+            artist_text = artist_text.title()
     else:
         # Build prompt
         if prompt_mode == 0:
@@ -201,18 +244,17 @@ try:
             artist_text = FileLoader.get_random_line(artists_file)
             title_text = FileLoader.get_random_line(subjects_file)
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
-            logging.info(prompt)  # TODO: Temporary, remove
 
         elif prompt_mode == 2:
             # Build prompt from artist/subject
             title_text = FileLoader.get_random_line(prompts_file)
             prompt = preamble + title_text + postscript
-            logging.info(prompt)  # TODO: Temporary, remove
 
         else:
-            warnings.warn('Invalid mode chosen. Exiting application.')
+            warnings.warn('Invalid prompt mode chosen. Exiting application.')
             exit()
 
+        # Pick between providers
         if provider_type == ProvidersConst.STABLE.value:
             # Request image for Stability
             warnings.warn('Stability not yet implemented. Exiting application.')
@@ -222,26 +264,6 @@ try:
             # Request image for DALLE
             warnings.warn('DALLE not yet implemented. Exiting application.')
             exit()
-
-    # TODO: This can be put into a function or external class
-
-
-    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
-    # TODO: Move font loading to only run if text required
-
-    if not os.path.exists(image_directory):
-        logging.info("Image directory path does not exist: '" + image_directory + "'")
-        exit()
-
-    # Get random image from folder
-
-    file = FileLoader(image_directory)
-    image_path = file.get_random_file_of_type(image_format)
-    logging.info(image_path)
-
-    logging.info("Displaying Test Image")
-    image_base = Image.open(image_path)
-    logging.info(image_base.width)
 
     # Resize to thumbnail size based on epd resolution
     epd_res = (epd.width, epd.height)
@@ -262,20 +284,6 @@ try:
     logging.info(image_base.width)
     logging.info(image_base.height)
     draw = ImageDraw.Draw(image_base, 'RGBA')
-
-    # Add text to image
-    image_name = os.path.basename(image_path)
-
-    artist_text = ''
-    title_text = image_name
-
-    if parse_text:
-        title_text, artist_text = FileLoader.get_title_and_artist(image_name, preamble_regex, artist_regex,
-                                                                  image_format)
-        title_text = FileLoader.remove_text(title_text, remove_text)
-        artist_text = FileLoader.remove_text(artist_text, remove_text)
-        title_text = title_text.title()
-        artist_text = artist_text.title()
 
     if add_text:
         font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
