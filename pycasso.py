@@ -91,7 +91,7 @@ display_type = ConfigConst.DISPLAY_TYPE.value
 
 # Provider Settings
 historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
-stability_ai_amount = ProvidersConst.STABLE_AMOUNT.value
+stability_amount = ProvidersConst.STABLE_AMOUNT.value
 dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 
 # Debug Settings
@@ -140,9 +140,9 @@ try:
         display_type = config.get('EPD', 'type', fallback=ConfigConst.DISPLAY_TYPE.value)
 
         # Provider
-        historic_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
-        stability_ai_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
-        dalle_amount = config.get('Providers', 'historic_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
+        historic_amount = config.getint('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
+        stability_amount = config.getint('Providers', 'stability_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
+        dalle_amount = config.getint('Providers', 'dalle_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
 
         # Debug Settings
         image_viewer = config.getboolean('Debug', 'image_viewer', fallback=ConfigConst.DEBUG_IMAGE_VIEWER.value)
@@ -168,6 +168,22 @@ except KeyboardInterrupt:
     exit()
 
 try:
+    # Build list
+    provider_types = [
+        ProvidersConst.HISTORIC.value,
+        ProvidersConst.STABLE.value,
+        ProvidersConst.DALLE.value
+    ]
+
+    # Pick random provider based on weight
+    provider_type = random.choices(provider_types, weights=(
+        historic_amount,
+        stability_amount,
+        dalle_amount
+    ))
+
+    logging.info(provider_type)
+
     # TODO: This can be put into a function or external class
     # Build prompt
     if prompt_mode == 0:
@@ -180,13 +196,13 @@ try:
         artist_text = FileLoader.get_random_line(artists_file)
         title_text = FileLoader.get_random_line(subjects_file)
         prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
-        logging.info(prompt) # TODO: Temporary, remove
+        logging.info(prompt)  # TODO: Temporary, remove
 
     elif prompt_mode == 2:
         # Build prompt from artist/subject
         title_text = FileLoader.get_random_line(prompts_file)
         prompt = preamble + title_text + postscript
-        logging.info(prompt) # TODO: Temporary, remove
+        logging.info(prompt)  # TODO: Temporary, remove
 
     image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
     font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
