@@ -57,6 +57,7 @@ logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 # Set Defaults
 
 # File Settings
+save_image = ConfigConst.FILE_SAVE_IMAGE.value
 image_location = ConfigConst.FILE_IMAGE_LOCATION.value
 image_format = ConfigConst.FILE_IMAGE_FORMAT.value
 font_file = ConfigConst.FILE_FONT_FILE.value
@@ -79,6 +80,12 @@ title_size = ConfigConst.TEXT_TITLE_SIZE.value
 padding = ConfigConst.TEXT_PADDING.value
 opacity = ConfigConst.TEXT_OPACITY.value
 
+# Prompt
+prompt_mode = ConfigConst.PROMPT_MODE.value
+preamble = ConfigConst.PROMPT_PREAMBLE.value
+connector = ConfigConst.PROMPT_CONNECTOR.value
+postscript = ConfigConst.PROMPT_POSTSCRIPT.value
+
 # Display Settings
 display_type = ConfigConst.DISPLAY_TYPE.value
 
@@ -100,6 +107,7 @@ try:
         logging.info('Loading config')
 
         # File Settings
+        save_image = config.getboolean('File', 'save_image', fallback=ConfigConst.FILE_SAVE_IMAGE.value)
         image_location = config.get('File', 'image_location', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
         image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
         font_file = config.get('File', 'font_file', fallback=ConfigConst.FILE_FONT_FILE.value)
@@ -161,7 +169,6 @@ except KeyboardInterrupt:
 
 try:
     # TODO: This can be put into a function or external class
-    # TODO: Fix so that newlines don't come into prompt building
     # Build prompt
     if prompt_mode == 0:
         # Pick random type of building

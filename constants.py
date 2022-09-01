@@ -12,6 +12,7 @@ class ConfigConst(Enum):
 
     # Defaults
     # File Settings
+    FILE_SAVE_IMAGE = 1
     FILE_IMAGE_LOCATION = 'images'
     FILE_IMAGE_FORMAT = 'png'
     FILE_FONT_FILE = 'fonts/Font.ttc'
