@@ -9,11 +9,15 @@ import warnings
 import numpy
 
 import logging
+
+from numpy import ceil
+
 from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont
 from file_loader import FileLoader
 from constants import ProvidersConst, StabilityConst, ConfigConst
+from provider import StabilityProvider
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(lib_dir):
@@ -52,21 +56,31 @@ def set_tuple_sides(tup, left, right):
     tup = (left, b, right, d)
     return tup
 
+
+def ceiling_multiple(number, multiple):
+    return int(multiple * ceil(number / multiple))
+
+
 # TODO: Functions to run to clean up switching the modes
 def load_historic_image():
     return
 
+
 def load_stability_image():
     return
+
 
 def load_dalle_image():
     return
 
+
 def load_historic_text():
     return
 
+
 def prep_prompt_text():
     return
+
 
 logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
 
@@ -184,6 +198,7 @@ except KeyboardInterrupt:
     exit()
 
 try:
+    # TODO: set up different image loaders - one for internal and one for external
     # Build list
     provider_types = [
         ProvidersConst.HISTORIC.value,
@@ -206,6 +221,7 @@ try:
 
     if provider_type == ProvidersConst.HISTORIC.value:
         # Historic image load
+        # TODO: This needs to be refactored into external not historic
         image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
 
         if not os.path.exists(image_directory):
@@ -256,8 +272,17 @@ try:
         # Pick between providers
         if provider_type == ProvidersConst.STABLE.value:
             # Request image for Stability
-            warnings.warn('Stability not yet implemented. Exiting application.')
-            exit()
+            logging.info("Loading Stability API")
+            stability_provider = StabilityProvider()
+            logging.info("Getting Image")
+            stable_height = ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
+            stable_width = ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
+            image_base = stability_provider.get_image_from_string(prompt, stable_height, stable_width)
+            if save_image:
+                # TODO: Set up to save in internal location for Historic loading
+                logging.info(f"Saving image as")
+                # Save the image
+                image_base.save('api_output.png')
 
         if provider_type == ProvidersConst.DALLE.value:
             # Request image for DALLE
@@ -292,7 +317,8 @@ try:
         artist_font = ImageFont.truetype(font_path, artist_size)
 
         if artist_text != '':
-            artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
+            artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font,
+                                       anchor='mb')
         if title_text != '':
             title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
 

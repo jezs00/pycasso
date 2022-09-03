@@ -70,3 +70,4 @@ class StabilityConst(Enum):
     KEY = "STABILITY_KEY"
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "grpc.stability.ai:443"
+    MULTIPLE = 64
