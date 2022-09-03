@@ -29,10 +29,10 @@ class Configs:
         self.path = path
         return
 
-    def read_config(self, path):
+    def read_config(self):
         # Method to read config file settings
         config = configparser.ConfigParser()
-        config.read(path)
+        config.read(self.path)
         return config
 
     def set_config_terminal(self, path):

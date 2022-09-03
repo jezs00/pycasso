@@ -117,9 +117,9 @@ image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
 config = {}
 try:
     # Load config
-    config_load = Configs()
+    config_load = Configs(ConfigConst.CONFIG_PATH.value)
     if os.path.exists(ConfigConst.CONFIG_PATH.value):
-        config = config_load.read_config(ConfigConst.CONFIG_PATH.value)
+        config = config_load.read_config()
         logging.info('Loading config')
 
         # File Settings
