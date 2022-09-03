@@ -199,8 +199,6 @@ try:
         dalle_amount
     ))[0]
 
-    logging.info(provider_type)
-
     # TODO: Code starting to look a little spaghetti. Clean up once API works.
 
     artist_text = ''
@@ -211,17 +209,15 @@ try:
         image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
 
         if not os.path.exists(image_directory):
-            logging.info("Image directory path does not exist: '" + image_directory + "'")
+            warnings.warn("Image directory path does not exist: '" + image_directory + "'")
             exit()
 
         # Get random image from folder
 
         file = FileLoader(image_directory)
         image_path = file.get_random_file_of_type(image_format)
-        logging.info(image_path)
 
         image_base = Image.open(image_path)
-        logging.info(image_base.width)
 
         # Add text to via parsing if necessary
         image_name = os.path.basename(image_path)
@@ -284,8 +280,6 @@ try:
 
     # Crop and prepare image
     image_base = image_base.crop(image_crop)
-    logging.info(image_base.width)
-    logging.info(image_base.height)
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
     if add_text:
@@ -294,13 +288,12 @@ try:
             logging.info("Font file path does not exist: '" + font_file + "'")
             exit()
 
-
         title_font = ImageFont.truetype(font_path, title_size)
         artist_font = ImageFont.truetype(font_path, artist_size)
 
-        if artist_text is not '':
+        if artist_text != '':
             artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
-        if title_text is not '':
+        if title_text != '':
             title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
 
         draw_box = max_area([artist_box, title_box])

@@ -83,7 +83,6 @@ class FileLoader:
 
         split = re.split(preamble_regex + "|" + artist_regex + "|\\." + file_extension, text)
         # handle list
-        logging.info(split)
         if len(split) < 4:
             tup = (text, "")
             return tup
