@@ -203,7 +203,11 @@ try:
 
     # TODO: Code starting to look a little spaghetti. Clean up once API works.
 
+    artist_text = ''
+    title_text = ''
+
     if provider_type == ProvidersConst.HISTORIC.value:
+        # Historic image load
         image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
 
         if not os.path.exists(image_directory):
@@ -222,7 +226,6 @@ try:
         # Add text to via parsing if necessary
         image_name = os.path.basename(image_path)
 
-        artist_text = ''
         title_text = image_name
 
         if parse_text:
@@ -291,11 +294,14 @@ try:
             logging.info("Font file path does not exist: '" + font_file + "'")
             exit()
 
+
         title_font = ImageFont.truetype(font_path, title_size)
         artist_font = ImageFont.truetype(font_path, artist_size)
 
-        artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
-        title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
+        if artist_text is not '':
+            artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb')
+        if title_text is not '':
+            title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
 
         draw_box = max_area([artist_box, title_box])
         draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
