@@ -134,7 +134,7 @@ stability_key = None
 
 try:
     parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
-                                                 'epaper screen through a raspberry pi unit')
+                                                 ' epaper screen through a raspberry pi unit')
     parser.add_argument('--configpath',
                         dest='configpath',
                         type=str,
@@ -148,7 +148,14 @@ try:
                         action='store_const',
                         const=1,
                         default=0,
-                        help='Boolean to save any keys passed to pycasso to keyring')
+                        help='Use this flag to save any keys provided to system keyring')
+    parser.add_argument('--norun',
+                        dest='norun',
+                        action='store_const',
+                        const=1,
+                        default=0,
+                        help='This flag ends the program before starting the main functionality of pycasso. This will '
+                             'not fetch images or update the epaper screen')
     args = parser.parse_args()
     stability_key = args.stabilitykey
 
@@ -231,6 +238,10 @@ except EPDNotFoundError:
 
 except KeyboardInterrupt:
     logging.info("ctrl + c:")
+    exit()
+
+if args.norun:
+    logging.info("--norun option used, closing pycasso without running")
     exit()
 
 try:
