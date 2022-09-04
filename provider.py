@@ -98,9 +98,11 @@ class StabilityProvider(Provider):
 
     @staticmethod
     def add_secret(text):
+        keyring.get_keyring()
         keyring.set_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text)
         return
 
     @staticmethod
     def get_secret():
+        keyring.get_keyring()
         return keyring.get_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value)
