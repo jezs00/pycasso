@@ -5,6 +5,7 @@ import sys
 import os
 import random
 import warnings
+import argparse
 
 import numpy
 
@@ -127,6 +128,20 @@ dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 # Debug Settings
 image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
 
+# Keys
+
+stability_key = None
+
+try:
+    parser = argparse.ArgumentParser(description='pycasso')
+    parser.add_argument('--stabilitykey', dest='stabilitykey', type=str, help='Name of the candidate')
+    args = parser.parse_args()
+    stability_key = args.stabilitykey
+    print(stability_key)
+
+except argparse.ArgumentError as e:
+    logging.error(e)
+
 # TODO: pull this out and put into config_wrapper.py
 config = {}
 try:
@@ -190,7 +205,7 @@ try:
     epd = displayfactory.load_display_driver(display_type, config)
 
 except EPDNotFoundError:
-    logging.info(f"Couldn't find {display_type}")
+    logging.error(f"Couldn't find {display_type}")
     exit()
 
 except KeyboardInterrupt:
