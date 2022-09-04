@@ -376,12 +376,12 @@ try:
         draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb', fill=0)
         draw.text((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb', fill=0)
 
-    logging.info("Prepare")
+    logging.info("Prepare epaper")
     epd.prepare()
 
     epd.display(image_base)
 
-    logging.info("Go to sleep...")
+    logging.info("Send epaper to sleep")
     epd.close()
 
 except EPDNotFoundError:
