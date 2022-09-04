@@ -134,10 +134,10 @@ stability_key = None
 
 try:
     parser = argparse.ArgumentParser(description='pycasso')
-    parser.add_argument('--stabilitykey', dest='stabilitykey', type=str, help='Name of the candidate')
+    parser.add_argument('--stabilitykey', dest='stabilitykey', type=str, help='Stable Diffusion API Key')
+    parser.add_argument('--configpath', dest='configpath', type=str, help='Path to .config file. Default: \'.config\'')
     args = parser.parse_args()
     stability_key = args.stabilitykey
-    print(stability_key)
 
 except argparse.ArgumentError as e:
     logging.error(e)
@@ -145,8 +145,12 @@ except argparse.ArgumentError as e:
 # TODO: pull this out and put into config_wrapper.py
 config = {}
 try:
+    if args.configpath is None:
+        config_load = Configs(ConfigConst.CONFIG_PATH.value)
+    else:
+        config_load = Configs(args.configpath)
+
     # Load config
-    config_load = Configs(ConfigConst.CONFIG_PATH.value)
     if os.path.exists(ConfigConst.CONFIG_PATH.value):
         config = config_load.read_config()
         logging.info('Loading config')
