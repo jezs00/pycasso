@@ -288,7 +288,11 @@ try:
         if provider_type == ProvidersConst.STABLE.value:
             # Request image for Stability
             logging.info("Loading Stability API")
-            stability_provider = StabilityProvider()
+            if stability_key is None:
+                stability_provider = StabilityProvider()
+            else:
+                stability_provider = StabilityProvider(key=stability_key)
+
             logging.info("Getting Image")
             stable_height = ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
             stable_width = ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
