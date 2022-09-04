@@ -294,6 +294,11 @@ try:
             artist_text = FileLoader.remove_text(artist_text, remove_text)
             title_text = title_text.title()
             artist_text = artist_text.title()
+
+        # Resize to thumbnail size based on epd resolution
+        # TODO: allow users to choose between crop and resize
+        epd_res = (epd.width, epd.height)
+        image_base.thumbnail(epd_res)
     else:
         # Build prompt
         if prompt_mode == 0:
@@ -340,10 +345,6 @@ try:
             warnings.warn('DALLE not yet implemented. Exiting application.')
             exit()
 
-    # Resize to thumbnail size based on epd resolution
-    epd_res = (epd.width, epd.height)
-    image_base.thumbnail(epd_res)
-
     # Make sure image is correct size and centered after thumbnail set
     # Define locations and crop settings
     width_diff = (epd.width - image_base.width) / 2
@@ -359,6 +360,7 @@ try:
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
     if add_text:
+        # TODO: bottom box doesn't look great if image crops on the top and bottom
         font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
         if not os.path.exists(font_path):
             logging.info("Font file path does not exist: '" + font_file + "'")
