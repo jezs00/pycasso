@@ -133,11 +133,28 @@ image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
 stability_key = None
 
 try:
-    parser = argparse.ArgumentParser(description='pycasso')
-    parser.add_argument('--stabilitykey', dest='stabilitykey', type=str, help='Stable Diffusion API Key')
-    parser.add_argument('--configpath', dest='configpath', type=str, help='Path to .config file. Default: \'.config\'')
+    parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
+                                                 'epaper screen through a raspberry pi unit')
+    parser.add_argument('--configpath',
+                        dest='configpath',
+                        type=str,
+                        help='Path to .config file. Default: \'.config\'')
+    parser.add_argument('--stabilitykey',
+                        dest='stabilitykey',
+                        type=str,
+                        help='Stable Diffusion API Key')
+    parser.add_argument('--savekeys',
+                        dest='savekeys',
+                        action='store_const',
+                        const=1,
+                        default=0,
+                        help='Boolean to save any keys passed to pycasso to keyring')
     args = parser.parse_args()
     stability_key = args.stabilitykey
+
+    if args.savekeys:
+        if stability_key is not None:
+            StabilityProvider.add_secret(stability_key)
 
 except argparse.ArgumentError as e:
     logging.error(e)
