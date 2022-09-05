@@ -23,11 +23,12 @@ display_type = DEFAULT_DISPLAY_TYPE
 try:
     # Load config
     if os.path.exists(CONFIG_PATH):
-        config = config_wrapper.read_config(CONFIG_PATH)
+        config_load = config_wrapper.Configs(CONFIG_PATH)
+        config = config_load.read_config()
         logging.info('Loading config')
 
         # Display Settings
-        display_type = config.get('DISPLAY', 'display_type')
+        display_type = config.get('EPD', 'type')
 
 except IOError as e:
     logging.error(e)
@@ -39,7 +40,7 @@ except KeyboardInterrupt:
 try:
     epd = displayfactory.load_display_driver(display_type)
 
-    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests/test_content')
+    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests\\test_content')
 
     logging.info("pycasso test image display")
 
