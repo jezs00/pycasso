@@ -58,6 +58,7 @@ def set_tuple_sides(tup, left, right):
     return tup
 
 
+# Helper to find next multiple of 'multiple' for number
 def ceiling_multiple(number, multiple):
     return int(multiple * ceil(number / multiple))
 
@@ -320,6 +321,8 @@ try:
         else:
             warnings.warn('Invalid prompt mode chosen. Exiting application.')
             exit()
+
+        logging.info(f"Requesting \'{prompt}\'")
 
         # Pick between providers
         if provider_type == ProvidersConst.STABLE.value:
