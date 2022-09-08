@@ -84,7 +84,7 @@ def prep_prompt_text():
     return
 
 
-logging.basicConfig(level=logging.DEBUG)  # TODO: config out the logging level
+logging.basicConfig(filename=os.path.dirname(os.path.abspath(__file__))+'/temp.log', level=logging.DEBUG)  # TODO: config out the logging level
 
 # Set Defaults
 
@@ -169,14 +169,18 @@ except argparse.ArgumentError as e:
 
 # TODO: pull this out and put into config_wrapper.py
 config = {}
+filepath = os.path.dirname(os.path.abspath(__file__))
 try:
+
+    
+
     if args.configpath is None:
-        config_load = Configs(ConfigConst.CONFIG_PATH.value)
+        config_load = Configs(filepath+'/'+ConfigConst.CONFIG_PATH.value)
     else:
         config_load = Configs(args.configpath)
 
     # Load config
-    if os.path.exists(ConfigConst.CONFIG_PATH.value):
+    if os.path.exists(config_load.path):
         config = config_load.read_config()
         logging.info('Loading config')
 
@@ -309,13 +313,13 @@ try:
 
         if prompt_mode == 1:
             # Build prompt from artist/subject
-            artist_text = FileLoader.get_random_line(artists_file)
-            title_text = FileLoader.get_random_line(subjects_file)
+            artist_text = FileLoader.get_random_line(filepath+'/'+artists_file)
+            title_text = FileLoader.get_random_line(filepath+'/'+subjects_file)
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
 
         elif prompt_mode == 2:
             # Build prompt from artist/subject
-            title_text = FileLoader.get_random_line(prompts_file)
+            title_text = FileLoader.get_random_line(filepath+'/'+prompts_file)
             prompt = preamble + title_text + postscript
 
         else:
