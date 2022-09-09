@@ -84,7 +84,7 @@ def prep_prompt_text():
     return
 
 
-logging.basicConfig(filename=os.path.dirname(os.path.abspath(__file__))+'/temp.log', level=logging.DEBUG)  # TODO: config out the logging level
+logging.basicConfig(level=logging.DEBUG)
 
 # Set Defaults
 
@@ -130,8 +130,10 @@ dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
 
 # Keys
-
 stability_key = None
+
+# Draw
+display_shape = None
 
 try:
     parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
@@ -157,8 +159,15 @@ try:
                         default=0,
                         help='This flag ends the program before starting the main functionality of pycasso. This will '
                              'not fetch images or update the epaper screen')
+    parser.add_argument('--displayshape',
+                        dest='displayshape',
+                        type=int,
+                        help='Displays a shape in the top left corner of the epd. Good for providing visual information'
+                             ' while using a mostly disconnected headless setup.'
+                             '\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle')
     args = parser.parse_args()
     stability_key = args.stabilitykey
+    display_shape = args.displayshape
 
     if args.savekeys:
         if stability_key is not None:
@@ -171,11 +180,8 @@ except argparse.ArgumentError as e:
 config = {}
 filepath = os.path.dirname(os.path.abspath(__file__))
 try:
-
-    
-
     if args.configpath is None:
-        config_load = Configs(filepath+'/'+ConfigConst.CONFIG_PATH.value)
+        config_load = Configs(filepath + '/' + ConfigConst.CONFIG_PATH.value)
     else:
         config_load = Configs(args.configpath)
 
@@ -313,13 +319,13 @@ try:
 
         if prompt_mode == 1:
             # Build prompt from artist/subject
-            artist_text = FileLoader.get_random_line(filepath+'/'+artists_file)
-            title_text = FileLoader.get_random_line(filepath+'/'+subjects_file)
+            artist_text = FileLoader.get_random_line(filepath + '/' + artists_file)
+            title_text = FileLoader.get_random_line(filepath + '/' + subjects_file)
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
 
         elif prompt_mode == 2:
             # Build prompt from artist/subject
-            title_text = FileLoader.get_random_line(filepath+'/'+prompts_file)
+            title_text = FileLoader.get_random_line(filepath + '/' + prompts_file)
             prompt = preamble + title_text + postscript
 
         else:
@@ -366,8 +372,47 @@ try:
     image_base = image_base.crop(image_crop)
     draw = ImageDraw.Draw(image_base, 'RGBA')
 
+    # Draw status shape if provided
+    if display_shape is not None:
+        # Make bounding box
+        status_padding = 5
+        status_size = 10  # TODO: put in config
+        status_width = 3
+        status_opacity = 150
+        status_corner = status_padding + status_size
+        status_box = (status_padding, status_padding, status_corner, status_corner)
+        status_circle = (status_padding + status_size / 2, status_padding + status_size / 2, status_size / 2)
+        if display_shape == 1:
+            draw.rectangle(status_box,
+                           width=0,
+                           fill=(0, 0, 0, status_opacity))
+            draw.line(status_box,
+                      width=status_width,
+                      fill=(255, 255, 255, status_opacity))
+            status_box = (status_corner, status_padding, status_padding, status_corner)
+            draw.line(status_box,
+                      width=status_width,
+                      fill=(255, 255, 255, status_opacity))
+        elif display_shape == 2:
+            # TODO: triangle doesn't have line thickness and lines overlap
+            draw.regular_polygon(status_circle,
+                                 n_sides=3,
+                                 fill=(0, 0, 0, status_opacity),
+                                 outline=(255, 255, 255, status_opacity))
+        elif display_shape == 3:
+            draw.ellipse(status_box,
+                         width=status_width,
+                         fill=(0, 0, 0, status_opacity),
+                         outline=(255, 255, 255, status_opacity))
+        else:
+            draw.rectangle(status_box,
+                           width=status_width,
+                           fill=(0, 0, 0, status_opacity),
+                           outline=(255, 255, 255, status_opacity))
+
+    # Draw text(s) if necessary
     if add_text:
-        # TODO: bottom box doesn't look great if image crops on the top and bottom
+        # TODO: bottom box doesn't look great if image crops with black space on the top and bottom
         font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
         if not os.path.exists(font_path):
             logging.info("Font file path does not exist: '" + font_file + "'")
