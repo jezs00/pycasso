@@ -71,3 +71,8 @@ class StabilityConst(Enum):
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "grpc.stability.ai:443"
     MULTIPLE = 64
+
+
+class PiJuiceConst(Enum):
+    STATUS_ROOT = "data"
+    STATUS_POWER = "powerInput"

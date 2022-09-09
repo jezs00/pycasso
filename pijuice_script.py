@@ -4,6 +4,7 @@ from pijuice import PiJuice
 import logging
 import os
 import sys
+from constants import PiJuiceConst
 
 try:
 	pijuice = PiJuice(1, 0x14)
@@ -11,9 +12,9 @@ except:
 	print("Cannot create pijuice object")
 	sys.exit()
 
-# TODO: set constants for pijuice statuses
+# TODO: handle error pijuice not available
 
-power_status = pijuice.status.GetStatus()['data']['powerInput']
+power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
 
 logging.info(f"Power status is \'{power_status}\'")
 
