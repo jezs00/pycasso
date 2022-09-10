@@ -12,7 +12,8 @@ class ConfigConst(Enum):
     # Defaults
     # File Settings
     FILE_SAVE_IMAGE = 1
-    FILE_IMAGE_LOCATION = 'images'
+    FILE_EXTERNAL_IMAGE_LOCATION = 'images/external'
+    FILE_GENERATED_IMAGE_LOCATION = 'images/generated'
     FILE_IMAGE_FORMAT = 'png'
     FILE_FONT_FILE = 'fonts/Font.ttc'
     FILE_SUBJECTS_FILE = 'prompts/subjects.txt'
@@ -52,11 +53,13 @@ class ConfigConst(Enum):
 class ProvidersConst(Enum):
     # Settings and defaults for providers
     HISTORIC = 0
-    STABLE = 1
-    DALLE = 2
-    MIDJOURNEY = 3
+    EXTERNAL = 1
+    STABLE = 2
+    DALLE = 3
+    MIDJOURNEY = 4
 
-    HISTORIC_AMOUNT = 1
+    EXTERNAL_AMOUNT = 1
+    HISTORIC_AMOUNT = 0
     STABLE_AMOUNT = 0
     DALLE_AMOUNT = 0
 

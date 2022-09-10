@@ -87,7 +87,8 @@ def prep_prompt_text():
 # Set Defaults
 # File Settings
 save_image = ConfigConst.FILE_SAVE_IMAGE.value
-image_location = ConfigConst.FILE_IMAGE_LOCATION.value
+external_image_location = ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value
+generated_image_location = ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value
 image_format = ConfigConst.FILE_IMAGE_FORMAT.value
 font_file = ConfigConst.FILE_FONT_FILE.value
 subjects_file = ConfigConst.FILE_SUBJECTS_FILE.value
@@ -119,6 +120,7 @@ postscript = ConfigConst.PROMPT_POSTSCRIPT.value
 display_type = ConfigConst.DISPLAY_TYPE.value
 
 # Provider Settings
+external_amount = ProvidersConst.EXTERNAL_AMOUNT.value
 historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
 stability_amount = ProvidersConst.STABLE_AMOUNT.value
 dalle_amount = ProvidersConst.DALLE_AMOUNT.value
@@ -133,7 +135,7 @@ stability_key = None
 # Draw
 display_shape = None
 
-filepath = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.dirname(os.path.abspath(__file__))
 
 try:
     parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
@@ -181,7 +183,7 @@ config = {}
 
 try:
     if args.configpath is None:
-        config_load = Configs(filepath + '/' + ConfigConst.CONFIG_PATH.value)
+        config_load = Configs(file_path + '/' + ConfigConst.CONFIG_PATH.value)
     else:
         config_load = Configs(args.configpath)
 
@@ -191,8 +193,11 @@ try:
 
         # File Settings
         save_image = config.getboolean('File', 'save_image', fallback=ConfigConst.FILE_SAVE_IMAGE.value)
-        image_location = config.get('File', 'image_location', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
-        image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_LOCATION.value)
+        external_image_location = config.get('File', 'image_location',
+                                             fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
+        generated_image_location = config.get('File', 'image_location',
+                                              fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
+        image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
         font_file = config.get('File', 'font_file', fallback=ConfigConst.FILE_FONT_FILE.value)
         subjects_file = config.get('File', 'subjects_file', fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
         artists_file = config.get('File', 'artists_file', fallback=ConfigConst.FILE_ARTISTS_FILE.value)
@@ -223,6 +228,7 @@ try:
         display_type = config.get('EPD', 'type', fallback=ConfigConst.DISPLAY_TYPE.value)
 
         # Provider
+        external_amount = config.getint('Providers', 'external_amount', fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
         historic_amount = config.getint('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
         stability_amount = config.getint('Providers', 'stability_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
         dalle_amount = config.getint('Providers', 'dalle_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
@@ -233,7 +239,7 @@ try:
 
     # Set up logging
     if log_file is not None and log_file != "":
-        log_file = filepath + '/' + log_file
+        log_file = file_path + '/' + log_file
 
     logging.basicConfig(level=log_level, filename=log_file)
     logging.info("Config loaded")
@@ -263,9 +269,9 @@ if args.norun:
     exit()
 
 try:
-    # TODO: set up different image loaders - one for internal and one for external
     # Build list
     provider_types = [
+        ProvidersConst.EXTERNAL.value,
         ProvidersConst.HISTORIC.value,
         ProvidersConst.STABLE.value,
         ProvidersConst.DALLE.value
@@ -274,6 +280,7 @@ try:
     # Pick random provider based on weight
     random.seed()
     provider_type = random.choices(provider_types, k=1, weights=(
+        external_amount,
         historic_amount,
         stability_amount,
         dalle_amount
@@ -284,25 +291,20 @@ try:
     artist_text = ''
     title_text = ''
 
-    if provider_type == ProvidersConst.HISTORIC.value:
-        # Historic image load
-        # TODO: This needs to be refactored into external not historic
-        image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), image_location)
-
+    if provider_type == ProvidersConst.EXTERNAL.value:
+        # External image load
+        image_directory = os.path.join(file_path, external_image_location)
         if not os.path.exists(image_directory):
-            warnings.warn("Image directory path does not exist: '" + image_directory + "'")
+            warnings.warn("External image directory path does not exist: '" + image_directory + "'")
             exit()
 
         # Get random image from folder
-
         file = FileLoader(image_directory)
         image_path = file.get_random_file_of_type(image_format)
-
         image_base = Image.open(image_path)
 
         # Add text to via parsing if necessary
         image_name = os.path.basename(image_path)
-
         title_text = image_name
 
         if parse_text:
@@ -317,6 +319,24 @@ try:
         # TODO: allow users to choose between crop and resize
         epd_res = (epd.width, epd.height)
         image_base.thumbnail(epd_res)
+
+    elif provider_type == ProvidersConst.HISTORIC.value:
+        # Historic image previously saved
+        image_directory = os.path.join(file_path, generated_image_location)
+        if not os.path.exists(image_directory):
+            warnings.warn("Historic image directory path does not exist: '" + image_directory + "'")
+            exit()
+
+        # Get random image from folder
+        file = FileLoader(image_directory)
+        image_path = file.get_random_file_of_type(image_format)
+        image_base = Image.open(image_path)
+
+        # TODO: set up system that loads prompt variables from file
+        # Add text to via parsing if necessary
+        image_name = os.path.basename(image_path)
+        title_text = image_name
+
     else:
         # Build prompt
         if prompt_mode == 0:
@@ -326,13 +346,14 @@ try:
 
         if prompt_mode == 1:
             # Build prompt from artist/subject
-            artist_text = FileLoader.get_random_line(filepath + '/' + artists_file)
-            title_text = FileLoader.get_random_line(filepath + '/' + subjects_file)
+            # TODO: Fix up string file path constructions with os.path.join
+            artist_text = FileLoader.get_random_line(file_path + '/' + artists_file)
+            title_text = FileLoader.get_random_line(file_path + '/' + subjects_file)
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
 
         elif prompt_mode == 2:
             # Build prompt from artist/subject
-            title_text = FileLoader.get_random_line(filepath + '/' + prompts_file)
+            title_text = FileLoader.get_random_line(file_path + '/' + prompts_file)
             prompt = preamble + title_text + postscript
 
         else:
@@ -355,10 +376,12 @@ try:
             stable_width = ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
             image_base = stability_provider.get_image_from_string(prompt, stable_height, stable_width)
             if save_image:
+                image_name = prompt + ".png"
+                save_path = os.path.join(file_path, generated_image_location, image_name)
                 # TODO: Set up to save in internal location for Historic loading
-                logging.info(f"Saving image as")
+                logging.info(f"Saving image as {save_path}")
                 # Save the image
-                image_base.save('api_output.png')
+                image_base.save(save_path)
 
         if provider_type == ProvidersConst.DALLE.value:
             # Request image for DALLE
@@ -428,6 +451,8 @@ try:
         title_font = ImageFont.truetype(font_path, title_size)
         artist_font = ImageFont.truetype(font_path, artist_size)
 
+        artist_box = (0, epd.height, 0, epd.height)
+        title_box = artist_box
         if artist_text != '':
             artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font,
                                        anchor='mb')
