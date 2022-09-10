@@ -84,10 +84,7 @@ def prep_prompt_text():
     return
 
 
-logging.basicConfig(level=logging.DEBUG)
-
 # Set Defaults
-
 # File Settings
 save_image = ConfigConst.FILE_SAVE_IMAGE.value
 image_location = ConfigConst.FILE_IMAGE_LOCATION.value
@@ -126,14 +123,17 @@ historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
 stability_amount = ProvidersConst.STABLE_AMOUNT.value
 dalle_amount = ProvidersConst.DALLE_AMOUNT.value
 
-# Debug Settings
-image_viewer = ConfigConst.DEBUG_IMAGE_VIEWER.value
+# Logging Settings
+log_file = ConfigConst.LOGGING_FILE.value
+log_level = ConfigConst.LOGGING_LEVEL.value
 
 # Keys
 stability_key = None
 
 # Draw
 display_shape = None
+
+filepath = os.path.dirname(os.path.abspath(__file__))
 
 try:
     parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
@@ -174,11 +174,11 @@ try:
             StabilityProvider.add_secret(stability_key)
 
 except argparse.ArgumentError as e:
-    logging.error(e)
+    startup_logger.error(e)
 
 # TODO: pull this out and put into config_wrapper.py
 config = {}
-filepath = os.path.dirname(os.path.abspath(__file__))
+
 try:
     if args.configpath is None:
         config_load = Configs(filepath + '/' + ConfigConst.CONFIG_PATH.value)
@@ -188,7 +188,6 @@ try:
     # Load config
     if os.path.exists(config_load.path):
         config = config_load.read_config()
-        logging.info('Loading config')
 
         # File Settings
         save_image = config.getboolean('File', 'save_image', fallback=ConfigConst.FILE_SAVE_IMAGE.value)
@@ -228,8 +227,16 @@ try:
         stability_amount = config.getint('Providers', 'stability_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
         dalle_amount = config.getint('Providers', 'dalle_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
 
-        # Debug Settings
-        image_viewer = config.getboolean('Debug', 'image_viewer', fallback=ConfigConst.DEBUG_IMAGE_VIEWER.value)
+        # Logging Settings
+        log_file = config.get('Logging', 'log_file', fallback=ConfigConst.LOGGING_FILE.value)
+        log_level = config.getint('Logging', 'log_level', fallback=ConfigConst.LOGGING_LEVEL.value)
+
+    # Set up logging
+    if log_file is not None and log_file != "":
+        log_file = filepath + '/' + log_file
+
+    logging.basicConfig(level=log_level, filename=log_file)
+    logging.info("Config loaded")
 
 except IOError as e:
     logging.error(e)
@@ -448,6 +455,7 @@ try:
 
     logging.info("Send epaper to sleep")
     epd.close()
+    logging.shutdown()
 
 except EPDNotFoundError:
     logging.info(f"Couldn't find {display_type}")

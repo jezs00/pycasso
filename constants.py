@@ -1,8 +1,7 @@
 # Enums for constants to be used throughout pycasso
 
 from enum import Enum
-
-import numpy
+import logging
 
 
 class ConfigConst(Enum):
@@ -45,8 +44,9 @@ class ConfigConst(Enum):
     # Display Settings
     DISPLAY_TYPE = 'omni_epd.mock'
 
-    # Debug Settings
-    DEBUG_IMAGE_VIEWER = False
+    # Logging Settings
+    LOGGING_FILE = 'pycasso.log'
+    LOGGING_LEVEL = logging.DEBUG
 
 
 class ProvidersConst(Enum):
