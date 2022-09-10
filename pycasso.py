@@ -174,7 +174,7 @@ try:
             StabilityProvider.add_secret(stability_key)
 
 except argparse.ArgumentError as e:
-    startup_logger.error(e)
+    logging.error(e)
 
 # TODO: pull this out and put into config_wrapper.py
 config = {}
