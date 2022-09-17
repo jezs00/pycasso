@@ -6,10 +6,14 @@ import os
 import sys
 from constants import PiJuiceConst
 
+# Set up logging
+file_path = os.path.dirname(os.path.abspath(__file__))
+logging.basicConfig(level=logging.INFO, filename=os.path.join(file_path, 'pijuice.log'))
+
 try:
 	pijuice = PiJuice(1, 0x14)
 except:
-	print("Cannot create pijuice object")
+	logging.error("Cannot create pijuice object")
 	sys.exit()
 
 # TODO: handle error pijuice not available
