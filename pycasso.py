@@ -183,7 +183,7 @@ config = {}
 
 try:
     if args.configpath is None:
-        config_load = Configs(file_path + '/' + ConfigConst.CONFIG_PATH.value)
+        config_load = Configs(os.path.join(file_path, ConfigConst.CONFIG_PATH.value))
     else:
         config_load = Configs(args.configpath)
 
@@ -239,7 +239,7 @@ try:
 
     # Set up logging
     if log_file is not None and log_file != "":
-        log_file = file_path + '/' + log_file
+        log_file = os.path.join(file_path, log_file)
 
     logging.basicConfig(level=log_level, filename=log_file)
     logging.info("Config loaded")
@@ -353,16 +353,15 @@ try:
 
         if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
             # Build prompt from artist/subject
-            # TODO: Fix up string file path constructions with os.path.join
-            artist_text = FileLoader.get_random_line(file_path + '/' + artists_file)
-            title_text = FileLoader.get_random_line(file_path + '/' + subjects_file)
+            artist_text = FileLoader.get_random_line(os.path.join(file_path, artists_file))
+            title_text = FileLoader.get_random_line(os.path.join(file_path, subjects_file))
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
         elif prompt_mode == PromptMode.PROMPT.value:
             # Build prompt from prompt file
-            title_text = FileLoader.get_random_line(file_path + '/' + prompts_file)
+            title_text = FileLoader.get_random_line(os.path.join(file_path, prompts_file))
             prompt = preamble + title_text + postscript
         else:
             warnings.warn('Invalid prompt mode chosen. Exiting application.')
@@ -452,7 +451,7 @@ try:
     # Draw text(s) if necessary
     if add_text:
         # TODO: bottom box doesn't look great if image crops with black space on the top and bottom
-        font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), font_file)
+        font_path = os.path.join(file_path, font_file)
         if not os.path.exists(font_path):
             logging.info("Font file path does not exist: '" + font_file + "'")
             exit()
