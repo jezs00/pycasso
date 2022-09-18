@@ -368,6 +368,9 @@ try:
             exit()
 
         metadata.add_text(PropertiesConst.PROMPT.value, prompt)
+        fetch_height = epd.height
+        fetch_width = epd.width
+
         logging.info(f"Requesting \'{prompt}\'")
 
         # Pick between providers
@@ -380,21 +383,27 @@ try:
                 stability_provider = StabilityProvider(key=stability_key)
 
             logging.info("Getting Image")
-            stable_height = ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
-            stable_width = ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
-            image_base = stability_provider.get_image_from_string(prompt, stable_height, stable_width)
-            if save_image:
-                image_name = prompt + ".png"
-                save_path = os.path.join(file_path, generated_image_location, image_name)
-                logging.info(f"Saving image as {save_path}")
+            fetch_height = ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
+            fetch_width = ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
+            image_base = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
-                # Save the image
-                image_base.save(save_path, pnginfo=metadata)
-
-        if provider_type == ProvidersConst.DALLE.value:
+        elif provider_type == ProvidersConst.DALLE.value:
             # Request image for DALLE
             warnings.warn("DALLE not yet implemented. Exiting application.")
             exit()
+
+        else:
+            # Invalid provider
+            warnings.warn(f"Invalid provider option chosen: {provider_type}")
+            exit()
+
+        if save_image:
+            image_name = prompt + ".png"
+            save_path = os.path.join(file_path, generated_image_location, image_name)
+            logging.info(f"Saving image as {save_path}")
+
+            # Save the image
+            image_base.save(save_path, pnginfo=metadata)
 
     # Make sure image is correct size and centered after thumbnail set
     # Define locations and crop settings
@@ -451,6 +460,7 @@ try:
     # Draw text(s) if necessary
     if add_text:
         # TODO: bottom box doesn't look great if image crops with black space on the top and bottom
+        # TODO: some special characters break font
         font_path = os.path.join(file_path, font_file)
         if not os.path.exists(font_path):
             logging.info("Font file path does not exist: '" + font_file + "'")
