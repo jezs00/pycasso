@@ -138,5 +138,6 @@ images/*
 mock_output.png
 api_output.png
 
-# Ignore default log file
+# Ignore log files
 pycasso.log
+pijuice.log
