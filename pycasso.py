@@ -423,7 +423,7 @@ class Pycasso:
                     exit()
 
                 if self.save_image:
-                    image_name = prompt + ".png"
+                    image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + ".png"
                     save_path = os.path.join(self.file_path, self.generated_image_location, image_name)
                     logging.info(f"Saving image as {save_path}")
 
