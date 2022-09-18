@@ -17,7 +17,7 @@ from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from file_loader import FileLoader
-from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst
+from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
 from provider import StabilityProvider
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
@@ -346,12 +346,12 @@ try:
     else:
         # Build prompt, add metadata as we go
         metadata = PngImagePlugin.PngInfo()
-        if prompt_mode == 0:
+        if prompt_mode == PromptMode.RANDOM.value:
             # Pick random type of building
             random.seed()
             prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
-        if prompt_mode == 1:
+        if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
             # Build prompt from artist/subject
             # TODO: Fix up string file path constructions with os.path.join
             artist_text = FileLoader.get_random_line(file_path + '/' + artists_file)
@@ -360,7 +360,7 @@ try:
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
-        elif prompt_mode == 2:
+        elif prompt_mode == PromptMode.PROMPT.value:
             # Build prompt from prompt file
             title_text = FileLoader.get_random_line(file_path + '/' + prompts_file)
             prompt = preamble + title_text + postscript

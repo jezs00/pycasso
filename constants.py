@@ -86,3 +86,9 @@ class PropertiesConst(Enum):
     ARTIST = "artist"
     TITLE = "title"
     PROMPT = "prompt"
+
+
+class PromptMode(Enum):
+    RANDOM = 0
+    SUBJECT_ARTIST = 1
+    PROMPT = 2
