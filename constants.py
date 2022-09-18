@@ -7,24 +7,24 @@ import logging
 class ConfigConst(Enum):
     # Default settings that are loaded from config
     # Relative path to config
-    CONFIG_PATH = '.config'
+    CONFIG_PATH = ".config"
 
     # Defaults
     # File Settings
     FILE_SAVE_IMAGE = 1
-    FILE_EXTERNAL_IMAGE_LOCATION = 'images/external'
-    FILE_GENERATED_IMAGE_LOCATION = 'images/generated'
-    FILE_IMAGE_FORMAT = 'png'
-    FILE_FONT_FILE = 'fonts/Font.ttc'
-    FILE_SUBJECTS_FILE = 'prompts/subjects.txt'
-    FILE_ARTISTS_FILE = 'prompts/artists.txt'
-    FILE_PROMPTS_FILE = 'prompts/prompts.txt'
+    FILE_EXTERNAL_IMAGE_LOCATION = "images/external"
+    FILE_GENERATED_IMAGE_LOCATION = "images/generated"
+    FILE_IMAGE_FORMAT = "png"
+    FILE_FONT_FILE = "fonts/Font.ttc"
+    FILE_SUBJECTS_FILE = "prompts/subjects.txt"
+    FILE_ARTISTS_FILE = "prompts/artists.txt"
+    FILE_PROMPTS_FILE = "prompts/prompts.txt"
 
     # Text Settings
     TEXT_ADD_TEXT = False
     TEXT_PARSE_TEXT = False
-    TEXT_PREAMBLE_REGEX = '.*- '
-    TEXT_ARTIST_REGEX = ' by '
+    TEXT_PREAMBLE_REGEX = ".*- "
+    TEXT_ARTIST_REGEX = " by "
     TEXT_REMOVE_TEXT = [", digital art", "A painting of"]
     TEXT_BOX_TO_FLOOR = True
     TEXT_BOX_TO_EDGE = True
@@ -38,15 +38,15 @@ class ConfigConst(Enum):
     # Automatic prompt construction
     PROMPT_MODES_COUNT = 2
     PROMPT_MODE = 1
-    PROMPT_PREAMBLE = ''
-    PROMPT_CONNECTOR = ' by '
-    PROMPT_POSTSCRIPT = ', digital art, trending on artstation'
+    PROMPT_PREAMBLE = ""
+    PROMPT_CONNECTOR = " by "
+    PROMPT_POSTSCRIPT = ", digital art, trending on artstation"
 
     # Display Settings
-    DISPLAY_TYPE = 'omni_epd.mock'
+    DISPLAY_TYPE = "omni_epd.mock"
 
     # Logging Settings
-    LOGGING_FILE = 'pycasso.log'
+    LOGGING_FILE = "pycasso.log"
     LOGGING_LEVEL = logging.DEBUG
 
 

@@ -11,7 +11,7 @@ from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageShow
 
 # Relative path to config
-CONFIG_PATH = '.config'
+CONFIG_PATH = ".config"
 
 # Display Settings
 DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
@@ -25,10 +25,10 @@ try:
     if os.path.exists(CONFIG_PATH):
         config_load = config_wrapper.Configs(CONFIG_PATH)
         config = config_load.read_config()
-        logging.info('Loading config')
+        logging.info("Loading config")
 
         # Display Settings
-        display_type = config.get('EPD', 'type')
+        display_type = config.get("EPD", "type")
 
 except IOError as e:
     logging.error(e)
@@ -40,14 +40,14 @@ except KeyboardInterrupt:
 try:
     epd = displayfactory.load_display_driver(display_type)
 
-    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests\\test_content')
+    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tests\\test_content")
 
     logging.info("pycasso test image display")
 
     logging.info("Init and clear screen")
     epd.prepare()
 
-    fileLocation = os.path.join(content_directory, 'test.png')
+    fileLocation = os.path.join(content_directory, "test.png")
 
     logging.info("Loading " + fileLocation)
     image_base = Image.open(fileLocation)

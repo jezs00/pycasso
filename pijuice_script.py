@@ -8,7 +8,7 @@ from constants import PiJuiceConst
 
 # Set up logging
 file_path = os.path.dirname(os.path.abspath(__file__))
-logging.basicConfig(level=logging.INFO, filename=os.path.join(file_path, 'pijuice.log'))
+logging.basicConfig(level=logging.INFO, filename=os.path.join(file_path, "pijuice.log"))
 
 try:
 	pijuice = PiJuice(1, 0x14)

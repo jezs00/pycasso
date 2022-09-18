@@ -20,7 +20,7 @@ from file_loader import FileLoader
 from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
 from provider import StabilityProvider
 
-lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
 if os.path.exists(lib_dir):
     sys.path.append(lib_dir)
 
@@ -138,35 +138,35 @@ display_shape = None
 file_path = os.path.dirname(os.path.abspath(__file__))
 
 try:
-    parser = argparse.ArgumentParser(description='A program to request an image from preset APIs and apply them to an'
-                                                 ' epaper screen through a raspberry pi unit')
-    parser.add_argument('--configpath',
-                        dest='configpath',
+    parser = argparse.ArgumentParser(description="A program to request an image from preset APIs and apply them to an"
+                                                 " epaper screen through a raspberry pi unit")
+    parser.add_argument("--configpath",
+                        dest="configpath",
                         type=str,
-                        help='Path to .config file. Default: \'.config\'')
-    parser.add_argument('--stabilitykey',
-                        dest='stabilitykey',
+                        help="Path to .config file. Default: \'.config\'")
+    parser.add_argument("--stabilitykey",
+                        dest="stabilitykey",
                         type=str,
-                        help='Stable Diffusion API Key')
-    parser.add_argument('--savekeys',
-                        dest='savekeys',
-                        action='store_const',
+                        help="Stable Diffusion API Key")
+    parser.add_argument("--savekeys",
+                        dest="savekeys",
+                        action="store_const",
                         const=1,
                         default=0,
-                        help='Use this flag to save any keys provided to system keyring')
-    parser.add_argument('--norun',
-                        dest='norun',
-                        action='store_const',
+                        help="Use this flag to save any keys provided to system keyring")
+    parser.add_argument("--norun",
+                        dest="norun",
+                        action="store_const",
                         const=1,
                         default=0,
-                        help='This flag ends the program before starting the main functionality of pycasso. This will '
-                             'not fetch images or update the epaper screen')
-    parser.add_argument('--displayshape',
-                        dest='displayshape',
+                        help="This flag ends the program before starting the main functionality of pycasso. This will "
+                             "not fetch images or update the epaper screen")
+    parser.add_argument("--displayshape",
+                        dest="displayshape",
                         type=int,
-                        help='Displays a shape in the top left corner of the epd. Good for providing visual information'
-                             ' while using a mostly disconnected headless setup.'
-                             '\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle')
+                        help="Displays a shape in the top left corner of the epd. Good for providing visual information"
+                             " while using a mostly disconnected headless setup."
+                             "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
     args = parser.parse_args()
     stability_key = args.stabilitykey
     display_shape = args.displayshape
@@ -192,50 +192,50 @@ try:
         config = config_load.read_config()
 
         # File Settings
-        save_image = config.getboolean('File', 'save_image', fallback=ConfigConst.FILE_SAVE_IMAGE.value)
-        external_image_location = config.get('File', 'image_location',
+        save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
+        external_image_location = config.get("File", "image_location",
                                              fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
-        generated_image_location = config.get('File', 'image_location',
+        generated_image_location = config.get("File", "image_location",
                                               fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
-        image_format = config.get('File', 'image_format', fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
-        font_file = config.get('File', 'font_file', fallback=ConfigConst.FILE_FONT_FILE.value)
-        subjects_file = config.get('File', 'subjects_file', fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
-        artists_file = config.get('File', 'artists_file', fallback=ConfigConst.FILE_ARTISTS_FILE.value)
-        prompts_file = config.get('File', 'prompts_file', fallback=ConfigConst.FILE_PROMPTS_FILE.value)
+        image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
+        font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
+        subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
+        artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
+        prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
 
         # Text Settings
-        add_text = config.getboolean('Text', 'add_text', fallback=ConfigConst.TEXT_ADD_TEXT.value)
-        parse_text = config.getboolean('Text', 'parse_text', fallback=ConfigConst.TEXT_PARSE_TEXT.value)
-        preamble_regex = config.get('Text', 'preamble_regex', fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
-        artist_regex = config.get('Text', 'artist_regex', fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
-        remove_text = config.get('Text', 'remove_text', fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split('\n')
-        box_to_floor = config.getboolean('Text', 'box_to_floor', fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
-        box_to_edge = config.getboolean('Text', 'box_to_edge', fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
-        artist_loc = config.getint('Text', 'artist_loc', fallback=ConfigConst.TEXT_ARTIST_LOC.value)
-        artist_size = config.getint('Text', 'artist_size', fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
-        title_loc = config.getint('Text', 'title_loc', fallback=ConfigConst.TEXT_TITLE_LOC.value)
-        title_size = config.getint('Text', 'title_size', fallback=ConfigConst.TEXT_TITLE_SIZE.value)
-        padding = config.getint('Text', 'padding', fallback=ConfigConst.TEXT_PADDING.value)
-        opacity = config.getint('Text', 'opacity', fallback=ConfigConst.TEXT_OPACITY.value)
+        add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
+        parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
+        preamble_regex = config.get("Text", "preamble_regex", fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
+        artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
+        remove_text = config.get("Text", "remove_text", fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n")
+        box_to_floor = config.getboolean("Text", "box_to_floor", fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
+        box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
+        artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
+        artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
+        title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)
+        title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
+        padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
+        opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
 
         # Prompt
-        prompt_mode = config.getint('Prompt', 'mode', fallback=ConfigConst.PROMPT_MODE.value)
-        preamble = config.get('Prompt', 'preamble', fallback=ConfigConst.PROMPT_PREAMBLE.value)
-        connector = config.get('Prompt', 'connector', fallback=ConfigConst.PROMPT_CONNECTOR.value)
-        postscript = config.get('Prompt', 'postscript', fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+        prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
+        preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
+        connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
+        postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
 
         # Display (rest of EPD config is just passed straight into displayfactory
-        display_type = config.get('EPD', 'type', fallback=ConfigConst.DISPLAY_TYPE.value)
+        display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
 
         # Provider
-        external_amount = config.getint('Providers', 'external_amount', fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
-        historic_amount = config.getint('Providers', 'historic_amount', fallback=ProvidersConst.HISTORIC_AMOUNT.value)
-        stability_amount = config.getint('Providers', 'stability_amount', fallback=ProvidersConst.STABLE_AMOUNT.value)
-        dalle_amount = config.getint('Providers', 'dalle_amount', fallback=ProvidersConst.DALLE_AMOUNT.value)
+        external_amount = config.getint("Providers", "external_amount", fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
+        historic_amount = config.getint("Providers", "historic_amount", fallback=ProvidersConst.HISTORIC_AMOUNT.value)
+        stability_amount = config.getint("Providers", "stability_amount", fallback=ProvidersConst.STABLE_AMOUNT.value)
+        dalle_amount = config.getint("Providers", "dalle_amount", fallback=ProvidersConst.DALLE_AMOUNT.value)
 
         # Logging Settings
-        log_file = config.get('Logging', 'log_file', fallback=ConfigConst.LOGGING_FILE.value)
-        log_level = config.getint('Logging', 'log_level', fallback=ConfigConst.LOGGING_LEVEL.value)
+        log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
+        log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
 
     # Set up logging
     if log_file is not None and log_file != "":
@@ -257,7 +257,7 @@ try:
     epd = displayfactory.load_display_driver(display_type, config)
 
 except EPDNotFoundError:
-    logging.error(f"Couldn't find {display_type}")
+    logging.error(f"Couldn\'t find {display_type}")
     exit()
 
 except KeyboardInterrupt:
@@ -288,8 +288,8 @@ try:
 
     # TODO: Code starting to look a little spaghetti. Clean up once API works.
 
-    artist_text = ''
-    title_text = ''
+    artist_text = ""
+    title_text = ""
 
     if provider_type == ProvidersConst.EXTERNAL.value:
         # External image load
@@ -355,7 +355,7 @@ try:
             # Build prompt from artist/subject
             artist_text = FileLoader.get_random_line(os.path.join(file_path, artists_file))
             title_text = FileLoader.get_random_line(os.path.join(file_path, subjects_file))
-            prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
+            prompt = preamble + title_text + " " + connector + " " + artist_text + postscript
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
@@ -364,7 +364,7 @@ try:
             title_text = FileLoader.get_random_line(os.path.join(file_path, prompts_file))
             prompt = preamble + title_text + postscript
         else:
-            warnings.warn('Invalid prompt mode chosen. Exiting application.')
+            warnings.warn("Invalid prompt mode chosen. Exiting application.")
             exit()
 
         metadata.add_text(PropertiesConst.PROMPT.value, prompt)
@@ -393,7 +393,7 @@ try:
 
         if provider_type == ProvidersConst.DALLE.value:
             # Request image for DALLE
-            warnings.warn('DALLE not yet implemented. Exiting application.')
+            warnings.warn("DALLE not yet implemented. Exiting application.")
             exit()
 
     # Make sure image is correct size and centered after thumbnail set
@@ -408,7 +408,7 @@ try:
 
     # Crop and prepare image
     image_base = image_base.crop(image_crop)
-    draw = ImageDraw.Draw(image_base, 'RGBA')
+    draw = ImageDraw.Draw(image_base, "RGBA")
 
     # Draw status shape if provided
     if display_shape is not None:
@@ -461,11 +461,11 @@ try:
 
         artist_box = (0, epd.height, 0, epd.height)
         title_box = artist_box
-        if artist_text != '':
+        if artist_text != "":
             artist_box = draw.textbbox((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font,
-                                       anchor='mb')
-        if title_text != '':
-            title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb')
+                                       anchor="mb")
+        if title_text != "":
+            title_box = draw.textbbox((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor="mb")
 
         draw_box = max_area([artist_box, title_box])
         draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
@@ -478,8 +478,8 @@ try:
             draw_box = set_tuple_sides(draw_box, width_diff, right_pixel)
 
         draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
-        draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor='mb', fill=0)
-        draw.text((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor='mb', fill=0)
+        draw.text((epd.width / 2, epd.height - artist_loc), artist_text, font=artist_font, anchor="mb", fill=0)
+        draw.text((epd.width / 2, epd.height - title_loc), title_text, font=title_font, anchor="mb", fill=0)
 
     logging.info("Prepare epaper")
     epd.prepare()
