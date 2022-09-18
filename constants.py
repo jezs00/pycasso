@@ -79,3 +79,10 @@ class StabilityConst(Enum):
 class PiJuiceConst(Enum):
     STATUS_ROOT = "data"
     STATUS_POWER = "powerInput"
+
+
+class PropertiesConst(Enum):
+    FILE_PREAMBLE = "pycasso - "
+    ARTIST = "artist"
+    TITLE = "title"
+    PROMPT = "prompt"

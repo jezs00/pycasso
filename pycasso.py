@@ -15,9 +15,9 @@ from numpy import ceil
 
 from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from file_loader import FileLoader
-from constants import ProvidersConst, StabilityConst, ConfigConst
+from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst
 from provider import StabilityProvider
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
@@ -324,21 +324,28 @@ try:
         # Historic image previously saved
         image_directory = os.path.join(file_path, generated_image_location)
         if not os.path.exists(image_directory):
-            warnings.warn("Historic image directory path does not exist: '" + image_directory + "'")
+            warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
             exit()
 
         # Get random image from folder
         file = FileLoader(image_directory)
         image_path = file.get_random_file_of_type(image_format)
         image_base = Image.open(image_path)
-
-        # TODO: set up system that loads prompt variables from file
-        # Add text to via parsing if necessary
         image_name = os.path.basename(image_path)
         title_text = image_name
 
+        # Get and apply metadata if it exists
+        metadata = image_base.text
+        if PropertiesConst.TITLE.value in metadata.keys():
+            title_text = metadata[PropertiesConst.TITLE.value]
+        elif PropertiesConst.PROMPT.value in metadata.keys():
+            title_text = metadata[PropertiesConst.PROMPT.value]
+        if PropertiesConst.ARTIST.value in metadata.keys():
+            artist_text = metadata[PropertiesConst.ARTIST.value]
+
     else:
-        # Build prompt
+        # Build prompt, add metadata as we go
+        metadata = PngImagePlugin.PngInfo()
         if prompt_mode == 0:
             # Pick random type of building
             random.seed()
@@ -350,16 +357,18 @@ try:
             artist_text = FileLoader.get_random_line(file_path + '/' + artists_file)
             title_text = FileLoader.get_random_line(file_path + '/' + subjects_file)
             prompt = preamble + title_text + ' ' + connector + ' ' + artist_text + postscript
+            metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
+            metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
         elif prompt_mode == 2:
-            # Build prompt from artist/subject
+            # Build prompt from prompt file
             title_text = FileLoader.get_random_line(file_path + '/' + prompts_file)
             prompt = preamble + title_text + postscript
-
         else:
             warnings.warn('Invalid prompt mode chosen. Exiting application.')
             exit()
 
+        metadata.add_text(PropertiesConst.PROMPT.value, prompt)
         logging.info(f"Requesting \'{prompt}\'")
 
         # Pick between providers
@@ -378,10 +387,10 @@ try:
             if save_image:
                 image_name = prompt + ".png"
                 save_path = os.path.join(file_path, generated_image_location, image_name)
-                # TODO: Set up to save in internal location for Historic loading
                 logging.info(f"Saving image as {save_path}")
+
                 # Save the image
-                image_base.save(save_path)
+                image_base.save(save_path, pnginfo=metadata)
 
         if provider_type == ProvidersConst.DALLE.value:
             # Request image for DALLE
