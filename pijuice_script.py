@@ -22,7 +22,7 @@ power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuic
 
 logging.info(f"Power status is \'{power_status}\'")
 
-if power_status == 'NOT_PRESENT':
+if power_status == PiJuiceConst.NOT_PRESENT.value:
 	# If power not plugged in, run pycasso and shut down
 	os.system(f"sudo dbus-run-session -- bash {os.path.dirname(os.path.abspath(__file__))}/run.sh")
 

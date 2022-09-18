@@ -80,6 +80,8 @@ class PiJuiceConst(Enum):
     STATUS_ROOT = "data"
     STATUS_POWER = "powerInput"
 
+    NOT_PRESENT = "NOT_PRESENT"
+
 
 class PropertiesConst(Enum):
     FILE_PREAMBLE = "pycasso - "
