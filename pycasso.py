@@ -80,9 +80,9 @@ class Pycasso:
 
         # Prompt
         self.prompt_mode = ConfigConst.PROMPT_MODE.value
-        self.preamble = ConfigConst.PROMPT_PREAMBLE.value
-        self.connector = ConfigConst.PROMPT_CONNECTOR.value
-        self.postscript = ConfigConst.PROMPT_POSTSCRIPT.value
+        self.prompt_preamble = ConfigConst.PROMPT_PREAMBLE.value
+        self.prompt_connector = ConfigConst.PROMPT_CONNECTOR.value
+        self.prompt_postscript = ConfigConst.PROMPT_POSTSCRIPT.value
 
         # Display Settings
         self.display_type = ConfigConst.DISPLAY_TYPE.value
@@ -184,12 +184,12 @@ class Pycasso:
                                      " while using a mostly disconnected headless setup."
                                      "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
             args = parser.parse_args()
-            stability_key = args.stabilitykey
-            display_shape = args.displayshape
+            self.stability_key = args.stabilitykey
+            self.display_shape = args.displayshape
 
             if args.savekeys:
-                if stability_key is not None:
-                    StabilityProvider.add_secret(stability_key)
+                if self.stability_key is not None:
+                    StabilityProvider.add_secret(self.stability_key)
 
         except argparse.ArgumentError as e:
             logging.error(e)
@@ -240,9 +240,9 @@ class Pycasso:
 
                 # Prompt
                 self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-                self.preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
-                self.connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
-                self.postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+                self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
+                self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
+                self.prompt_postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
 
                 # Display (rest of EPD config is just passed straight into displayfactory
                 self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
@@ -374,20 +374,20 @@ class Pycasso:
                 if self.prompt_mode == PromptMode.RANDOM.value:
                     # Pick random type of building
                     random.seed()
-                    prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
+                    self.prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
-                if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
+                if self.prompt_mode == PromptMode.SUBJECT_ARTIST.value:
                     # Build prompt from artist/subject
                     artist_text = FileLoader.get_random_line(os.path.join(self.file_path, self.artists_file))
                     title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.subjects_file))
-                    prompt = self.preamble + title_text + " " + self.connector + " " + artist_text + self.postscript
+                    prompt = self.prompt_preamble + title_text + " " + self.prompt_connector + " " + artist_text + self.prompt_postscript
                     metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
                     metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
-                elif prompt_mode == PromptMode.PROMPT.value:
+                elif self.prompt_mode == PromptMode.PROMPT.value:
                     # Build prompt from prompt file
                     title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.prompts_file))
-                    prompt = self.preamble + title_text + self.postscript
+                    prompt = self.prompt_preamble + title_text + self.prompt_postscript
                 else:
                     warnings.warn("Invalid prompt mode chosen. Exiting application.")
                     exit()
@@ -402,10 +402,10 @@ class Pycasso:
                 if provider_type == ProvidersConst.STABLE.value:
                     # Request image for Stability
                     logging.info("Loading Stability API")
-                    if stability_key is None:
+                    if self.stability_key is None:
                         stability_provider = StabilityProvider()
                     else:
-                        stability_provider = StabilityProvider(key=stability_key)
+                        stability_provider = StabilityProvider(key=self.stability_key)
 
                     logging.info("Getting Image")
                     fetch_height = Pycasso.ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
@@ -445,7 +445,7 @@ class Pycasso:
             draw = ImageDraw.Draw(image_base, "RGBA")
 
             # Draw status shape if provided
-            if display_shape is not None:
+            if self.display_shape is not None:
                 # Make bounding box
                 status_padding = 5
                 status_size = 10  # TODO: put in config
@@ -454,7 +454,7 @@ class Pycasso:
                 status_corner = status_padding + status_size
                 status_box = (status_padding, status_padding, status_corner, status_corner)
                 status_circle = (status_padding + status_size / 2, status_padding + status_size / 2, status_size / 2)
-                if display_shape == 1:
+                if self.display_shape == 1:
                     draw.rectangle(status_box,
                                    width=0,
                                    fill=(0, 0, 0, status_opacity))
@@ -465,13 +465,13 @@ class Pycasso:
                     draw.line(status_box,
                               width=status_width,
                               fill=(255, 255, 255, status_opacity))
-                elif display_shape == 2:
+                elif self.display_shape == 2:
                     # TODO: triangle doesn't have line thickness and lines overlap
                     draw.regular_polygon(status_circle,
                                          n_sides=3,
                                          fill=(0, 0, 0, status_opacity),
                                          outline=(255, 255, 255, status_opacity))
-                elif display_shape == 3:
+                elif self.display_shape == 3:
                     draw.ellipse(status_box,
                                  width=status_width,
                                  fill=(0, 0, 0, status_opacity),
