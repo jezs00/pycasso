@@ -102,6 +102,9 @@ class Pycasso:
 
         # Draw
         self.display_shape = None
+
+        # Args init
+        self.args = None
         return
 
     @staticmethod
@@ -183,11 +186,11 @@ class Pycasso:
                                 help="Displays a shape in the top left corner of the epd. Good for providing visual information"
                                      " while using a mostly disconnected headless setup."
                                      "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
-            args = parser.parse_args()
-            self.stability_key = args.stabilitykey
-            self.display_shape = args.displayshape
+            self.args = parser.parse_args()
+            self.stability_key = self.args.stabilitykey
+            self.display_shape = self.args.displayshape
 
-            if args.savekeys:
+            if self.args.savekeys:
                 if self.stability_key is not None:
                     StabilityProvider.add_secret(self.stability_key)
 
@@ -199,10 +202,10 @@ class Pycasso:
         config = {}
 
         try:
-            if args.configpath is None:
+            if self.args.configpath is None:
                 config_load = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
             else:
-                config_load = Configs(args.configpath)
+                config_load = Configs(self.args.configpath)
 
             # Load config
             if os.path.exists(config_load.path):
@@ -288,7 +291,7 @@ class Pycasso:
             logging.info("ctrl + c:")
             exit()
 
-        if args.norun:
+        if self.args.norun:
             logging.info("--norun option used, closing pycasso without running")
             exit()
 
