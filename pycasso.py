@@ -30,8 +30,13 @@ class Pycasso:
 
     Methods
     -------
-    run()
-        Do pycasso
+    parse_args()
+        Function parses arguments provided via command line. Sets internal args variable to argparser
+        Also returns the argparser
+
+    load_config()
+        Loads config from file provided to it or
+        Also returns the argparser
 
     max_area(area_list)
         Takes an array of tuples and returns the largest area within them
@@ -47,6 +52,9 @@ class Pycasso:
 
     ceiling_multiple(number, multiple)
         Helper to find next multiple of 'multiple' for number
+
+    run()
+        Do pycasso
     """
 
     def __init__(self):
@@ -107,6 +115,130 @@ class Pycasso:
         self.args = None
         return
 
+    def parse_args(self):
+        try:
+            parser = argparse.ArgumentParser(
+                description="A program to request an image from preset APIs and apply them to an"
+                            " epaper screen through a raspberry pi unit")
+            parser.add_argument("--configpath",
+                                dest="configpath",
+                                type=str,
+                                help="Path to .config file. Default: \'.config\'")
+            parser.add_argument("--stabilitykey",
+                                dest="stabilitykey",
+                                type=str,
+                                help="Stable Diffusion API Key")
+            parser.add_argument("--savekeys",
+                                dest="savekeys",
+                                action="store_const",
+                                const=1,
+                                default=0,
+                                help="Use this flag to save any keys provided to system keyring")
+            parser.add_argument("--norun",
+                                dest="norun",
+                                action="store_const",
+                                const=1,
+                                default=0,
+                                help="This flag ends the program before starting the main functionality of pycasso. This will "
+                                     "not fetch images or update the epaper screen")
+            parser.add_argument("--displayshape",
+                                dest="displayshape",
+                                type=int,
+                                help="Displays a shape in the top left corner of the epd. Good for providing visual information"
+                                     " while using a mostly disconnected headless setup."
+                                     "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
+            self.args = parser.parse_args()
+        except argparse.ArgumentError as e:
+            logging.error(e)
+            exit()
+
+        return self.args
+
+    def load_config(self, config_path=None):
+        config = {}
+
+        try:
+            if config_path is not None:
+                config_load = Configs(os.path.join(self.file_path, config_path))
+            elif self.args.configpath is None:
+                config_load = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
+            else:
+                config_load = Configs(self.args.configpath)
+
+            # Load config
+            if os.path.exists(config_load.path):
+                config = config_load.read_config()
+
+                # File Settings
+                self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
+                self.external_image_location = config.get("File", "image_location",
+                                                          fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
+                self.generated_image_location = config.get("File", "image_location",
+                                                           fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
+                self.image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
+                self.font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
+                self.subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
+                self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
+                self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
+
+                # Text Settings
+                self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
+                self.parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
+                self.preamble_regex = config.get("Text", "preamble_regex",
+                                                 fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
+                self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
+                self.remove_text = config.get("Text", "remove_text",
+                                              fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n")
+                self.box_to_floor = config.getboolean("Text", "box_to_floor",
+                                                      fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
+                self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
+                self.artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
+                self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
+                self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)
+                self.title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
+                self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
+                self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
+
+                # Prompt
+                self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
+                self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
+                self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
+                self.prompt_postscript = config.get("Prompt", "postscript",
+                                                    fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+
+                # Display (rest of EPD config is just passed straight into displayfactory
+                self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
+
+                # Provider
+                self.external_amount = config.getint("Providers", "external_amount",
+                                                     fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
+                self.historic_amount = config.getint("Providers", "historic_amount",
+                                                     fallback=ProvidersConst.HISTORIC_AMOUNT.value)
+                self.stability_amount = config.getint("Providers", "stability_amount",
+                                                      fallback=ProvidersConst.STABLE_AMOUNT.value)
+                self.dalle_amount = config.getint("Providers", "dalle_amount",
+                                                  fallback=ProvidersConst.DALLE_AMOUNT.value)
+
+                # Logging Settings
+                self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
+                self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
+
+            # Set up logging
+            if self.log_file is not None and self.log_file != "":
+                self.log_file = os.path.join(self.file_path, self.log_file)
+
+            logging.basicConfig(level=self.log_level, filename=self.log_file)
+            logging.info("Config loaded")
+
+        except IOError as e:
+            logging.error(e)
+
+        except KeyboardInterrupt:
+            logging.info("ctrl + c:")
+            exit()
+
+        return config
+
     @staticmethod
     def max_area(area_list):
         # initialise
@@ -155,128 +287,15 @@ class Pycasso:
         return
 
     def run(self):
-        try:
-            parser = argparse.ArgumentParser(
-                description="A program to request an image from preset APIs and apply them to an"
-                            " epaper screen through a raspberry pi unit")
-            parser.add_argument("--configpath",
-                                dest="configpath",
-                                type=str,
-                                help="Path to .config file. Default: \'.config\'")
-            parser.add_argument("--stabilitykey",
-                                dest="stabilitykey",
-                                type=str,
-                                help="Stable Diffusion API Key")
-            parser.add_argument("--savekeys",
-                                dest="savekeys",
-                                action="store_const",
-                                const=1,
-                                default=0,
-                                help="Use this flag to save any keys provided to system keyring")
-            parser.add_argument("--norun",
-                                dest="norun",
-                                action="store_const",
-                                const=1,
-                                default=0,
-                                help="This flag ends the program before starting the main functionality of pycasso. This will "
-                                     "not fetch images or update the epaper screen")
-            parser.add_argument("--displayshape",
-                                dest="displayshape",
-                                type=int,
-                                help="Displays a shape in the top left corner of the epd. Good for providing visual information"
-                                     " while using a mostly disconnected headless setup."
-                                     "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
-            self.args = parser.parse_args()
-            self.stability_key = self.args.stabilitykey
-            self.display_shape = self.args.displayshape
+        self.parse_args()
+        self.stability_key = self.args.stabilitykey
+        self.display_shape = self.args.displayshape
 
-            if self.args.savekeys:
-                if self.stability_key is not None:
-                    StabilityProvider.add_secret(self.stability_key)
+        if self.args.savekeys:
+            if self.stability_key is not None:
+                StabilityProvider.add_secret(self.stability_key)
 
-        except argparse.ArgumentError as e:
-            logging.error(e)
-            exit()
-
-        # TODO: pull this out and put into config_wrapper.py
-        config = {}
-
-        try:
-            if self.args.configpath is None:
-                config_load = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
-            else:
-                config_load = Configs(self.args.configpath)
-
-            # Load config
-            if os.path.exists(config_load.path):
-                config = config_load.read_config()
-
-                # File Settings
-                self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
-                self.external_image_location = config.get("File", "image_location",
-                                                          fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
-                self.generated_image_location = config.get("File", "image_location",
-                                                           fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
-                self.image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
-                self.font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
-                self.subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
-                self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
-                self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
-
-                # Text Settings
-                self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
-                self.parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
-                self.preamble_regex = config.get("Text", "preamble_regex",
-                                                 fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
-                self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
-                self.remove_text = config.get("Text", "remove_text",
-                                              fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n")
-                self.box_to_floor = config.getboolean("Text", "box_to_floor",
-                                                      fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
-                self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
-                self.artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
-                self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
-                self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)
-                self.title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
-                self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
-                self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
-
-                # Prompt
-                self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-                self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
-                self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
-                self.prompt_postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
-
-                # Display (rest of EPD config is just passed straight into displayfactory
-                self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
-
-                # Provider
-                self.external_amount = config.getint("Providers", "external_amount",
-                                                     fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
-                self.historic_amount = config.getint("Providers", "historic_amount",
-                                                     fallback=ProvidersConst.HISTORIC_AMOUNT.value)
-                self.stability_amount = config.getint("Providers", "stability_amount",
-                                                      fallback=ProvidersConst.STABLE_AMOUNT.value)
-                self.dalle_amount = config.getint("Providers", "dalle_amount",
-                                                  fallback=ProvidersConst.DALLE_AMOUNT.value)
-
-                # Logging Settings
-                self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
-                self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
-
-            # Set up logging
-            if self.log_file is not None and self.log_file != "":
-                self.log_file = os.path.join(self.file_path, self.log_file)
-
-            logging.basicConfig(level=self.log_level, filename=self.log_file)
-            logging.info("Config loaded")
-
-        except IOError as e:
-            logging.error(e)
-
-        except KeyboardInterrupt:
-            logging.info("ctrl + c:")
-            exit()
+        config = self.load_config()
 
         logging.info("pycasso has begun")
 
