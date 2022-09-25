@@ -551,7 +551,7 @@ class Pycasso:
             logging.shutdown()
 
         except EPDNotFoundError:
-            logging.info(f"Couldn't find {self.display_type}")
+            warnings.warn(f"Couldn't find {self.display_type}")
             exit()
 
         except IOError as e:
