@@ -430,8 +430,8 @@ class Pycasso:
                         stability_provider = StabilityProvider(key=self.stability_key)
 
                     logging.info("Getting Image")
-                    fetch_height = Pycasso.ceiling_multiple(epd.height, StabilityConst.MULTIPLE.value)
-                    fetch_width = Pycasso.ceiling_multiple(epd.width, StabilityConst.MULTIPLE.value)
+                    fetch_height = Pycasso.ceiling_multiple(fetch_height, StabilityConst.MULTIPLE.value)
+                    fetch_width = Pycasso.ceiling_multiple(fetch_width, StabilityConst.MULTIPLE.value)
                     image_base = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
                 elif provider_type == ProvidersConst.DALLE.value:
