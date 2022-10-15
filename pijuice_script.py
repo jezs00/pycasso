@@ -6,7 +6,7 @@ from pycasso import Pycasso
 import logging
 import os
 import sys
-from constants import PiJuiceConst
+from constants import PiJuiceConst, DisplayShape
 
 # Set up logging
 file_path = os.path.dirname(os.path.abspath(__file__))
@@ -21,12 +21,19 @@ except:
 # TODO: handle error pijuice not available
 
 power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
+charge_level = pijuice.status.GetChargeLevel()
 
 logging.info(f"Power status is \'{power_status}\'")
+logging.info(f"Battery level is \'{charge_level}\'")
 
 if power_status == PiJuiceConst.NOT_PRESENT.value:
 	# If power not plugged in, run pycasso and shut down
 	instance = Pycasso()
+
+	# Set icon if PiJuice has lower battery
+	if charge_level < PiJuiceConst.CHARGE_DISPLAY.value:
+		instance.display_shape = DisplayShape.SQUARE
+
 	instance.run()
 
 	# Remove power to PiJuice MCU IO pins
