@@ -53,6 +53,9 @@ class Pycasso:
     ceiling_multiple(number, multiple)
         Helper to find next multiple of 'multiple' for number
 
+    display_image_on_EPD(display_image, epd):
+        Displays PIL image object 'display_image' on omni_epd object 'epd'
+
     run()
         Do pycasso
     """
@@ -269,6 +272,17 @@ class Pycasso:
     @staticmethod
     def ceiling_multiple(number, multiple):
         return int(multiple * numpy.ceil(number / multiple))
+
+    @staticmethod
+    def display_image_on_EPD(displayImage, epd):
+        logging.info("Prepare epaper")
+        epd.prepare()
+
+        epd.display(displayImage)
+
+        logging.info("Send epaper to sleep")
+        epd.close()
+        return
 
     # TODO: Functions to run to clean up switching the modes
     def load_historic_image(self):
@@ -541,13 +555,7 @@ class Pycasso:
                 draw.text((epd.width / 2, epd.height - self.title_loc), title_text, font=title_font, anchor="mb",
                           fill=0)
 
-            logging.info("Prepare epaper")
-            epd.prepare()
-
-            epd.display(image_base)
-
-            logging.info("Send epaper to sleep")
-            epd.close()
+            self.display_image_on_EPD(image_base, epd)
             logging.shutdown()
 
         except EPDNotFoundError:
