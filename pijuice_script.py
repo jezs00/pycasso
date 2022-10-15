@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 from pijuice import PiJuice
+
+from pycasso import Pycasso
 import logging
 import os
 import sys
@@ -24,7 +26,8 @@ logging.info(f"Power status is \'{power_status}\'")
 
 if power_status == PiJuiceConst.NOT_PRESENT.value:
 	# If power not plugged in, run pycasso and shut down
-	os.system(f"sudo dbus-run-session -- bash {os.path.dirname(os.path.abspath(__file__))}/run.sh")
+	instance = Pycasso()
+	instance.run()
 
 	# Remove power to PiJuice MCU IO pins
 	pijuice.power.SetSystemPowerSwitch(0)
