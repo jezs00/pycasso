@@ -35,6 +35,12 @@ class ConfigConst(Enum):
     TEXT_PADDING = 10
     TEXT_OPACITY = 150
 
+    # Icon Settings
+    ICON_PADDING = 5
+    ICON_SIZE = 10
+    ICON_WIDTH = 3
+    ICON_OPACITY = 150
+
     # Automatic prompt construction
     PROMPT_MODES_COUNT = 2
     PROMPT_MODE = 1

@@ -89,6 +89,12 @@ class Pycasso:
         self.padding = ConfigConst.TEXT_PADDING.value
         self.opacity = ConfigConst.TEXT_OPACITY.value
 
+        # Icon
+        self.icon_padding = ConfigConst.ICON_PADDING.value
+        self.icon_size = ConfigConst.ICON_SIZE.value
+        self.icon_width = ConfigConst.ICON_WIDTH.value
+        self.icon_opacity = ConfigConst.ICON_OPACITY.value
+
         # Prompt
         self.prompt_mode = ConfigConst.PROMPT_MODE.value
         self.prompt_preamble = ConfigConst.PROMPT_PREAMBLE.value
@@ -202,12 +208,14 @@ class Pycasso:
                 self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
                 self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
 
-                # Prompt
+                # Icon
                 self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-                self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
-                self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
-                self.prompt_postscript = config.get("Prompt", "postscript",
-                                                    fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+
+                # Prompt
+                self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
+                self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)
+                self.icon_width = config.getint("Icon", "icon_width", fallback=ConfigConst.ICON_WIDTH.value)
+                self.icon_opacity = config.getint("Icon", "icon_opacity", fallback=ConfigConst.ICON_OPACITY.value)
 
                 # Display (rest of EPD config is just passed straight into displayfactory
                 self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
@@ -483,40 +491,37 @@ class Pycasso:
             # Draw status shape if provided
             if self.display_shape is not None:
                 # Make bounding box
-                status_padding = 5
-                status_size = 10  # TODO: put in config
-                status_width = 3
-                status_opacity = 150
-                status_corner = status_padding + status_size
-                status_box = (status_padding, status_padding, status_corner, status_corner)
-                status_circle = (status_padding + status_size / 2, status_padding + status_size / 2, status_size / 2)
+                status_corner = self.icon_padding + self.icon_size
+                status_box = (self.icon_padding, self.icon_padding, status_corner, status_corner)
                 if self.display_shape == 1:
                     draw.rectangle(status_box,
                                    width=0,
-                                   fill=(0, 0, 0, status_opacity))
+                                   fill=(0, 0, 0, self.icon_opacity))
                     draw.line(status_box,
-                              width=status_width,
-                              fill=(255, 255, 255, status_opacity))
-                    status_box = (status_corner, status_padding, status_padding, status_corner)
+                              width=self.icon_width,
+                              fill=(255, 255, 255, self.icon_opacity))
+                    status_box = (status_corner, self.icon_padding, self.icon_padding, status_corner)
                     draw.line(status_box,
-                              width=status_width,
-                              fill=(255, 255, 255, status_opacity))
+                              width=self.icon_width,
+                              fill=(255, 255, 255, self.icon_opacity))
                 elif self.display_shape == 2:
                     # TODO: triangle doesn't have line thickness and lines overlap
+                    status_circle = (self.icon_padding + self.icon_size / 2, self.icon_padding
+                                     + self.icon_size / 2, self.icon_size / 2)
                     draw.regular_polygon(status_circle,
                                          n_sides=3,
-                                         fill=(0, 0, 0, status_opacity),
-                                         outline=(255, 255, 255, status_opacity))
+                                         fill=(0, 0, 0, self.icon_opacity),
+                                         outline=(255, 255, 255, self.icon_opacity))
                 elif self.display_shape == 3:
                     draw.ellipse(status_box,
-                                 width=status_width,
-                                 fill=(0, 0, 0, status_opacity),
-                                 outline=(255, 255, 255, status_opacity))
+                                 width=self.icon_width,
+                                 fill=(0, 0, 0, self.icon_opacity),
+                                 outline=(255, 255, 255, self.icon_opacity))
                 else:
                     draw.rectangle(status_box,
-                                   width=status_width,
-                                   fill=(0, 0, 0, status_opacity),
-                                   outline=(255, 255, 255, status_opacity))
+                                   width=self.icon_width,
+                                   fill=(0, 0, 0, self.icon_opacity),
+                                   outline=(255, 255, 255, self.icon_opacity))
 
             # Draw text(s) if necessary
             if self.add_text:
