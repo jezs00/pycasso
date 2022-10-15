@@ -587,5 +587,5 @@ class Pycasso:
             exit()
 
 
-instance = Pycasso()
-instance.run()
+# instance = Pycasso()
+# instance.run()

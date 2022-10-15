@@ -12,16 +12,18 @@ from constants import PiJuiceConst, DisplayShape
 file_path = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=logging.INFO, filename=os.path.join(file_path, "pijuice.log"))
 
+power_status = PiJuiceConst.NOT_PRESENT.value
+charge_level = 100
+
 try:
 	pijuice = PiJuice(1, 0x14)
+	power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
+	charge_level = pijuice.status.GetChargeLevel()['data']
 except:
 	logging.error("Cannot create pijuice object")
 	sys.exit()
 
 # TODO: handle error pijuice not available
-
-power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
-charge_level = pijuice.status.GetChargeLevel()
 
 logging.info(f"Power status is \'{power_status}\'")
 logging.info(f"Battery level is \'{charge_level}\'")
@@ -32,10 +34,11 @@ if power_status == PiJuiceConst.NOT_PRESENT.value:
 
 	# Set icon if PiJuice has lower battery
 	if charge_level < PiJuiceConst.CHARGE_DISPLAY.value:
-		instance.display_shape = DisplayShape.SQUARE
-
+		logging.info(f"Displaying icon due to low battery")
+		instance.icon_shape = DisplayShape.SQUARE
+	
 	instance.run()
-
+	
 	# Remove power to PiJuice MCU IO pins
 	pijuice.power.SetSystemPowerSwitch(0)
 
