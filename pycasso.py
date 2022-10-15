@@ -353,7 +353,8 @@ class Pycasso:
     def run(self):
         self.parse_args()
         self.stability_key = self.args.stabilitykey
-        self.icon_shape = self.args.displayshape
+        if self.args.displayshape is not None:
+            self.icon_shape = self.args.displayshape
 
         if self.args.savekeys:
             if self.stability_key is not None:
