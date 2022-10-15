@@ -13,7 +13,7 @@ from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from file_loader import FileLoader
-from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
+from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode, DisplayShape
 from provider import StabilityProvider
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
@@ -57,7 +57,7 @@ class Pycasso:
         Displays PIL image object 'display_image' on omni_epd object 'epd'
 
     add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150)
-        Adds a status icon of type 'display_shape' on draw object 'draw'
+        Adds a status icon of type 'display_shape' on draw object 'draw'. Draws a rectangle if no display_shape provided
         'icon_padding' sets pixel distance from edge
         'icon_size' sets pixel size of object
         'icon_width' sets line width for icon
@@ -302,7 +302,7 @@ class Pycasso:
     def add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150):
         status_corner = icon_padding + icon_size
         status_box = (icon_padding, icon_padding, status_corner, status_corner)
-        if display_shape == 1:
+        if display_shape == DisplayShape.CROSS.value:
             draw.rectangle(status_box,
                            width=0,
                            fill=(0, 0, 0, icon_opacity))
@@ -313,20 +313,18 @@ class Pycasso:
             draw.line(status_box,
                       width=icon_width,
                       fill=(255, 255, 255, icon_opacity))
-        elif display_shape == 2:
+        elif display_shape == DisplayShape.TRIANGLE.value:
             status_circle = (icon_padding + icon_size / 2, icon_padding
                              + icon_size / 2, icon_size / 2)
             draw.regular_polygon(status_circle,
                                  n_sides=3,
                                  fill=(0, 0, 0, icon_opacity),
                                  outline=(255, 255, 255, icon_opacity))
-        elif display_shape == 3:
+        elif display_shape == DisplayShape.CIRCLE.value:
             draw.ellipse(status_box,
                          width=icon_width,
                          fill=(0, 0, 0, icon_opacity),
                          outline=(255, 255, 255, icon_opacity))
-        elif display_shape is None:
-            return
         else:
             draw.rectangle(status_box,
                            width=icon_width,

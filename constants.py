@@ -88,6 +88,8 @@ class PiJuiceConst(Enum):
 
     NOT_PRESENT = "NOT_PRESENT"
 
+    CHARGE_DISPLAY = 15
+
 
 class PropertiesConst(Enum):
     FILE_PREAMBLE = "pycasso - "
@@ -100,3 +102,9 @@ class PromptMode(Enum):
     RANDOM = 0
     SUBJECT_ARTIST = 1
     PROMPT = 2
+
+class DisplayShape(Enum):
+    SQUARE = 0
+    CROSS = 1
+    TRIANGLE = 2
+    CIRCLE = 3
