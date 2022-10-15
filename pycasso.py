@@ -56,6 +56,14 @@ class Pycasso:
     display_image_on_EPD(display_image, epd):
         Displays PIL image object 'display_image' on omni_epd object 'epd'
 
+    add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150)
+        Adds a status icon of type 'display_shape' on draw object 'draw'
+        'icon_padding' sets pixel distance from edge
+        'icon_size' sets pixel size of object
+        'icon_width' sets line width for icon
+        'icon opacity' sets opacity for icon
+        returns draw object
+
     run()
         Do pycasso
     """
@@ -282,15 +290,51 @@ class Pycasso:
         return int(multiple * numpy.ceil(number / multiple))
 
     @staticmethod
-    def display_image_on_EPD(displayImage, epd):
+    def display_image_on_epd(display_image, epd):
         logging.info("Prepare epaper")
         epd.prepare()
 
-        epd.display(displayImage)
+        epd.display(display_image)
 
         logging.info("Send epaper to sleep")
         epd.close()
         return
+
+    @staticmethod
+    def add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150):
+        status_corner = icon_padding + icon_size
+        status_box = (icon_padding, icon_padding, status_corner, status_corner)
+        if display_shape == 1:
+            draw.rectangle(status_box,
+                           width=0,
+                           fill=(0, 0, 0, icon_opacity))
+            draw.line(status_box,
+                      width=icon_width,
+                      fill=(255, 255, 255, icon_opacity))
+            status_box = (status_corner, icon_padding, icon_padding, status_corner)
+            draw.line(status_box,
+                      width=icon_width,
+                      fill=(255, 255, 255, icon_opacity))
+        elif display_shape == 2:
+            status_circle = (icon_padding + icon_size / 2, icon_padding
+                             + icon_size / 2, icon_size / 2)
+            draw.regular_polygon(status_circle,
+                                 n_sides=3,
+                                 fill=(0, 0, 0, icon_opacity),
+                                 outline=(255, 255, 255, icon_opacity))
+        elif display_shape == 3:
+            draw.ellipse(status_box,
+                         width=icon_width,
+                         fill=(0, 0, 0, icon_opacity),
+                         outline=(255, 255, 255, icon_opacity))
+        elif display_shape is None:
+            return
+        else:
+            draw.rectangle(status_box,
+                           width=icon_width,
+                           fill=(0, 0, 0, icon_opacity),
+                           outline=(255, 255, 255, icon_opacity))
+        return draw
 
     # TODO: Functions to run to clean up switching the modes
     def load_historic_image(self):
@@ -490,38 +534,8 @@ class Pycasso:
 
             # Draw status shape if provided
             if self.display_shape is not None:
-                # Make bounding box
-                status_corner = self.icon_padding + self.icon_size
-                status_box = (self.icon_padding, self.icon_padding, status_corner, status_corner)
-                if self.display_shape == 1:
-                    draw.rectangle(status_box,
-                                   width=0,
-                                   fill=(0, 0, 0, self.icon_opacity))
-                    draw.line(status_box,
-                              width=self.icon_width,
-                              fill=(255, 255, 255, self.icon_opacity))
-                    status_box = (status_corner, self.icon_padding, self.icon_padding, status_corner)
-                    draw.line(status_box,
-                              width=self.icon_width,
-                              fill=(255, 255, 255, self.icon_opacity))
-                elif self.display_shape == 2:
-                    # TODO: triangle doesn't have line thickness and lines overlap
-                    status_circle = (self.icon_padding + self.icon_size / 2, self.icon_padding
-                                     + self.icon_size / 2, self.icon_size / 2)
-                    draw.regular_polygon(status_circle,
-                                         n_sides=3,
-                                         fill=(0, 0, 0, self.icon_opacity),
-                                         outline=(255, 255, 255, self.icon_opacity))
-                elif self.display_shape == 3:
-                    draw.ellipse(status_box,
-                                 width=self.icon_width,
-                                 fill=(0, 0, 0, self.icon_opacity),
-                                 outline=(255, 255, 255, self.icon_opacity))
-                else:
-                    draw.rectangle(status_box,
-                                   width=self.icon_width,
-                                   fill=(0, 0, 0, self.icon_opacity),
-                                   outline=(255, 255, 255, self.icon_opacity))
+                draw = self.add_status_icon(draw, self.display_shape, self.icon_padding, self.icon_size,
+                                            self.icon_width, self.icon_opacity)
 
             # Draw text(s) if necessary
             if self.add_text:
@@ -560,7 +574,7 @@ class Pycasso:
                 draw.text((epd.width / 2, epd.height - self.title_loc), title_text, font=title_font, anchor="mb",
                           fill=0)
 
-            self.display_image_on_EPD(image_base, epd)
+            self.display_image_on_epd(image_base, epd)
             logging.shutdown()
 
         except EPDNotFoundError:
