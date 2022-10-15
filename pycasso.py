@@ -98,6 +98,7 @@ class Pycasso:
         self.opacity = ConfigConst.TEXT_OPACITY.value
 
         # Icon
+        self.icon_shape = None
         self.icon_padding = ConfigConst.ICON_PADDING.value
         self.icon_size = ConfigConst.ICON_SIZE.value
         self.icon_width = ConfigConst.ICON_WIDTH.value
@@ -124,9 +125,6 @@ class Pycasso:
 
         # Keys
         self.stability_key = None
-
-        # Draw
-        self.display_shape = None
 
         # Args init
         self.args = None
@@ -355,7 +353,7 @@ class Pycasso:
     def run(self):
         self.parse_args()
         self.stability_key = self.args.stabilitykey
-        self.display_shape = self.args.displayshape
+        self.icon_shape = self.args.displayshape
 
         if self.args.savekeys:
             if self.stability_key is not None:
@@ -533,8 +531,8 @@ class Pycasso:
             draw = ImageDraw.Draw(image_base, "RGBA")
 
             # Draw status shape if provided
-            if self.display_shape is not None:
-                draw = self.add_status_icon(draw, self.display_shape, self.icon_padding, self.icon_size,
+            if self.icon_shape is not None:
+                draw = self.add_status_icon(draw, self.icon_shape, self.icon_padding, self.icon_size,
                                             self.icon_width, self.icon_opacity)
 
             # Draw text(s) if necessary
