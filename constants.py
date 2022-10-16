@@ -36,8 +36,8 @@ class ConfigConst(Enum):
     TEXT_OPACITY = 150
 
     # Icon Settings
-    ICON_PADDING = 5
-    ICON_SIZE = 10
+    ICON_PADDING = 10
+    ICON_SIZE = 20
     ICON_WIDTH = 3
     ICON_OPACITY = 150
 
