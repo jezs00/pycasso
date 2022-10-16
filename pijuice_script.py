@@ -20,10 +20,12 @@ try:
 	power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
 	charge_level = pijuice.status.GetChargeLevel()['data']
 except:
-	logging.error("Cannot create pijuice object")
+	logging.error("Cannot create pijuice object. Running pycasso once with error display and exiting process.")
+	# run pycasso with error symbol, then exit
+	instance = Pycasso()
+	instance.icon_shape = DisplayShape.CROSS
+	instance.run()
 	sys.exit()
-
-# TODO: handle error pijuice not available
 
 logging.info(f"Power status is \'{power_status}\'")
 logging.info(f"Battery level is \'{charge_level}\'")
