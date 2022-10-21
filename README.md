@@ -28,7 +28,7 @@ python3 pip install git+https://github.com/robweber/omni-epd.git@v0.3.1#egg=omni
 #### Option 1: RC setup
 Enable pycasso on startup by adding the following command to rc.local, crontab or whatever
 
-* If using dbus for key management: `python3 <Path to pycasso>/pycasso.py`
+* If using dbus for key management: TODO
 * Otherwise: `python3 <Path to pycasso>/pycasso.py`
 
 #### Option 2: Pijuice setup
@@ -39,11 +39,12 @@ Enable pycasso to interact with pijuice by adding the following command to rc.lo
 * Otherwise: `sudo python3 <Path to pycasso>/pijuice_script.py`
 
 ### Configure
-* `nano .config` for all configutarion options
+* `nano .config` for all configuration options
 
 ### Configure pijuice
 * See [pijuice documentation](https://github.com/PiSupply/PiJuice/blob/master/Software/README.md) for
 more information. You can set the pijuice to wake up every day at a certain time.
+Recommend turning off battery LED permanently to avoid draining battery.
 
 ## Troubleshooting
 
