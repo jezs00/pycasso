@@ -21,6 +21,7 @@ Uses stability-sdk to interact with Stable Diffusion's API: https://github.com/S
 ```
 python3 pip install git+https://github.com/Stability-AI/stability-sdk.git
 python3 pip install git+https://github.com/robweber/omni-epd.git@v0.3.1#egg=omni-epd
+python3 pip install https://github.com/openai/openai-python.git
 ```
 
 
