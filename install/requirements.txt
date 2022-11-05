@@ -1,4 +1,4 @@
 keyring
 git+https://github.com/Stability-AI/stability-sdk.git
-https://github.com/openai/openai-python.git
+git+https://github.com/openai/openai-python.git
 git+https://github.com/robweber/omni-epd.git@v0.3.1#egg=omni-epd
