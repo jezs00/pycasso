@@ -123,6 +123,9 @@ class Pycasso:
         self.log_file = ConfigConst.LOGGING_FILE.value
         self.log_level = ConfigConst.LOGGING_LEVEL.value
 
+        # Generation Settings
+        self.infill = ConfigConst.GENERATION_INFILL.value
+
         # Keys
         self.stability_key = None
         self.dalle_key = None
@@ -244,6 +247,9 @@ class Pycasso:
                 # Logging Settings
                 self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
                 self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
+
+                # Generation Settings
+                self.infill = config.getboolean("Generation", "infill", fallback=ConfigConst.GENERATION_INFILL.value)
 
             # Set up logging
             if self.log_file is not None and self.log_file != "":
