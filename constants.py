@@ -55,6 +55,8 @@ class ConfigConst(Enum):
     LOGGING_FILE = "pycasso.log"
     LOGGING_LEVEL = logging.DEBUG
 
+    # Generation Settings
+    GENERATION_INFILL = 0
 
 class ProvidersConst(Enum):
     # Settings and defaults for providers
