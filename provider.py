@@ -7,11 +7,12 @@ import keyring
 import openai
 import requests
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from constants import ProvidersConst, StabilityConst, DalleConst
 from io import BytesIO
+from image_functions import ImageFunctions
 
 
 # TODO: Unit tests for this
@@ -147,8 +148,54 @@ class DalleProvider(Provider):
         img = Image.open(BytesIO(requests.get(url).content))
         return img
 
-    def infill_image_from_image(self, text, img):
 
+
+    def infill_image_from_image(self, text, img):
+        # Infills image based on next size up possible from available image
+        # TODO: handle if there are no bigger sizes
+        mask_size = (0, 0)
+
+        for key in DalleConst.SIZES.value:
+            res = DalleConst.SIZES.value[key]
+            mask_size = (key, key)
+            if key > img.height and key > img.height:
+                break
+
+        mask = DalleProvider.create_image_mask(img, mask_size)
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format='PNG')
+        mask_bytes = io.BytesIO()
+        mask.save(mask_bytes, format='PNG')
+
+        response = openai.Image.create_edit(
+            image=mask_bytes.getvalue(),
+            mask=mask_bytes.getvalue(),
+            prompt=text,
+            n=1,
+            size=res
+        )
+
+        url = response['data'][0]['url']
+        img = Image.open(BytesIO(requests.get(url).content))
+        return img
+
+
+    @staticmethod
+    def create_image_mask(img, new_size):
+        # Creates an image mask for dalle extending out on all sides equally
+        original_width, original_height = img.size
+        new_width, new_height = new_size
+
+        image_loc = (original_width / 2, original_height / 2, (original_width + original_width / 2) - 1,
+                     (original_height + original_height / 2) - 1)
+        mask = Image.new('L', (new_width, new_height), color=0)
+        draw = ImageDraw.Draw(mask)
+        draw.rectangle(image_loc, fill=255)
+
+        image_crop = ImageFunctions.get_crop_size(original_width, original_height, new_width, new_height)
+        img = img.crop(image_crop)
+
+        img.putalpha(mask)
         return img
 
     @staticmethod
