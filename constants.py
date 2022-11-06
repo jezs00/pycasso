@@ -82,6 +82,14 @@ class StabilityConst(Enum):
     MULTIPLE = 64
 
 
+class DalleConst(Enum):
+    SIZES = {
+        256: "256x256",
+        512: "512x512",
+        1024: "1024x1024"
+    }
+
+
 class PiJuiceConst(Enum):
     STATUS_ROOT = "data"
     STATUS_POWER = "powerInput"
