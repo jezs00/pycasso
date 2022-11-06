@@ -131,18 +131,24 @@ class DalleProvider(Provider):
         return
 
     def get_image_from_string(self, text, height=0, width=0):
-        response = openai.Image.create(prompt=text, n=1, size=DalleConst.SIZES.value[512])
 
-        # TODO: Logic to generate correct sized image based on shortest edge
+        # Select appropriate size from options in
+        res = list(DalleConst.SIZES.value.keys())[0]
 
-        """
-        if height == 0 or width == 0:
-            response = openai.Image.create(prompt=text, n=1, size=DalleConst.SIZES.value[1024])
-        else:
+        if height != 0 and width != 0:
+            for key in DalleConst.SIZES.value:
+                if key > height or key > width:
+                    res = DalleConst.SIZES.value[key]
+                    break
 
-        """
+        response = openai.Image.create(prompt=text, n=1, size=res)
+
         url = response['data'][0]['url']
         img = Image.open(BytesIO(requests.get(url).content))
+        return img
+
+    def infill_image_from_image(self, text, img):
+
         return img
 
     @staticmethod
