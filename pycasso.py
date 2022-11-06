@@ -14,7 +14,7 @@ from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from file_loader import FileLoader
 from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode, DisplayShape
-from provider import StabilityProvider
+from provider import StabilityProvider, DalleProvider
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
 if os.path.exists(lib_dir):
@@ -125,6 +125,7 @@ class Pycasso:
 
         # Keys
         self.stability_key = None
+        self.dalle_key = None
 
         # Args init
         self.args = None
@@ -143,6 +144,10 @@ class Pycasso:
                                 dest="stabilitykey",
                                 type=str,
                                 help="Stable Diffusion API Key")
+            parser.add_argument("--dallekey",
+                                dest="dallekey",
+                                type=str,
+                                help="Dalle API Key")
             parser.add_argument("--savekeys",
                                 dest="savekeys",
                                 action="store_const",
@@ -351,12 +356,15 @@ class Pycasso:
     def run(self):
         self.parse_args()
         self.stability_key = self.args.stabilitykey
+        self.dalle_key = self.args.dallekey
         if self.args.displayshape is not None:
             self.icon_shape = self.args.displayshape
 
         if self.args.savekeys:
             if self.stability_key is not None:
                 StabilityProvider.add_secret(self.stability_key)
+            if self.dalle_key is not None:
+                DalleProvider.add_secret(self.dalle_key)
 
         config = self.load_config()
 
@@ -498,9 +506,17 @@ class Pycasso:
                     image_base = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
                 elif provider_type == ProvidersConst.DALLE.value:
-                    # Request image for DALLE
-                    warnings.warn("DALLE not yet implemented. Exiting application.")
-                    exit()
+                    # Request image for Stability
+                    logging.info("Loading Dalle API")
+                    if self.dalle_key is None:
+                        dalle_provider = DalleProvider()
+                    else:
+                        dalle_provider = DalleProvider(key=self.dalle_key)
+
+                    logging.info("Getting Image")
+                    image_base = dalle_provider.get_image_from_string(prompt, fetch_height, fetch_width)
+
+                    # TODO: set up so that it has the option to fill full frame
 
                 else:
                     # Invalid provider
@@ -585,7 +601,3 @@ class Pycasso:
             logging.info("ctrl + c:")
             epd.close()
             exit()
-
-
-# instance = Pycasso()
-# instance.run()
