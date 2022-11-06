@@ -268,7 +268,7 @@ class Pycasso:
         return config
 
     @staticmethod
-    def max_area(area_list):
+    def max_area(area_list): # TODO: Move to image_functions
         # initialise
         a, b, c, d = area_list[0]
 
@@ -283,19 +283,19 @@ class Pycasso:
         return tup
 
     @staticmethod
-    def set_tuple_bottom(tup, bottom):
+    def set_tuple_bottom(tup, bottom): # TODO: Move to image_functions
         a, b, c, d = tup
         tup = (a, b, c, bottom)
         return tup
 
     @staticmethod
-    def set_tuple_sides(tup, left, right):
+    def set_tuple_sides(tup, left, right): # TODO: Move to image_functions
         a, b, c, d = tup
         tup = (left, b, right, d)
         return tup
 
     @staticmethod
-    def ceiling_multiple(number, multiple):
+    def ceiling_multiple(number, multiple): # TODO: Move to image_functions
         return int(multiple * numpy.ceil(number / multiple))
 
     @staticmethod
@@ -522,7 +522,9 @@ class Pycasso:
                     logging.info("Getting Image")
                     image_base = dalle_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
-                    # TODO: set up so that it has the option to fill full frame
+                    # Use infill to fill in sides of image instead of cropping
+                    if self.infill:
+                        image_base = dalle_provider.infill_image_from_image(prompt, image_base)
 
                 else:
                     # Invalid provider
@@ -539,6 +541,7 @@ class Pycasso:
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
+            # TODO: Look into moving this to image_functions
             width_diff = (epd.width - image_base.width) / 2
             height_diff = (epd.height - image_base.height) / 2
             left_pixel = 0 - width_diff
