@@ -28,23 +28,37 @@ except:
 
 logging.info(f"Power status is \'{power_status}\'")
 logging.info(f"Battery level is \'{charge_level}\'")
+try:
+	if power_status == PiJuiceConst.NOT_PRESENT.value:
+		# If power not plugged in, run pycasso and shut down
+		instance = Pycasso()
 
-if power_status == PiJuiceConst.NOT_PRESENT.value:
-	# If power not plugged in, run pycasso and shut down
-	instance = Pycasso()
+		# Set icon if PiJuice has lower battery
+		if charge_level < PiJuiceConst.CHARGE_DISPLAY.value:
+			logging.info(f"Displaying icon due to low battery")
+			instance.icon_shape = DisplayShape.SQUARE.value
 
-	# Set icon if PiJuice has lower battery
-	if charge_level < PiJuiceConst.CHARGE_DISPLAY.value:
-		logging.info(f"Displaying icon due to low battery")
-		instance.icon_shape = DisplayShape.SQUARE.value
+		instance.run()
 
-	instance.run()
+		# Remove power to PiJuice MCU IO pins
+		pijuice.power.SetSystemPowerSwitch(0)
 
+		# In 10 seconds we are not so nice - Remove 5V power to RPi
+		pijuice.power.SetPowerOff(10)
+
+		# Enable wakeup alarm
+		pijuice.rtcAlarm.SetWakeupEnabled(True)
+
+		# But try to shut down nicely first
+		os.system("sudo shutdown -h 0")
+
+except:
+	logging.error("Program Error. Shutting down if possible")
 	# Remove power to PiJuice MCU IO pins
 	pijuice.power.SetSystemPowerSwitch(0)
 
-	# In 10 seconds we are not so nice - Remove 5V power to RPi
-	pijuice.power.SetPowerOff(10)
+	# In 5 seconds we are not so nice - Remove 5V power to RPi
+	pijuice.power.SetPowerOff(5)
 
 	# Enable wakeup alarm
 	pijuice.rtcAlarm.SetWakeupEnabled(True)
