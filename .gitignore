@@ -134,6 +134,9 @@ dmypy.json
 # Ignore image folder contents
 images/*
 
+# Ignore prompts folder contents
+prompts/*
+
 # Ignore mock outputs
 mock_output.png
 api_output.png
