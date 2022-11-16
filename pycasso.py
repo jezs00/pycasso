@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-
+import re
 import sys
 import os
 import random
@@ -63,6 +63,9 @@ class Pycasso:
         'icon_width' sets line width for icon
         'icon opacity' sets opacity for icon
         returns draw object
+
+    parse_subject(subject)
+        String parsing method that pulls out text with random options in it
 
     run()
         Do pycasso
@@ -343,6 +346,20 @@ class Pycasso:
                            outline=(255, 255, 255, icon_opacity))
         return draw
 
+    # TODO: offload prompt generation into another class
+    @staticmethod
+    def parse_subject(subject):
+        # Get everything inside brackets
+        brackets = re.findall(r"\(.*?\)", subject)
+        for bracket in brackets:
+            # Get random item
+            bracket = bracket.replace('(','').replace(')','')
+            random.seed()
+            option = random.choice(bracket.split('|'))
+            # Substitute brackets
+            subject = re.sub(r"\(.*?\)", option, subject, 1)
+        return subject
+
     # TODO: Functions to run to clean up switching the modes
     def load_historic_image(self):
         return
@@ -479,7 +496,9 @@ class Pycasso:
                     # Build prompt from artist/subject
                     artist_text = FileLoader.get_random_line(os.path.join(self.file_path, self.artists_file))
                     title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.subjects_file))
-                    prompt = self.prompt_preamble + title_text + " " + self.prompt_connector + " " + artist_text + self.prompt_postscript
+                    title_text = self.parse_subject(title_text)
+                    prompt = (self.prompt_preamble + title_text + self.prompt_connector
+                              + artist_text + self.prompt_postscript)
                     metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
                     metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
