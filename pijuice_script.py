@@ -5,6 +5,7 @@ from pycasso import Pycasso
 import logging
 import os
 import sys
+import time
 from constants import PiJuiceConst, DisplayShape
 
 # Set up logging
@@ -13,6 +14,9 @@ logging.basicConfig(level=logging.INFO, filename=os.path.join(file_path, "pycass
 
 power_status = None
 charge_level = 100
+
+# sleep for a bit as I can't figure out a better solution to stop pijuice from failing to start
+time.sleep(30) #TODO set up constant and config for wait time
 
 try:
 	pijuice = PiJuice(1, 0x14)
@@ -24,6 +28,7 @@ except:
 	instance = Pycasso()
 	instance.icon_shape = DisplayShape.CROSS.value
 	instance.run()
+	os.system("shutdown /s /t 1")
 	sys.exit()
 
 logging.info(f"Power status is \'{power_status}\'")
