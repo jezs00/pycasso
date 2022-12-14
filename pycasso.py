@@ -13,14 +13,16 @@ from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from file_loader import FileLoader
-from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode, DisplayShape
+from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
 from provider import StabilityProvider, DalleProvider
+from image_functions import ImageFunctions
 
 lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
 if os.path.exists(lib_dir):
     sys.path.append(lib_dir)
 
 
+# noinspection PyTypeChecker
 class Pycasso:
     """
     Object used to run pycasso
@@ -38,31 +40,8 @@ class Pycasso:
         Loads config from file provided to it or
         Also returns the argparser
 
-    max_area(area_list)
-        Takes an array of tuples and returns the largest area within them
-        (a, b, c, d) - will return the smallest value for a,b and largest value for c,d
-
-    set_tuple_bottom(tup, bottom)
-        Helper to set fourth element in four element tuple
-        In context of application, sets the bottom coordinate of the box
-
-    set_tuple_sides(tup, left, right)
-        Helper to set first and third element in four element tuple
-        In context of application, sets the left and right coordinates of the box
-
-    ceiling_multiple(number, multiple)
-        Helper to find next multiple of 'multiple' for number
-
     display_image_on_EPD(display_image, epd):
         Displays PIL image object 'display_image' on omni_epd object 'epd'
-
-    add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150)
-        Adds a status icon of type 'display_shape' on draw object 'draw'. Draws a rectangle if no display_shape provided
-        'icon_padding' sets pixel distance from edge
-        'icon_size' sets pixel size of object
-        'icon_width' sets line width for icon
-        'icon opacity' sets opacity for icon
-        returns draw object
 
     parse_subject(subject)
         String parsing method that pulls out text with random options in it
@@ -271,37 +250,6 @@ class Pycasso:
         return config
 
     @staticmethod
-    def max_area(area_list): # TODO: Move to image_functions
-        # initialise
-        a, b, c, d = area_list[0]
-
-        # find max for each element
-        for t in area_list:
-            at, bt, ct, dt = t
-            a = min(a, at)
-            b = min(b, bt)
-            c = max(c, ct)
-            d = max(d, dt)
-        tup = (a, b, c, d)
-        return tup
-
-    @staticmethod
-    def set_tuple_bottom(tup, bottom): # TODO: Move to image_functions
-        a, b, c, d = tup
-        tup = (a, b, c, bottom)
-        return tup
-
-    @staticmethod
-    def set_tuple_sides(tup, left, right): # TODO: Move to image_functions
-        a, b, c, d = tup
-        tup = (left, b, right, d)
-        return tup
-
-    @staticmethod
-    def ceiling_multiple(number, multiple): # TODO: Move to image_functions
-        return int(multiple * numpy.ceil(number / multiple))
-
-    @staticmethod
     def display_image_on_epd(display_image, epd):
         logging.info("Prepare epaper")
         epd.prepare()
@@ -312,40 +260,6 @@ class Pycasso:
         epd.close()
         return
 
-    @staticmethod
-    def add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150):
-        status_corner = icon_padding + icon_size
-        status_box = (icon_padding, icon_padding, status_corner, status_corner)
-        if display_shape == DisplayShape.CROSS.value:
-            draw.rectangle(status_box,
-                           width=0,
-                           fill=(0, 0, 0, icon_opacity))
-            draw.line(status_box,
-                      width=icon_width,
-                      fill=(255, 255, 255, icon_opacity))
-            status_box = (status_corner, icon_padding, icon_padding, status_corner)
-            draw.line(status_box,
-                      width=icon_width,
-                      fill=(255, 255, 255, icon_opacity))
-        elif display_shape == DisplayShape.TRIANGLE.value:
-            status_circle = (icon_padding + icon_size / 2, icon_padding
-                             + icon_size / 2, icon_size / 2)
-            draw.regular_polygon(status_circle,
-                                 n_sides=3,
-                                 fill=(0, 0, 0, icon_opacity),
-                                 outline=(255, 255, 255, icon_opacity))
-        elif display_shape == DisplayShape.CIRCLE.value:
-            draw.ellipse(status_box,
-                         width=icon_width,
-                         fill=(0, 0, 0, icon_opacity),
-                         outline=(255, 255, 255, icon_opacity))
-        else:
-            draw.rectangle(status_box,
-                           width=icon_width,
-                           fill=(0, 0, 0, icon_opacity),
-                           outline=(255, 255, 255, icon_opacity))
-        return draw
-
     # TODO: offload prompt generation into another class
     @staticmethod
     def parse_subject(subject):
@@ -353,7 +267,7 @@ class Pycasso:
         brackets = re.findall(r"\(.*?\)", subject)
         for bracket in brackets:
             # Get random item
-            bracket = bracket.replace('(','').replace(')','')
+            bracket = bracket.replace('(', '').replace(')', '')
             random.seed()
             option = random.choice(bracket.split('|'))
             # Substitute brackets
@@ -526,8 +440,8 @@ class Pycasso:
                         stability_provider = StabilityProvider(key=self.stability_key)
 
                     logging.info("Getting Image")
-                    fetch_height = Pycasso.ceiling_multiple(fetch_height, StabilityConst.MULTIPLE.value)
-                    fetch_width = Pycasso.ceiling_multiple(fetch_width, StabilityConst.MULTIPLE.value)
+                    fetch_height = ImageFunctions.ceiling_multiple(fetch_height, StabilityConst.MULTIPLE.value)
+                    fetch_width = ImageFunctions.ceiling_multiple(fetch_width, StabilityConst.MULTIPLE.value)
                     image_base = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
                 elif provider_type == ProvidersConst.DALLE.value:
@@ -560,14 +474,7 @@ class Pycasso:
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
-            # TODO: Look into moving this to image_functions
-            width_diff = (epd.width - image_base.width) / 2
-            height_diff = (epd.height - image_base.height) / 2
-            left_pixel = 0 - width_diff
-            top_pixel = 0 - height_diff
-            right_pixel = image_base.width + width_diff
-            bottom_pixel = image_base.height + height_diff
-            image_crop = (left_pixel, top_pixel, right_pixel, bottom_pixel)
+            image_crop = ImageFunctions.get_crop_size(image_base.width, image_base.height, epd.width, epd.height)
 
             # Crop and prepare image
             image_base = image_base.crop(image_crop)
@@ -575,13 +482,11 @@ class Pycasso:
 
             # Draw status shape if provided
             if self.icon_shape is not None:
-                draw = self.add_status_icon(draw, self.icon_shape, self.icon_padding, self.icon_size,
-                                            self.icon_width, self.icon_opacity)
+                draw = ImageFunctions.add_status_icon(draw, self.icon_shape, self.icon_padding, self.icon_size,
+                                                      self.icon_width, self.icon_opacity)
 
             # Draw text(s) if necessary
             if self.add_text:
-                # TODO: bottom box doesn't look great if image crops with black space on the top and bottom
-                # TODO: some special characters break font
                 font_path = os.path.join(self.file_path, self.font_file)
                 if not os.path.exists(font_path):
                     logging.info("Font file path does not exist: '" + self.font_file + "'")
@@ -590,29 +495,30 @@ class Pycasso:
                 title_font = ImageFont.truetype(font_path, self.title_size)
                 artist_font = ImageFont.truetype(font_path, self.artist_size)
 
-                artist_box = (0, epd.height, 0, epd.height)
+                artist_box = (0, image_crop[3], 0, image_crop[3])
                 title_box = artist_box
+
                 if artist_text != "":
-                    artist_box = draw.textbbox((epd.width / 2, epd.height - self.artist_loc),
+                    artist_box = draw.textbbox((epd.width / 2, image_crop[3] - self.artist_loc),
                                                artist_text, font=artist_font, anchor="mb")
                 if title_text != "":
-                    title_box = draw.textbbox((epd.width / 2, epd.height - self.title_loc),
+                    title_box = draw.textbbox((epd.width / 2, image_crop[3] - self.title_loc),
                                               title_text, font=title_font, anchor="mb")
 
-                draw_box = Pycasso.max_area([artist_box, title_box])
+                draw_box = ImageFunctions.max_area([artist_box, title_box])
                 draw_box = tuple(numpy.add(draw_box, (-self.padding, -self.padding, self.padding, self.padding)))
 
                 # Modify depending on box type
                 if self.box_to_floor:
-                    draw_box = Pycasso.set_tuple_bottom(draw_box, bottom_pixel)
+                    draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_crop[3])
 
                 if self.box_to_edge:
-                    draw_box = Pycasso.set_tuple_sides(draw_box, width_diff, right_pixel)
+                    draw_box = ImageFunctions.set_tuple_sides(draw_box, -image_crop[0], image_crop[2])
 
                 draw.rectangle(draw_box, fill=(255, 255, 255, self.opacity))
-                draw.text((epd.width / 2, epd.height - self.artist_loc), artist_text, font=artist_font, anchor="mb",
+                draw.text((epd.width / 2, image_crop[3] - self.artist_loc), artist_text, font=artist_font, anchor="mb",
                           fill=0)
-                draw.text((epd.width / 2, epd.height - self.title_loc), title_text, font=title_font, anchor="mb",
+                draw.text((epd.width / 2, image_crop[3] - self.title_loc), title_text, font=title_font, anchor="mb",
                           fill=0)
 
             self.display_image_on_epd(image_base, epd)
