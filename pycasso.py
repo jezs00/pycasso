@@ -495,14 +495,14 @@ class Pycasso:
                 title_font = ImageFont.truetype(font_path, self.title_size)
                 artist_font = ImageFont.truetype(font_path, self.artist_size)
 
-                artist_box = (0, image_crop[3], 0, image_crop[3])
+                artist_box = (0, image_base.height, 0, image_base.height)
                 title_box = artist_box
 
                 if artist_text != "":
-                    artist_box = draw.textbbox((epd.width / 2, image_crop[3] - self.artist_loc),
+                    artist_box = draw.textbbox((epd.width / 2, image_base.height - self.artist_loc),
                                                artist_text, font=artist_font, anchor="mb")
                 if title_text != "":
-                    title_box = draw.textbbox((epd.width / 2, image_crop[3] - self.title_loc),
+                    title_box = draw.textbbox((epd.width / 2, image_base.height - self.title_loc),
                                               title_text, font=title_font, anchor="mb")
 
                 draw_box = ImageFunctions.max_area([artist_box, title_box])
@@ -510,16 +510,16 @@ class Pycasso:
 
                 # Modify depending on box type
                 if self.box_to_floor:
-                    draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_crop[3])
+                    draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_base.height)
 
                 if self.box_to_edge:
                     draw_box = ImageFunctions.set_tuple_sides(draw_box, -image_crop[0], image_crop[2])
 
                 draw.rectangle(draw_box, fill=(255, 255, 255, self.opacity))
-                draw.text((epd.width / 2, image_crop[3] - self.artist_loc), artist_text, font=artist_font, anchor="mb",
-                          fill=0)
-                draw.text((epd.width / 2, image_crop[3] - self.title_loc), title_text, font=title_font, anchor="mb",
-                          fill=0)
+                draw.text((epd.width / 2, image_base.height - self.artist_loc), artist_text, font=artist_font,
+                          anchor="mb", fill=0)
+                draw.text((epd.width / 2, image_base.height - self.title_loc), title_text, font=title_font,
+                          anchor="mb", fill=0)
 
             self.display_image_on_epd(image_base, epd)
             logging.shutdown()
