@@ -41,7 +41,7 @@ class ConfigConst(Enum):
     ICON_WIDTH = 3
     ICON_OPACITY = 150
 
-    # Automatic prompt construction
+    # Automatic Prompt Construction Settings
     PROMPT_MODES_COUNT = 2
     PROMPT_MODE = 1
     PROMPT_PREAMBLE = ""
@@ -57,6 +57,11 @@ class ConfigConst(Enum):
 
     # Generation Settings
     GENERATION_INFILL = 0
+
+    # PiJuice Settings
+    SHUTDOWN_ON_BATTERY = True
+    WAIT_TO_RUN = 30
+
 
 class ProvidersConst(Enum):
     # Settings and defaults for providers
@@ -112,6 +117,7 @@ class PromptMode(Enum):
     RANDOM = 0
     SUBJECT_ARTIST = 1
     PROMPT = 2
+
 
 class DisplayShape(Enum):
     SQUARE = 0

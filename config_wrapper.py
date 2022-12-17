@@ -17,7 +17,7 @@ class Configs:
     Methods
     -------
     read_config(path)
-        Retrieves config from provided path. Returns ConfigParser object.
+        Retrieves config from provided path and applies to variables in this class. Returns ConfigParser object.
 
     write_config(configs, path) # Not yet implemented
         Writes config from a provided dict 'configs' to file at 'path'.
@@ -82,6 +82,10 @@ class Configs:
 
         # Generation Settings
         self.infill = ConfigConst.GENERATION_INFILL.value
+
+        # PiJuice Settings
+        self.shutdown_on_battery = ConfigConst.SHUTDOWN_ON_BATTERY.value
+        self.wait_to_run = ConfigConst.WAIT_TO_RUN.value
         return
 
     def read_config(self):
@@ -149,6 +153,11 @@ class Configs:
 
             # Generation Settings
             self.infill = config.getboolean("Generation", "infill", fallback=ConfigConst.GENERATION_INFILL.value)
+
+            # PiJuice Settings
+            self.shutdown_on_battery = config.getboolean("PiJuice", "shutdown_on_battery",
+                                                         fallback=ConfigConst.SHUTDOWN_ON_BATTERY.value)
+            self.wait_to_run = config.getint("PiJuice", "wait_to_run", fallback=ConfigConst.WAIT_TO_RUN.value)
 
         return config
 
