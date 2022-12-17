@@ -44,16 +44,14 @@ logging.info(f"Power status is \'{power_status}\'")
 logging.info(f"Battery level is \'{charge_level}\'")
 
 try:
+    # Set icon if PiJuice has lower battery
+    if charge_level < charge_display:
+        logging.info(f"Displaying icon due to low battery")
+        instance.icon_shape = DisplayShape.SQUARE.value
+
     instance.run()
 
     if power_status == PiJuiceConst.NOT_PRESENT.value:
-        # If power not plugged in, run pycasso and shut down
-
-        # Set icon if PiJuice has lower battery
-        if charge_level < charge_display:
-            logging.info(f"Displaying icon due to low battery")
-            instance.icon_shape = DisplayShape.SQUARE.value
-
         # shutdown if we've configured pycasso to do so
         if shutdown:
             # Remove power to PiJuice MCU IO pins
