@@ -37,8 +37,7 @@ class Pycasso:
         Also returns the argparser
 
     load_config()
-        Loads config from file provided to it or
-        Also returns the argparser
+        Loads config from file provided to it or sets defaults
 
     display_image_on_EPD(display_image, epd):
         Displays PIL image object 'display_image' on omni_epd object 'epd'
@@ -53,60 +52,11 @@ class Pycasso:
     def __init__(self):
         self.file_path = os.path.dirname(os.path.abspath(__file__))
 
-        # Set Defaults
-        # File Settings
-        self.save_image = ConfigConst.FILE_SAVE_IMAGE.value
-        self.external_image_location = ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value
-        self.generated_image_location = ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value
-        self.image_format = ConfigConst.FILE_IMAGE_FORMAT.value
-        self.font_file = ConfigConst.FILE_FONT_FILE.value
-        self.subjects_file = ConfigConst.FILE_SUBJECTS_FILE.value
-        self.artists_file = ConfigConst.FILE_ARTISTS_FILE.value
-        self.prompts_file = ConfigConst.FILE_PROMPTS_FILE.value
-
-        # Text Settings
-        self.add_text = ConfigConst.TEXT_ADD_TEXT.value
-        self.parse_text = ConfigConst.TEXT_PARSE_TEXT.value
-        self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
-        self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
-        self.remove_text = ConfigConst.TEXT_REMOVE_TEXT.value
-        self.box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
-        self.box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
-        self.artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
-        self.artist_size = ConfigConst.TEXT_ARTIST_SIZE.value
-        self.title_loc = ConfigConst.TEXT_TITLE_LOC.value
-        self.title_size = ConfigConst.TEXT_TITLE_SIZE.value
-        self.padding = ConfigConst.TEXT_PADDING.value
-        self.opacity = ConfigConst.TEXT_OPACITY.value
+        # Config Dictionary for omni-epd
+        self.config_dict = {}
 
         # Icon
         self.icon_shape = None
-        self.icon_padding = ConfigConst.ICON_PADDING.value
-        self.icon_size = ConfigConst.ICON_SIZE.value
-        self.icon_width = ConfigConst.ICON_WIDTH.value
-        self.icon_opacity = ConfigConst.ICON_OPACITY.value
-
-        # Prompt
-        self.prompt_mode = ConfigConst.PROMPT_MODE.value
-        self.prompt_preamble = ConfigConst.PROMPT_PREAMBLE.value
-        self.prompt_connector = ConfigConst.PROMPT_CONNECTOR.value
-        self.prompt_postscript = ConfigConst.PROMPT_POSTSCRIPT.value
-
-        # Display Settings
-        self.display_type = ConfigConst.DISPLAY_TYPE.value
-
-        # Provider Settings
-        self.external_amount = ProvidersConst.EXTERNAL_AMOUNT.value
-        self.historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
-        self.stability_amount = ProvidersConst.STABLE_AMOUNT.value
-        self.dalle_amount = ProvidersConst.DALLE_AMOUNT.value
-
-        # Logging Settings
-        self.log_file = ConfigConst.LOGGING_FILE.value
-        self.log_level = ConfigConst.LOGGING_LEVEL.value
-
-        # Generation Settings
-        self.infill = ConfigConst.GENERATION_INFILL.value
 
         # Keys
         self.stability_key = None
@@ -160,84 +110,23 @@ class Pycasso:
         return self.args
 
     def load_config(self, config_path=None):
-        config = {}
+        # Loads config from file provided to it or sets defaults
 
         try:
             if config_path is not None:
-                config_load = Configs(os.path.join(self.file_path, config_path))
+                config = Configs(os.path.join(self.file_path, config_path))
             elif self.args.configpath is None:
-                config_load = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
+                config = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
             else:
-                config_load = Configs(self.args.configpath)
+                config = Configs(self.args.configpath)
 
-            # Load config
-            if os.path.exists(config_load.path):
-                config = config_load.read_config()
-
-                # File Settings
-                self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
-                self.external_image_location = config.get("File", "image_location",
-                                                          fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
-                self.generated_image_location = config.get("File", "image_location",
-                                                           fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
-                self.image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
-                self.font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
-                self.subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
-                self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
-                self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
-
-                # Text Settings
-                self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
-                self.parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
-                self.preamble_regex = config.get("Text", "preamble_regex",
-                                                 fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
-                self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
-                self.remove_text = config.get("Text", "remove_text",
-                                              fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n")
-                self.box_to_floor = config.getboolean("Text", "box_to_floor",
-                                                      fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
-                self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
-                self.artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
-                self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
-                self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)
-                self.title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
-                self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
-                self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
-
-                # Icon
-                self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-
-                # Prompt
-                self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
-                self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)
-                self.icon_width = config.getint("Icon", "icon_width", fallback=ConfigConst.ICON_WIDTH.value)
-                self.icon_opacity = config.getint("Icon", "icon_opacity", fallback=ConfigConst.ICON_OPACITY.value)
-
-                # Display (rest of EPD config is just passed straight into displayfactory
-                self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
-
-                # Provider
-                self.external_amount = config.getint("Providers", "external_amount",
-                                                     fallback=ProvidersConst.EXTERNAL_AMOUNT.value)
-                self.historic_amount = config.getint("Providers", "historic_amount",
-                                                     fallback=ProvidersConst.HISTORIC_AMOUNT.value)
-                self.stability_amount = config.getint("Providers", "stability_amount",
-                                                      fallback=ProvidersConst.STABLE_AMOUNT.value)
-                self.dalle_amount = config.getint("Providers", "dalle_amount",
-                                                  fallback=ProvidersConst.DALLE_AMOUNT.value)
-
-                # Logging Settings
-                self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
-                self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
-
-                # Generation Settings
-                self.infill = config.getboolean("Generation", "infill", fallback=ConfigConst.GENERATION_INFILL.value)
+            self.config_dict = config.read_config()
 
             # Set up logging
-            if self.log_file is not None and self.log_file != "":
-                self.log_file = os.path.join(self.file_path, self.log_file)
+            if config.log_file is not None and config.log_file != "":
+                log_file = os.path.join(self.file_path, config.log_file)
 
-            logging.basicConfig(level=self.log_level, filename=self.log_file)
+            logging.basicConfig(level=config.log_level, filename=log_file)
             logging.info("Config loaded")
 
         except IOError as e:
@@ -308,10 +197,10 @@ class Pycasso:
         logging.info("pycasso has begun")
 
         try:
-            epd = displayfactory.load_display_driver(self.display_type, config)
+            epd = displayfactory.load_display_driver(config.display_type, self.config_dict)
 
         except EPDNotFoundError:
-            logging.error(f"Couldn\'t find {self.display_type}")
+            logging.error(f"Couldn\'t find {config.display_type}")
             exit()
 
         except KeyboardInterrupt:
@@ -334,10 +223,10 @@ class Pycasso:
             # Pick random provider based on weight
             random.seed()
             provider_type = random.choices(provider_types, k=1, weights=(
-                self.external_amount,
-                self.historic_amount,
-                self.stability_amount,
-                self.dalle_amount
+                config.external_amount,
+                config.historic_amount,
+                config.stability_amount,
+                config.dalle_amount
             ))[0]
 
             # TODO: Code starting to look a little spaghetti. Clean up once API works.
@@ -347,26 +236,27 @@ class Pycasso:
 
             if provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
-                image_directory = os.path.join(self.file_path, self.external_image_location)
+                image_directory = os.path.join(self.file_path, config.external_image_location)
                 if not os.path.exists(image_directory):
                     warnings.warn("External image directory path does not exist: '" + image_directory + "'")
                     exit()
 
                 # Get random image from folder
                 file = FileLoader(image_directory)
-                image_path = file.get_random_file_of_type(self.image_format)
+                image_path = file.get_random_file_of_type(config.image_format)
                 image_base = Image.open(image_path)
 
                 # Add text to via parsing if necessary
                 image_name = os.path.basename(image_path)
                 title_text = image_name
 
-                if self.parse_text:
+                if config.parse_text:
                     title_text, artist_text = FileLoader.get_title_and_artist(image_name,
-                                                                              self.preamble_regex, self.artist_regex,
-                                                                              self.image_format)
-                    title_text = FileLoader.remove_text(title_text, self.remove_text)
-                    artist_text = FileLoader.remove_text(artist_text, self.remove_text)
+                                                                              config.preamble_regex,
+                                                                              config.artist_regex,
+                                                                              config.image_format)
+                    title_text = FileLoader.remove_text(title_text, config.remove_text)
+                    artist_text = FileLoader.remove_text(artist_text, config.remove_text)
                     title_text = title_text.title()
                     artist_text = artist_text.title()
 
@@ -377,14 +267,14 @@ class Pycasso:
 
             elif provider_type == ProvidersConst.HISTORIC.value:
                 # Historic image previously saved
-                image_directory = os.path.join(self.file_path, self.generated_image_location)
+                image_directory = os.path.join(self.file_path, config.generated_image_location)
                 if not os.path.exists(image_directory):
                     warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
                     exit()
 
                 # Get random image from folder
                 file = FileLoader(image_directory)
-                image_path = file.get_random_file_of_type(self.image_format)
+                image_path = file.get_random_file_of_type(config.image_format)
                 image_base = Image.open(image_path)
                 image_name = os.path.basename(image_path)
                 title_text = image_name
@@ -401,25 +291,26 @@ class Pycasso:
             else:
                 # Build prompt, add metadata as we go
                 metadata = PngImagePlugin.PngInfo()
-                if self.prompt_mode == PromptMode.RANDOM.value:
+                prompt_mode = config.prompt_mode
+                if prompt_mode == PromptMode.RANDOM.value:
                     # Pick random type of building
                     random.seed()
-                    self.prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
+                    prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
-                if self.prompt_mode == PromptMode.SUBJECT_ARTIST.value:
+                if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
                     # Build prompt from artist/subject
-                    artist_text = FileLoader.get_random_line(os.path.join(self.file_path, self.artists_file))
-                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.subjects_file))
+                    artist_text = FileLoader.get_random_line(os.path.join(self.file_path, config.artists_file))
+                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, config.subjects_file))
                     title_text = self.parse_subject(title_text)
-                    prompt = (self.prompt_preamble + title_text + self.prompt_connector
-                              + artist_text + self.prompt_postscript)
+                    prompt = (config.prompt_preamble + title_text + config.prompt_connector
+                              + artist_text + config.prompt_postscript)
                     metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
                     metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
-                elif self.prompt_mode == PromptMode.PROMPT.value:
+                elif prompt_mode == PromptMode.PROMPT.value:
                     # Build prompt from prompt file
-                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.prompts_file))
-                    prompt = self.prompt_preamble + title_text + self.prompt_postscript
+                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, config.prompts_file))
+                    prompt = config.prompt_preamble + title_text + config.prompt_postscript
                 else:
                     warnings.warn("Invalid prompt mode chosen. Exiting application.")
                     exit()
@@ -456,7 +347,7 @@ class Pycasso:
                     image_base = dalle_provider.get_image_from_string(prompt, fetch_height, fetch_width)
 
                     # Use infill to fill in sides of image instead of cropping
-                    if self.infill:
+                    if config.infill:
                         image_base = dalle_provider.infill_image_from_image(prompt, image_base)
 
                 else:
@@ -464,9 +355,9 @@ class Pycasso:
                     warnings.warn(f"Invalid provider option chosen: {provider_type}")
                     exit()
 
-                if self.save_image:
+                if config.save_image:
                     image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + ".png"
-                    save_path = os.path.join(self.file_path, self.generated_image_location, image_name)
+                    save_path = os.path.join(self.file_path, config.generated_image_location, image_name)
                     logging.info(f"Saving image as {save_path}")
 
                     # Save the image
@@ -482,50 +373,51 @@ class Pycasso:
 
             # Draw status shape if provided
             if self.icon_shape is not None:
-                draw = ImageFunctions.add_status_icon(draw, self.icon_shape, self.icon_padding, self.icon_size,
-                                                      self.icon_width, self.icon_opacity)
+                draw = ImageFunctions.add_status_icon(draw, self.icon_shape, config.icon_padding, config.icon_size,
+                                                      config.icon_width, config.icon_opacity)
 
             # Draw text(s) if necessary
-            if self.add_text:
-                font_path = os.path.join(self.file_path, self.font_file)
+            if config.add_text:
+                font_path = os.path.join(self.file_path, config.font_file)
                 if not os.path.exists(font_path):
-                    logging.info("Font file path does not exist: '" + self.font_file + "'")
+                    logging.info("Font file path does not exist: '" + config.font_file + "'")
                     exit()
 
-                title_font = ImageFont.truetype(font_path, self.title_size)
-                artist_font = ImageFont.truetype(font_path, self.artist_size)
+                title_font = ImageFont.truetype(font_path, config.title_size)
+                artist_font = ImageFont.truetype(font_path, config.artist_size)
 
                 artist_box = (0, image_base.height, 0, image_base.height)
                 title_box = artist_box
 
                 if artist_text != "":
-                    artist_box = draw.textbbox((epd.width / 2, image_base.height - self.artist_loc),
+                    artist_box = draw.textbbox((epd.width / 2, image_base.height - config.artist_loc),
                                                artist_text, font=artist_font, anchor="mb")
                 if title_text != "":
-                    title_box = draw.textbbox((epd.width / 2, image_base.height - self.title_loc),
+                    title_box = draw.textbbox((epd.width / 2, image_base.height - config.title_loc),
                                               title_text, font=title_font, anchor="mb")
 
                 draw_box = ImageFunctions.max_area([artist_box, title_box])
-                draw_box = tuple(numpy.add(draw_box, (-self.padding, -self.padding, self.padding, self.padding)))
+                draw_box = tuple(numpy.add(draw_box, (-config.padding, -config.padding,
+                                                      config.padding, config.padding)))
 
                 # Modify depending on box type
-                if self.box_to_floor:
+                if config.box_to_floor:
                     draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_base.height)
 
-                if self.box_to_edge:
+                if config.box_to_edge:
                     draw_box = ImageFunctions.set_tuple_sides(draw_box, -image_crop[0], image_crop[2])
 
-                draw.rectangle(draw_box, fill=(255, 255, 255, self.opacity))
-                draw.text((epd.width / 2, image_base.height - self.artist_loc), artist_text, font=artist_font,
+                draw.rectangle(draw_box, fill=(255, 255, 255, config.opacity))
+                draw.text((epd.width / 2, image_base.height - config.artist_loc), artist_text, font=artist_font,
                           anchor="mb", fill=0)
-                draw.text((epd.width / 2, image_base.height - self.title_loc), title_text, font=title_font,
+                draw.text((epd.width / 2, image_base.height - config.title_loc), title_text, font=title_font,
                           anchor="mb", fill=0)
 
             self.display_image_on_epd(image_base, epd)
             logging.shutdown()
 
         except EPDNotFoundError:
-            warnings.warn(f"Couldn't find {self.display_type}")
+            warnings.warn(f"Couldn't find {config.display_type}")
             exit()
 
         except IOError as e:
