@@ -128,13 +128,13 @@ class Pycasso:
         # Loads config from file provided to it or sets defaults
 
         try:
-            # TODO: Fix logic so that args can be none object
-            if config_path is not None:
-                config = Configs(os.path.join(self.file_path, config_path))
-            elif self.args.configpath is None:
-                config = Configs(os.path.join(self.file_path, ConfigConst.CONFIG_PATH.value))
-            else:
-                config = Configs(self.args.configpath)
+            if config_path is None:
+                config_path = ConfigConst.CONFIG_PATH.value
+                if self.args is not None:
+                    if self.args.configpath is not None:
+                        config_path = self.args.configpath
+
+            config = Configs(os.path.join(self.file_path, config_path))
 
             self.config_dict = config.read_config()
 
