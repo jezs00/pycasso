@@ -17,6 +17,7 @@ instance = Pycasso()
 # Set config variables based on config that pycasso loaded
 sleep_time = instance.config.wait_to_run
 shutdown = instance.config.shutdown_on_battery
+charge_display = instance.config.charge_display
 
 power_status = None
 charge_level = 100
@@ -49,7 +50,7 @@ try:
         # If power not plugged in, run pycasso and shut down
 
         # Set icon if PiJuice has lower battery
-        if charge_level < PiJuiceConst.CHARGE_DISPLAY.value:
+        if charge_level < charge_display:
             logging.info(f"Displaying icon due to low battery")
             instance.icon_shape = DisplayShape.SQUARE.value
 

@@ -61,6 +61,7 @@ class ConfigConst(Enum):
     # PiJuice Settings
     SHUTDOWN_ON_BATTERY = True
     WAIT_TO_RUN = 30
+    CHARGE_DISPLAY = 15
 
 
 class ProvidersConst(Enum):
@@ -102,8 +103,6 @@ class PiJuiceConst(Enum):
     STATUS_POWER = "powerInput"
 
     NOT_PRESENT = "NOT_PRESENT"
-
-    CHARGE_DISPLAY = 15
 
 
 class PropertiesConst(Enum):
