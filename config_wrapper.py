@@ -1,4 +1,3 @@
-# TODO: Unit tests
 # TODO: option to allow custom height/width not matching epd
 
 import configparser

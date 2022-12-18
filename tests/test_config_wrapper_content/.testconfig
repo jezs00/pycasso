@@ -1,0 +1,23 @@
+[File]
+
+save_image=False
+image_format=jpg
+
+
+[Text]
+
+add_text = False
+parse_text = False
+preamble_regex =  test
+artist_regex =  test
+remove_text = test
+            test2
+            test3
+box_to_floor = False
+box_to_edge = False
+artist_loc = 20
+artist_size = 28
+title_loc = 56
+title_size = 40
+padding = 20
+opacity = 160
