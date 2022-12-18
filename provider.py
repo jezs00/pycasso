@@ -1,5 +1,5 @@
 # Provider class to wrap APIs for web operations
-# TODO: Unit tests
+
 import io
 import logging
 import warnings
@@ -15,7 +15,6 @@ from io import BytesIO
 from image_functions import ImageFunctions
 
 
-# TODO: Unit tests for this
 class Provider(object):
     """
     A superclass used to wrap APIs for web operations from pycasso.
@@ -148,8 +147,6 @@ class DalleProvider(Provider):
         img = Image.open(BytesIO(requests.get(url).content))
         return img
 
-
-
     def infill_image_from_image(self, text, img):
         # Infills image based on next size up possible from available image
         # TODO: handle if there are no bigger sizes
@@ -178,7 +175,6 @@ class DalleProvider(Provider):
         url = response['data'][0]['url']
         img = Image.open(BytesIO(requests.get(url).content))
         return img
-
 
     @staticmethod
     def create_image_mask(img, new_size):
