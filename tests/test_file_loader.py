@@ -4,7 +4,7 @@ from file_loader import FileLoader
 
 
 def test_get_all_files():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_loader_content')
     test_file = FileLoader(directory)
     print(test_file)
     result = test_file.get_all_files()
@@ -15,7 +15,7 @@ def test_get_all_files():
 
 
 def test_get_all_files_of_type():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_loader_content')
     test_file = FileLoader(directory)
     result = test_file.get_all_files_of_type('png')
     expected = os.path.join(directory, "test.png")
@@ -24,7 +24,7 @@ def test_get_all_files_of_type():
 
 
 def test_get_random_file():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_loader_content')
     test_file = FileLoader(directory)
     result = test_file.get_random_file()
     expected = os.path.join(directory, "test.png")
@@ -32,7 +32,7 @@ def test_get_random_file():
 
 
 def test_get_random_file_of_type():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_loader_content')
     test_file = FileLoader(directory)
     result = test_file.get_random_file_of_type('png')
     expected = os.path.join(directory, "test.png")

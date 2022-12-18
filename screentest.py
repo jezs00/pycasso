@@ -40,7 +40,7 @@ except KeyboardInterrupt:
 try:
     epd = displayfactory.load_display_driver(display_type)
 
-    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tests\\test_content")
+    content_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tests/test_file_loader_content")
 
     logging.info("pycasso test image display")
 
