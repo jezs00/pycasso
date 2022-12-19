@@ -10,7 +10,8 @@ from pijuice_handler import PiJuiceHandler
 
 # Set up logging
 file_path = os.path.dirname(os.path.abspath(__file__))
-logging.basicConfig(level=ConfigConst.LOGGING_LEVEL, filename=os.path.join(file_path, ConfigConst.LOGGING_FILE))
+logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
+                    filename=os.path.join(file_path, ConfigConst.LOGGING_FILE.value))
 
 instance = Pycasso()
 if instance.config.use_pijuice:
