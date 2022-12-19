@@ -59,6 +59,7 @@ class ConfigConst(Enum):
     GENERATION_INFILL = 0
 
     # PiJuice Settings
+    USE_PIJUICE = False
     SHUTDOWN_ON_BATTERY = True
     WAIT_TO_RUN = 30
     CHARGE_DISPLAY = 15
