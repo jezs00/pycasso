@@ -6,7 +6,6 @@ from pycasso import Pycasso
 import logging
 import os
 from constants import ConfigConst
-from pijuice_handler import PiJuiceHandler
 
 # Set up logging
 file_path = os.path.dirname(os.path.abspath(__file__))
@@ -15,6 +14,8 @@ logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
 
 instance = Pycasso()
 if instance.config.use_pijuice:
+    from pijuice_handler import PiJuiceHandler
+
     logging.info("Starting program using PiJuice")
     pijuice_instance = PiJuiceHandler()
     pijuice_instance.run()
