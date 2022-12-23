@@ -10,7 +10,7 @@ def test_get_all_files():
     expected = [os.path.join(directory, "lines.txt"),
                 os.path.join(directory, "test.png"),
                 os.path.join(directory, "test_file.txt")]
-    assert result == expected
+    assert all(item in expected for item in result)
     assert len(result) == 3
 
 
