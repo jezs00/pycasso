@@ -20,9 +20,9 @@ class ConfigConst(Enum):
     FILE_SUBJECTS_FILE = "prompts/subjects.txt"
     FILE_ARTISTS_FILE = "prompts/artists.txt"
     FILE_PROMPTS_FILE = "prompts/prompts.txt"
-    FILE_SUBJECTS_EXAMPLE = "prompts/subjects-example.txt"
-    FILE_ARTISTS_EXAMPLE = "prompts/artists-example.txt"
-    FILE_PROMPTS_EXAMPLE = "prompts/prompts-example.txt"
+    FILE_SUBJECTS_EG = "prompts/subjects-example.txt"
+    FILE_ARTISTS_EG = "prompts/artists-example.txt"
+    FILE_PROMPTS_EG = "prompts/prompts-example.txt"
 
     # Text Settings
     TEXT_ADD_TEXT = False

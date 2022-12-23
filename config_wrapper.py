@@ -30,12 +30,13 @@ class Configs:
         Sets config file via terminal prompts
     """
 
+    # TODO: refactor all paths to store as full paths to clean everything up and reduce confusion
     def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.CONFIG_PATH_EG.value):
         # Paths
-        file = FileOperations()
+        self.file = FileOperations()
 
-        self.path = file.get_full_path(path)
-        self.example_path = file.get_full_path(example_path)
+        self.path = self.file.get_full_path(path)
+        self.example_path = self.file.get_full_path(example_path)
 
         # Set Defaults
         # File Settings
@@ -44,9 +45,12 @@ class Configs:
         self.generated_image_location = ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value
         self.image_format = ConfigConst.FILE_IMAGE_FORMAT.value
         self.font_file = ConfigConst.FILE_FONT_FILE.value
-        self.subjects_file = ConfigConst.FILE_SUBJECTS_FILE.value
-        self.artists_file = ConfigConst.FILE_ARTISTS_FILE.value
-        self.prompts_file = ConfigConst.FILE_PROMPTS_FILE.value
+        self.subjects_file = self.file.get_full_path(ConfigConst.FILE_SUBJECTS_FILE.value)
+        self.artists_file = self.file.get_full_path(ConfigConst.FILE_ARTISTS_FILE.value)
+        self.prompts_file = self.file.get_full_path(ConfigConst.FILE_PROMPTS_FILE.value)
+        self.subjects_example = self.file.get_full_path(ConfigConst.FILE_SUBJECTS_EG.value)
+        self.artists_example = self.file.get_full_path(ConfigConst.FILE_ARTISTS_EG.value)
+        self.prompts_example = self.file.get_full_path(ConfigConst.FILE_PROMPTS_EG.value)
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
@@ -100,7 +104,7 @@ class Configs:
 
     def read_config(self):
         # Create new config file if necessary
-        FileOperations.backup_file(self.path, self.example_path)
+        self.path = FileOperations.backup_file(self.path, self.example_path)
 
         # Method to read config file settings
         config = configparser.ConfigParser()
@@ -173,6 +177,16 @@ class Configs:
                                                          fallback=ConfigConst.SHUTDOWN_ON_BATTERY.value)
             self.wait_to_run = config.getint("PiJuice", "wait_to_run", fallback=ConfigConst.WAIT_TO_RUN.value)
             self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
+
+            # Create new prompts if necessary and make them full paths
+
+            self.subjects_file = self.file.get_full_path(self.subjects_file)
+            self.artists_file = self.file.get_full_path(self.artists_file)
+            self.prompts_file = self.file.get_full_path(self.prompts_file)
+
+            self.subjects_file = FileOperations.backup_file(self.subjects_file, self.subjects_example)
+            self.artists_file = FileOperations.backup_file(self.artists_file, self.artists_example)
+            self.prompts_file = FileOperations.backup_file(self.prompts_file, self.prompts_example)
 
         return config
 
