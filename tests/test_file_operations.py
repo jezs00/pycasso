@@ -69,30 +69,35 @@ def test_remove_text():
 
 
 def test_get_lines():
-    path = "test_file_operations_content/lines.txt"
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
+    path = os.path.join(directory, "lines.txt")
     result = FileOperations.get_lines(path)
     expected = ["first_line", "second_line", "third_line"]
     assert result == expected
 
 
 def test_get_random_line():
-    path = "test_file_operations_content/lines.txt"
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
+    path = os.path.join(directory, "lines.txt")
     result = FileOperations.get_random_line(path)
     expected = ["first_line", "second_line", "third_line"]
     assert result in expected
 
 
 def test_backup_file_both_exist():
-    primary_path = "test_file_operations_content/lines.txt"
-    backup_path = "test_file_operations_content/lines.txt"
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
+    primary_path = os.path.join(directory, "lines.txt")
+    backup_path = os.path.join(directory, "lines.txt")
     result = FileOperations.backup_file(primary_path, backup_path)
     expected = primary_path
     assert result == expected
 
 
 def test_backup_file_no_primary():
-    primary_path = "test_temp/new_file.txt"
-    backup_path = "test_file_operations_content/lines.txt"
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
+    temp_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_temp")
+    primary_path = os.path.join(temp_directory, "new_file.txt")
+    backup_path = os.path.join(directory, "lines.txt")
 
     # Cleanup files before
     if os.path.exists(primary_path):
@@ -109,8 +114,9 @@ def test_backup_file_no_primary():
 
 
 def test_backup_file_fail():
-    primary_path = "test_temp/new_file.txt"
-    backup_path = "test_temp/non_existent.txt"
+    temp_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_temp")
+    primary_path = os.path.join(temp_directory, "new_file.txt")
+    backup_path = os.path.join(temp_directory, "non_existent.txt")
 
     # Cleanup files before
     if os.path.exists(primary_path):
