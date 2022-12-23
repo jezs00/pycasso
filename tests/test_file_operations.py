@@ -4,7 +4,7 @@ from file_operations import FileOperations
 
 
 def test_get_all_files():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_operations_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
     test_file = FileOperations(directory)
     result = test_file.get_all_files()
     expected = [os.path.join(directory, "lines.txt"),
@@ -15,16 +15,16 @@ def test_get_all_files():
 
 
 def test_get_all_files_of_type():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_operations_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
     test_file = FileOperations(directory)
-    result = test_file.get_all_files_of_type('png')
+    result = test_file.get_all_files_of_type("png")
     expected = os.path.join(directory, "test.png")
     assert result[0] == expected
     assert len(result) == 1
 
 
 def test_get_random_file():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_operations_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
     test_file = FileOperations(directory)
     result = test_file.get_random_file()
     expected = [os.path.join(directory, "lines.txt"),
@@ -34,9 +34,9 @@ def test_get_random_file():
 
 
 def test_get_random_file_of_type():
-    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_file_operations_content')
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
     test_file = FileOperations(directory)
-    result = test_file.get_random_file_of_type('txt')
+    result = test_file.get_random_file_of_type("txt")
     expected = [os.path.join(directory, "lines.txt"),
                 os.path.join(directory, "test_file.txt")]
     assert result in expected
@@ -127,3 +127,11 @@ def test_backup_file_fail():
         os.remove(primary_path)
     if os.path.exists(backup_path):
         os.remove(backup_path)
+
+
+def test_get_full_path():
+    directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_file_operations_content")
+    test_file = FileOperations(directory)
+    result = test_file.get_full_path("test.png")
+    expected = os.path.join(directory, "test.png")
+    assert result == expected
