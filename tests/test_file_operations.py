@@ -82,7 +82,7 @@ def test_get_random_line():
     assert result in expected
 
 
-def test_backup_file():
+def test_backup_file_both_exist():
     primary_path = "test_file_operations_content/lines.txt"
     backup_path = "test_file_operations_content/lines.txt"
     result = FileOperations.backup_file(primary_path, backup_path)
@@ -91,7 +91,7 @@ def test_backup_file():
 
 
 def test_backup_file_no_primary():
-    primary_path = "test_file_operations_content/new_file.txt"
+    primary_path = "test_temp/new_file.txt"
     backup_path = "test_file_operations_content/lines.txt"
 
     # Cleanup files before
@@ -104,13 +104,13 @@ def test_backup_file_no_primary():
     assert result == expected
 
     # Cleanup files after
-    if os.path.exists(result):
-        os.remove(result)
+    if os.path.exists(primary_path):
+        os.remove(primary_path)
 
 
 def test_backup_file_fail():
-    primary_path = "test_file_operations_content/new_file.txt"
-    backup_path = "test_file_operations_content/non_existent.txt"
+    primary_path = "test_temp/new_file.txt"
+    backup_path = "test_temp/non_existent.txt"
 
     # Cleanup files before
     if os.path.exists(primary_path):
@@ -121,3 +121,9 @@ def test_backup_file_fail():
     result = FileOperations.backup_file(primary_path, backup_path)
     expected = None
     assert result == expected
+
+    # Cleanup files after
+    if os.path.exists(primary_path):
+        os.remove(primary_path)
+    if os.path.exists(backup_path):
+        os.remove(backup_path)
