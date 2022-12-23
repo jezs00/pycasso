@@ -134,6 +134,9 @@ dmypy.json
 # Ignore image folder contents
 images/*
 
+# Ignore config
+.config
+
 # Ignore prompts folder contents
 prompts/artists.txt
 prompts/prompts.txt
