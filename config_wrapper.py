@@ -4,6 +4,7 @@ import configparser
 import os
 
 from constants import ConfigConst, ProvidersConst
+from file_operations import FileOperations
 
 
 class Configs:
@@ -18,6 +19,9 @@ class Configs:
     read_config(path)
         Retrieves config from provided path and applies to variables in this class. Returns ConfigParser object.
 
+    init_config()
+        Creates .config file from .config-example if
+
     write_config(configs, path) # Not yet implemented
         Writes config from a provided dict 'configs' to file at 'path'.
 
@@ -26,7 +30,9 @@ class Configs:
     """
 
     def __init__(self, path=ConfigConst.CONFIG_PATH.value):
+        # Paths
         self.path = path
+        self.example_path = ConfigConst.EG_CONFIG_PATH.value
 
         # Set Defaults
         # File Settings
@@ -90,6 +96,9 @@ class Configs:
         return
 
     def read_config(self):
+        # Create new config file if necessary
+        FileOperations.backup_file(self.path, self.example_path)
+
         # Method to read config file settings
         config = configparser.ConfigParser()
         config.read(self.path)

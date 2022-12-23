@@ -8,6 +8,7 @@ class ConfigConst(Enum):
     # Default settings that are loaded from config
     # Relative path to config
     CONFIG_PATH = ".config"
+    EG_CONFIG_PATH = ".config-example"
 
     # Defaults
     # File Settings

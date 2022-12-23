@@ -130,6 +130,7 @@ class FileOperations:
         if os.path.exists(primary_path):
             return primary_path
         elif os.path.exists(backup_path):
+            logging.info(f"{primary_path} does not exist. Copying {backup_path} to {primary_path}")
             shutil.copy2(backup_path, primary_path)
             return primary_path
         return None
