@@ -12,7 +12,7 @@ import logging
 from config_wrapper import Configs
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
-from file_loader import FileLoader
+from file_operations import FileOperations
 from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
 from provider import StabilityProvider, DalleProvider
 from image_functions import ImageFunctions
@@ -244,7 +244,7 @@ class Pycasso:
                     exit()
 
                 # Get random image from folder
-                file = FileLoader(image_directory)
+                file = FileOperations(image_directory)
                 image_path = file.get_random_file_of_type(self.config.image_format)
                 image_base = Image.open(image_path)
 
@@ -253,12 +253,12 @@ class Pycasso:
                 title_text = image_name
 
                 if self.config.parse_text:
-                    title_text, artist_text = FileLoader.get_title_and_artist(image_name,
-                                                                              self.config.preamble_regex,
-                                                                              self.config.artist_regex,
-                                                                              self.config.image_format)
-                    title_text = FileLoader.remove_text(title_text, self.config.remove_text)
-                    artist_text = FileLoader.remove_text(artist_text, self.config.remove_text)
+                    title_text, artist_text = FileOperations.get_title_and_artist(image_name,
+                                                                                  self.config.preamble_regex,
+                                                                                  self.config.artist_regex,
+                                                                                  self.config.image_format)
+                    title_text = FileOperations.remove_text(title_text, self.config.remove_text)
+                    artist_text = FileOperations.remove_text(artist_text, self.config.remove_text)
                     title_text = title_text.title()
                     artist_text = artist_text.title()
 
@@ -275,7 +275,7 @@ class Pycasso:
                     exit()
 
                 # Get random image from folder
-                file = FileLoader(image_directory)
+                file = FileOperations(image_directory)
                 image_path = file.get_random_file_of_type(self.config.image_format)
                 image_base = Image.open(image_path)
                 image_name = os.path.basename(image_path)
@@ -301,8 +301,8 @@ class Pycasso:
 
                 if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
                     # Build prompt from artist/subject
-                    artist_text = FileLoader.get_random_line(os.path.join(self.file_path, self.config.artists_file))
-                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.config.subjects_file))
+                    artist_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.artists_file))
+                    title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.subjects_file))
                     title_text = self.parse_subject(title_text)
                     prompt = (self.config.prompt_preamble + title_text + self.config.prompt_connector
                               + artist_text + self.config.prompt_postscript)
@@ -311,7 +311,7 @@ class Pycasso:
 
                 elif prompt_mode == PromptMode.PROMPT.value:
                     # Build prompt from prompt file
-                    title_text = FileLoader.get_random_line(os.path.join(self.file_path, self.config.prompts_file))
+                    title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.prompts_file))
                     prompt = self.config.prompt_preamble + title_text + self.config.prompt_postscript
                 else:
                     warnings.warn("Invalid prompt mode chosen. Exiting application.")

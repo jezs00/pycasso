@@ -1,10 +1,12 @@
 import logging
 import glob
+import os
 import random
 import re
+import shutil
 
 
-class FileLoader:
+class FileOperations:
     """
     A class used to provide file operations for pycasso.
 
@@ -29,6 +31,9 @@ class FileLoader:
         returns every line as a separate item in an array from a text file located at 'path'
     get_random_line(path)
         returns a random line from file located at 'path'
+    backup_file(primary_path, backup_path)
+        if primary_path does not exist, copies file at backup_path to primary_path.
+        returns primary_path if operation worked, otherwise returns None if both paths do not exist
     """
 
     def __init__(self, path):
@@ -112,13 +117,22 @@ class FileLoader:
 
     @staticmethod
     def get_random_line(path):  # TODO: more unit tests!
-        lines = FileLoader.get_lines(path)
+        lines = FileOperations.get_lines(path)
         size = len(lines)
         if size == 0:
             return
         random.seed()
         r = random.randint(0, size - 1)
         return lines[r]
+
+    @staticmethod
+    def backup_file(primary_path, backup_path):
+        if os.path.exists(primary_path):
+            return primary_path
+        elif os.path.exists(backup_path):
+            shutil.copy2(backup_path, primary_path)
+            return primary_path
+        return None
 
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex
