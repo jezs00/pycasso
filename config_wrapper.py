@@ -17,7 +17,8 @@ class Configs:
     Methods
     -------
     read_config(path)
-        Retrieves config from provided path and applies to variables in this class. Returns ConfigParser object.
+        Retrieves config from provided relative path and applies to variables in this class. Returns ConfigParser
+        object.
 
     init_config()
         Creates .config file from .config-example if
@@ -29,10 +30,12 @@ class Configs:
         Sets config file via terminal prompts
     """
 
-    def __init__(self, path=ConfigConst.CONFIG_PATH.value):
+    def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.EG_CONFIG_PATH.value):
         # Paths
-        self.path = path
-        self.example_path = ConfigConst.EG_CONFIG_PATH.value
+        file = FileOperations()
+
+        self.path = file.get_full_path(path)
+        self.example_path = file.get_full_path(example_path)
 
         # Set Defaults
         # File Settings
@@ -175,3 +178,4 @@ class Configs:
 
     def set_config_terminal(self, path):
         return
+

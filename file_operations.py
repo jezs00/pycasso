@@ -19,24 +19,33 @@ class FileOperations:
     -------
     get_all_files():
         returns path of all files in folder
+
     get_all_files_of_type(type):
         returns path of all files in folder with extension 'type'
         type value 'png' would include cat.png
+
     get_random_file()
         returns path for a random file in the current path
+
     get_random_file_of_type(type):
         returns path for a random file in the current path with extension 'type'
         type value 'png' could return cat.png
+
     get_lines(path)
         returns every line as a separate item in an array from a text file located at 'path'
+
     get_random_line(path)
         returns a random line from file located at 'path'
+
     backup_file(primary_path, backup_path)
         if primary_path does not exist, copies file at backup_path to primary_path.
         returns primary_path if operation worked, otherwise returns None if both paths do not exist
+
+    get_full_path(path)
+        Returns full file system path of path relative to config_wrapper.py file.
     """
 
-    def __init__(self, path):
+    def __init__(self, path=os.path.dirname(os.path.abspath(__file__))):
         self.path = path
         return
 
@@ -135,5 +144,8 @@ class FileOperations:
             return primary_path
         return None
 
+    def get_full_path(self, path):
+        full_path = os.path.join(self.path, path)
+        return full_path
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex

@@ -134,7 +134,7 @@ class Pycasso:
                     if self.args.configpath is not None:
                         config_path = self.args.configpath
 
-            config = Configs(os.path.join(self.file_path, config_path))
+            config = Configs(config_path)
 
             self.config_dict = config.read_config()
 
