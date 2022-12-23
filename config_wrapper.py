@@ -30,7 +30,7 @@ class Configs:
         Sets config file via terminal prompts
     """
 
-    def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.EG_CONFIG_PATH.value):
+    def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.CONFIG_PATH_EG.value):
         # Paths
         file = FileOperations()
 
