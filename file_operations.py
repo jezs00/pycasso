@@ -43,6 +43,10 @@ class FileOperations:
 
     get_full_path(path)
         Returns full file system path of path relative to config_wrapper.py file.
+
+
+    parse_text(text)
+        String parsing method that pulls out text with random options in it
     """
 
     def __init__(self, path=os.path.dirname(os.path.abspath(__file__))):
@@ -147,5 +151,19 @@ class FileOperations:
     def get_full_path(self, path):
         full_path = os.path.join(self.path, path)
         return full_path
+
+    @staticmethod
+    def parse_text(text):
+        # Get everything inside brackets
+        brackets = re.findall(r"\(.*?\)", text)
+        for bracket in brackets:
+            # Get random item
+            bracket = bracket.replace('(', '').replace(')', '')
+            random.seed()
+            option = random.choice(bracket.split('|'))
+            # Substitute brackets
+            text = re.sub(r"\(.*?\)", option, text, 1)
+        return text
+
     # TODO make type functions that can take multiple types
     # TODO make function that just takes normal regex

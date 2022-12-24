@@ -42,9 +42,6 @@ class Pycasso:
     display_image_on_EPD(display_image, epd):
         Displays PIL image object 'display_image' on omni_epd object 'epd'
 
-    parse_subject(subject)
-        String parsing method that pulls out text with random options in it
-
     run()
         Do pycasso
     """
@@ -165,20 +162,6 @@ class Pycasso:
         epd.close()
         return
 
-    # TODO: offload prompt generation into another class
-    @staticmethod
-    def parse_subject(subject):
-        # Get everything inside brackets
-        brackets = re.findall(r"\(.*?\)", subject)
-        for bracket in brackets:
-            # Get random item
-            bracket = bracket.replace('(', '').replace(')', '')
-            random.seed()
-            option = random.choice(bracket.split('|'))
-            # Substitute brackets
-            subject = re.sub(r"\(.*?\)", option, subject, 1)
-        return subject
-
     # TODO: Functions to run to clean up switching the modes
     def load_historic_image(self):
         return
@@ -230,8 +213,6 @@ class Pycasso:
                 self.config.stability_amount,
                 self.config.dalle_amount
             ))[0]
-
-            # TODO: Code starting to look a little spaghetti. Clean up once API works.
 
             artist_text = ""
             title_text = ""
@@ -302,8 +283,9 @@ class Pycasso:
                 if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
                     # Build prompt from artist/subject
                     artist_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.artists_file))
+                    artist_text = FileOperations.parse_text(artist_text)
                     title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.subjects_file))
-                    title_text = self.parse_subject(title_text)
+                    title_text = FileOperations.parse_text(title_text)
                     prompt = (self.config.prompt_preamble + title_text + self.config.prompt_connector
                               + artist_text + self.config.prompt_postscript)
                     metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
@@ -312,6 +294,7 @@ class Pycasso:
                 elif prompt_mode == PromptMode.PROMPT.value:
                     # Build prompt from prompt file
                     title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.prompts_file))
+                    title_text = FileOperations.parse_text(title_text)
                     prompt = self.config.prompt_preamble + title_text + self.config.prompt_postscript
                 else:
                     warnings.warn("Invalid prompt mode chosen. Exiting application.")
