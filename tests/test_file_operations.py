@@ -141,3 +141,10 @@ def test_get_full_path():
     result = test_file.get_full_path("test.png")
     expected = os.path.join(directory, "test.png")
     assert result == expected
+
+
+def test_parse_text():
+    text = "part1 (option1|option2) part3"
+    result = FileOperations.parse_text(text)
+    expected = ["part1 option1 part3", "part1 option2 part3"]
+    assert result in expected
