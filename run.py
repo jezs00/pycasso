@@ -10,7 +10,8 @@ from constants import ConfigConst
 # Set up logging
 file_path = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
-                    filename=os.path.join(file_path, ConfigConst.LOGGING_FILE.value))
+                    filename=os.path.join(file_path, ConfigConst.LOGGING_FILE.value),
+                    format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 instance = Pycasso()
 if instance.config.use_pijuice:

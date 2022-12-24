@@ -139,7 +139,8 @@ class Pycasso:
             if config.log_file is not None and config.log_file != "":
                 log_file = os.path.join(self.file_path, config.log_file)
 
-            logging.basicConfig(level=config.log_level, filename=log_file)
+            logging.basicConfig(level=config.log_level, filename=log_file,
+                                format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
             logging.info("Config loaded")
 
         except IOError as e:
