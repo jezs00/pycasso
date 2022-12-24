@@ -117,15 +117,15 @@ class FileOperations:
         return text
 
     @staticmethod
-    def get_lines(path):
+    def get_lines(path, encoding='utf-8'):
         lines = []
-        with open(path) as file:
+        with open(path, encoding=encoding) as file:
             for line in file:
                 lines.append(line.strip())
         return lines
 
     @staticmethod
-    def get_random_line(path):  # TODO: more unit tests!
+    def get_random_line(path):
         lines = FileOperations.get_lines(path)
         size = len(lines)
         if size == 0:
