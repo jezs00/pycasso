@@ -164,6 +164,3 @@ class FileOperations:
             # Substitute brackets
             text = re.sub(r"\(.*?\)", option, text, 1)
         return text
-
-    # TODO make type functions that can take multiple types
-    # TODO make function that just takes normal regex
