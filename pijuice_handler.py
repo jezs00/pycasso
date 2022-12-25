@@ -53,7 +53,8 @@ class PiJuiceHandler:
             power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
             charge_level = pijuice.status.GetChargeLevel()['data']
 
-        except:
+        except Exception as e:
+            logging.error(e)
             logging.error("Cannot create pijuice object. Running pycasso once with error display and exiting process.")
             # run pycasso with error symbol, then exit
             instance.icon_shape = DisplayShape.CROSS.value
@@ -62,6 +63,7 @@ class PiJuiceHandler:
             if shutdown:
                 logging.info("Shutting down if possible")
                 self.system_shutdown()
+                sys.exit()
 
         logging.info(f"Power status is \'{power_status}\'")
         logging.info(f"Battery level is \'{charge_level}\'")
@@ -79,8 +81,8 @@ class PiJuiceHandler:
                 if shutdown:
                     self.safe_pijuice_shutdown(pijuice)
 
-        except:
-            logging.error("Program Error.")
+        except Exception as e:
+            logging.error(e)
 
             # shutdown if we've configured pycasso to do so
             if shutdown:
