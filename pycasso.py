@@ -220,7 +220,7 @@ class Pycasso:
 
             if provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
-                image_directory = os.path.join(self.file_path, self.config.external_image_location)
+                image_directory = self.config.external_image_location
                 if not os.path.exists(image_directory):
                     warnings.warn("External image directory path does not exist: '" + image_directory + "'")
                     exit()
@@ -251,7 +251,7 @@ class Pycasso:
 
             elif provider_type == ProvidersConst.HISTORIC.value:
                 # Historic image previously saved
-                image_directory = os.path.join(self.file_path, self.config.generated_image_location)
+                image_directory = self.config.generated_image_location
                 if not os.path.exists(image_directory):
                     warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
                     exit()
@@ -342,8 +342,9 @@ class Pycasso:
                     exit()
 
                 if self.config.save_image:
+                    #TODO: Make this a function
                     image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + ".png"
-                    save_path = os.path.join(self.file_path, self.config.generated_image_location, image_name)
+                    save_path = os.path.join(self.config.generated_image_location, image_name)
                     logging.info(f"Saving image as {save_path}")
 
                     # Save the image
@@ -365,13 +366,13 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                font_path = os.path.join(self.file_path, self.config.font_file)
-                if not os.path.exists(font_path):
+                self.config.font_file
+                if not os.path.exists(self.config.font_file):
                     logging.info("Font file path does not exist: '" + self.config.font_file + "'")
                     exit()
 
-                title_font = ImageFont.truetype(font_path, self.config.title_size)
-                artist_font = ImageFont.truetype(font_path, self.config.artist_size)
+                title_font = ImageFont.truetype(self.config.font_file, self.config.title_size)
+                artist_font = ImageFont.truetype(self.config.font_file, self.config.artist_size)
 
                 artist_box = (0, image_base.height, 0, image_base.height)
                 title_box = artist_box

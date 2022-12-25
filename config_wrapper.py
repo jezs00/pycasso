@@ -30,7 +30,6 @@ class Configs:
         Sets config file via terminal prompts
     """
 
-    # TODO: refactor all paths to store as full paths to clean everything up and reduce confusion
     def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.CONFIG_PATH_EG.value):
         # Paths
         self.file = FileOperations()
@@ -41,10 +40,10 @@ class Configs:
         # Set Defaults
         # File Settings
         self.save_image = ConfigConst.FILE_SAVE_IMAGE.value
-        self.external_image_location = ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value
-        self.generated_image_location = ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value
+        self.external_image_location = self.file.get_full_path(ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
+        self.generated_image_location = self.file.get_full_path(ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
         self.image_format = ConfigConst.FILE_IMAGE_FORMAT.value
-        self.font_file = ConfigConst.FILE_FONT_FILE.value
+        self.font_file = self.file.get_full_path(ConfigConst.FILE_FONT_FILE.value)
         self.subjects_file = self.file.get_full_path(ConfigConst.FILE_SUBJECTS_FILE.value)
         self.artists_file = self.file.get_full_path(ConfigConst.FILE_ARTISTS_FILE.value)
         self.prompts_file = self.file.get_full_path(ConfigConst.FILE_PROMPTS_FILE.value)
@@ -179,7 +178,6 @@ class Configs:
             self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
 
             # Create new prompts if necessary and make them full paths
-
             self.subjects_file = self.file.get_full_path(self.subjects_file)
             self.artists_file = self.file.get_full_path(self.artists_file)
             self.prompts_file = self.file.get_full_path(self.prompts_file)
@@ -187,6 +185,11 @@ class Configs:
             self.subjects_file = FileOperations.backup_file(self.subjects_file, self.subjects_example)
             self.artists_file = FileOperations.backup_file(self.artists_file, self.artists_example)
             self.prompts_file = FileOperations.backup_file(self.prompts_file, self.prompts_example)
+
+            # Set full paths for other paths
+            self.external_image_location = self.file.get_full_path(self.external_image_location)
+            self.generated_image_location = self.file.get_full_path(self.generated_image_location)
+            self.font_file = self.file.get_full_path(self.font_file)
 
         return config
 
