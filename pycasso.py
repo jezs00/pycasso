@@ -283,9 +283,9 @@ class Pycasso:
 
                 if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
                     # Build prompt from artist/subject
-                    artist_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.artists_file))
+                    artist_text = FileOperations.get_random_line(self.config.artists_file)
                     artist_text = FileOperations.parse_text(artist_text)
-                    title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.subjects_file))
+                    title_text = FileOperations.get_random_line(self.config.subjects_file)
                     title_text = FileOperations.parse_text(title_text)
                     prompt = (self.config.prompt_preamble + title_text + self.config.prompt_connector
                               + artist_text + self.config.prompt_postscript)
@@ -294,7 +294,7 @@ class Pycasso:
 
                 elif prompt_mode == PromptMode.PROMPT.value:
                     # Build prompt from prompt file
-                    title_text = FileOperations.get_random_line(os.path.join(self.file_path, self.config.prompts_file))
+                    title_text = FileOperations.get_random_line(self.config.prompts_file)
                     title_text = FileOperations.parse_text(title_text)
                     prompt = self.config.prompt_preamble + title_text + self.config.prompt_postscript
                 else:
