@@ -147,7 +147,8 @@ class DalleProvider(Provider):
         img = Image.open(BytesIO(requests.get(url).content))
         return img
 
-    def infill_image_from_image(self, text, img):
+    @staticmethod
+    def infill_image_from_image(text, img):
         # Infills image based on next size up possible from available image
         # TODO: handle if there are no bigger sizes
         mask_size = (0, 0)
