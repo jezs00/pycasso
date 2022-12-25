@@ -33,8 +33,7 @@ class Pycasso:
     Methods
     -------
     parse_args()
-        Function parses arguments provided via command line. Sets internal args variable to argparser
-        Also returns the argparser
+        Function parses arguments provided via command line. Returns the parser object.
 
     load_config()
         Loads config from file provided to it or sets defaults
@@ -44,6 +43,9 @@ class Pycasso:
 
     run()
         Do pycasso
+
+    save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT):
+        Saves a PIL image (image) based on string (prompt), with metadata object (metadata)
     """
 
     def __init__(self):
@@ -180,6 +182,35 @@ class Pycasso:
     def prep_prompt_text(self):
         return
 
+    @staticmethod
+    def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT):
+        image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + extension
+        save_path = os.path.join(path, image_name)
+        logging.info(f"Saving image as {save_path}")
+
+        # Save the image
+        image.save(save_path, pnginfo=metadata)
+        return
+
+    def get_random_provider_mode(self):
+        provider_types = [
+            ProvidersConst.EXTERNAL.value,
+            ProvidersConst.HISTORIC.value,
+            ProvidersConst.STABLE.value,
+            ProvidersConst.DALLE.value
+        ]
+
+        # Pick random provider based on weight
+        random.seed()
+        provider_type = random.choices(provider_types, k=1, weights=(
+            self.config.external_amount,
+            self.config.historic_amount,
+            self.config.stability_amount,
+            self.config.dalle_amount
+        ))[0]
+
+        return provider_type
+
     def run(self):
         logging.info("pycasso has begun")
 
@@ -199,22 +230,7 @@ class Pycasso:
             exit()
 
         try:
-            # Build list
-            provider_types = [
-                ProvidersConst.EXTERNAL.value,
-                ProvidersConst.HISTORIC.value,
-                ProvidersConst.STABLE.value,
-                ProvidersConst.DALLE.value
-            ]
-
-            # Pick random provider based on weight
-            random.seed()
-            provider_type = random.choices(provider_types, k=1, weights=(
-                self.config.external_amount,
-                self.config.historic_amount,
-                self.config.stability_amount,
-                self.config.dalle_amount
-            ))[0]
+            provider_type = self.get_random_provider_mode()
 
             artist_text = ""
             title_text = ""
@@ -343,13 +359,7 @@ class Pycasso:
                     exit()
 
                 if self.config.save_image:
-                    #TODO: Make this a function
-                    image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + ".png"
-                    save_path = os.path.join(self.config.generated_image_location, image_name)
-                    logging.info(f"Saving image as {save_path}")
-
-                    # Save the image
-                    image_base.save(save_path, pnginfo=metadata)
+                    self.save_image(prompt, metadata, self.config.generated_image_location)
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
