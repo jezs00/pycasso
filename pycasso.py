@@ -60,8 +60,7 @@ class Pycasso:
         self.dalle_key = None
 
         # Args read
-        self.args = None
-        self.parse_args()
+        self.args = self.parse_args()
         self.stability_key = self.args.stabilitykey
         self.dalle_key = self.args.dallekey
         if self.args.displayshape is not None:
@@ -78,7 +77,8 @@ class Pycasso:
 
         return
 
-    def parse_args(self):
+    @staticmethod
+    def parse_args():
         try:
             parser = argparse.ArgumentParser(
                 description="A program to request an image from preset APIs and apply them to an"
@@ -114,12 +114,13 @@ class Pycasso:
                                 help="Displays a shape in the top left corner of the epd. Good for providing visual"
                                      "information while using a mostly disconnected headless setup."
                                      "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
-            self.args = parser.parse_args()
+            args = parser.parse_args()
+
         except argparse.ArgumentError as e:
             logging.error(e)
             exit()
 
-        return self.args
+        return args
 
     def load_config(self, config_path=None):
         # Loads config from file provided to it or sets defaults
@@ -186,7 +187,7 @@ class Pycasso:
             epd = displayfactory.load_display_driver(self.config.display_type, self.config_dict)
 
         except EPDNotFoundError:
-            logging.error(f"Couldn\'t find {self.config.display_type}")
+            logging.error(f"Couldn't find {self.config.display_type}")
             exit()
 
         except KeyboardInterrupt:
@@ -366,7 +367,6 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                self.config.font_file
                 if not os.path.exists(self.config.font_file):
                     logging.info("Font file path does not exist: '" + self.config.font_file + "'")
                     exit()
