@@ -29,7 +29,7 @@ class Provider(object):
 
     add_secret(text):
         Adds a secret 'text' to the keyring for the appropriate provider
-        
+
     get_secret(text):
         Retrieves appropriate secret from the keyring for the appropriate provider
     """

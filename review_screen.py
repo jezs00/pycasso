@@ -8,7 +8,7 @@ import logging
 import time
 import config_wrapper
 from omni_epd import displayfactory, EPDNotFoundError
-from PIL import Image, ImageShow
+from PIL import Image
 
 # Relative path to config
 CONFIG_PATH = ".config"

@@ -71,7 +71,7 @@ class PiJuiceHandler:
         try:
             # Set icon if PiJuice has lower battery
             if charge_level < charge_display:
-                logging.info(f"Displaying icon due to low battery")
+                logging.info("Displaying icon due to low battery")
                 instance.icon_shape = DisplayShape.SQUARE.value
 
             instance.run()

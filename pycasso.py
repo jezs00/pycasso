@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-import re
+
 import sys
 import os
 import random
@@ -106,13 +106,13 @@ class Pycasso:
                                 action="store_const",
                                 const=1,
                                 default=0,
-                                help="This flag ends the program before starting the main functionality of pycasso. This will "
-                                     "not fetch images or update the epaper screen")
+                                help="This flag ends the program before starting the main functionality of pycasso."
+                                     "This will not fetch images or update the epaper screen")
             parser.add_argument("--displayshape",
                                 dest="displayshape",
                                 type=int,
-                                help="Displays a shape in the top left corner of the epd. Good for providing visual information"
-                                     " while using a mostly disconnected headless setup."
+                                help="Displays a shape in the top left corner of the epd. Good for providing visual"
+                                     "information while using a mostly disconnected headless setup."
                                      "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
             self.args = parser.parse_args()
         except argparse.ArgumentError as e:

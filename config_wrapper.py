@@ -195,4 +195,3 @@ class Configs:
 
     def set_config_terminal(self, path):
         return
-
