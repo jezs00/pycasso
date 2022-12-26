@@ -45,7 +45,11 @@ class Pycasso:
         Do pycasso
 
     save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT):
-        Saves a PIL image (image) based on string (prompt), with metadata object (metadata)
+        Saves a PIL image 'image' based on string 'prompt', with metadata object 'metadata'
+
+    load_stability_image(prompt, width, height, stability_key=None):
+        Uses Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'
+        API key should be provided in 'stability_key'
     """
 
     def __init__(self):
@@ -170,8 +174,19 @@ class Pycasso:
     def load_historic_image(self):
         return
 
-    def load_stability_image(self):
-        return
+    @staticmethod
+    def load_stability_image(prompt, width, height, stability_key=None):
+        logging.info("Loading Stability API")
+        if stability_key is None:
+            stability_provider = StabilityProvider()
+        else:
+            stability_provider = StabilityProvider(key=stability_key)
+
+        logging.info("Getting Image")
+        fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
+        fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
+        image = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
+        return image
 
     def load_dalle_image(self):
         return
@@ -183,8 +198,8 @@ class Pycasso:
         return
 
     @staticmethod
-    def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT):
-        image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + extension
+    def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT.value):
+        image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + "." + extension
         save_path = os.path.join(path, image_name)
         logging.info(f"Saving image as {save_path}")
 
@@ -326,20 +341,11 @@ class Pycasso:
 
                 # Pick between providers
                 if provider_type == ProvidersConst.STABLE.value:
-                    # Request image for Stability
-                    logging.info("Loading Stability API")
-                    if self.stability_key is None:
-                        stability_provider = StabilityProvider()
-                    else:
-                        stability_provider = StabilityProvider(key=self.stability_key)
-
-                    logging.info("Getting Image")
-                    fetch_height = ImageFunctions.ceiling_multiple(fetch_height, StabilityConst.MULTIPLE.value)
-                    fetch_width = ImageFunctions.ceiling_multiple(fetch_width, StabilityConst.MULTIPLE.value)
-                    image_base = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
+                    image_base = self.load_stability_image(prompt, fetch_width, fetch_height,
+                                                           stability_key=self.stability_key)
 
                 elif provider_type == ProvidersConst.DALLE.value:
-                    # Request image for Stability
+                    # Request image for Dalle
                     logging.info("Loading Dalle API")
                     if self.dalle_key is None:
                         dalle_provider = DalleProvider()
@@ -359,7 +365,7 @@ class Pycasso:
                     exit()
 
                 if self.config.save_image:
-                    self.save_image(prompt, metadata, self.config.generated_image_location)
+                    self.save_image(prompt, image_base, metadata, self.config.generated_image_location)
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
