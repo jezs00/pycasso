@@ -50,6 +50,13 @@ class Pycasso:
     load_stability_image(prompt, width, height, stability_key=None):
         Uses Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'
         API key should be provided in 'stability_key'
+        returns PIL image object
+
+    load_dalle_image(prompt, width, height, infill=False, dalle_key=None):
+        Uses Dalle API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'.
+        If infill set to 'True' it will make a second request to fill out the screen to avoid gaps or ugly cropping
+        API key should be provided in 'dalle_key'
+        returns PIL image object
     """
 
     def __init__(self):
@@ -188,8 +195,21 @@ class Pycasso:
         image = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
         return image
 
-    def load_dalle_image(self):
-        return
+    @staticmethod
+    def load_dalle_image(prompt, width, height, infill=False, dalle_key=None):
+        logging.info("Loading Dalle API")
+        if dalle_key is None:
+            dalle_provider = DalleProvider()
+        else:
+            dalle_provider = DalleProvider(key=dalle_key)
+
+        logging.info("Getting Image")
+        image_base = dalle_provider.get_image_from_string(prompt, height, width)
+
+        # Use infill to fill in sides of image instead of cropping
+        if infill:
+            image = dalle_provider.infill_image_from_image(prompt, image_base)
+        return image
 
     def load_historic_text(self):
         return
@@ -345,19 +365,8 @@ class Pycasso:
                                                            stability_key=self.stability_key)
 
                 elif provider_type == ProvidersConst.DALLE.value:
-                    # Request image for Dalle
-                    logging.info("Loading Dalle API")
-                    if self.dalle_key is None:
-                        dalle_provider = DalleProvider()
-                    else:
-                        dalle_provider = DalleProvider(key=self.dalle_key)
-
-                    logging.info("Getting Image")
-                    image_base = dalle_provider.get_image_from_string(prompt, fetch_height, fetch_width)
-
-                    # Use infill to fill in sides of image instead of cropping
-                    if self.config.infill:
-                        image_base = dalle_provider.infill_image_from_image(prompt, image_base)
+                    image_base = self.load_dalle_image(prompt, fetch_width, fetch_height,
+                                                       infill=self.config.infill, dalle_key=self.dalle_key)
 
                 else:
                     # Invalid provider
