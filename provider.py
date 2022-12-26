@@ -71,7 +71,7 @@ class StabilityProvider(Provider):
         self.stability_api = client.StabilityInference(
             key=stability_key,
             host=host,
-            verbose=True,
+            verbose=False,
         )
 
         return
