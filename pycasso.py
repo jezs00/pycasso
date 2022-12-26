@@ -86,8 +86,22 @@ class Pycasso:
         the prompt.
         return prompt string and title string
 
-    get_random_provider_mode(self):
-        returns a random provider mode based on the current set
+    get_random_provider_mode()
+        returns a random provider mode based on the current set available to pycasso
+
+    add_text_to_image(draw, font_file, image_height, epd_width, title_text, artist_text, title_location,
+                      artist_location, padding, opacity, title_size, artist_size, box_to_floor, box_to_edge, crop_left,
+                      crop_right)
+        Adds text via a 'draw' object passed to the function. 'font_file' specifies a file location of a true type font.
+        image_height, is the height of the actual image retrieved from the provider or file, epd_width is the width of
+        the epd screen. 'title_text' and 'artist_text' are strings that provide the selected artist and title
+        respectively. 'title_location' and 'artist_location' provide the location in pixels from the bottom of the
+        image/display to place the text. 'padding' is how much additional space the text box takes in pixels from the
+        normal area of the text. 'opacity' is a 0-255 integer value of opacity. 'title_size' and 'artist_size' are the
+        text sizes of the title and artist respectively. 'box_to_floor' is a boolean flag to draw the text box to the
+        bottom of the image or not. 'box_to_edge' is a boolean flag to draw the text box to the edges of the image or
+        not. 'crop_left' and 'crop_right' are the cropped image coordinates to use if 'box to edge' is used. These do
+        not need to be set if box_to_edge is false.
 
     run()
         Do pycasso
@@ -302,9 +316,6 @@ class Pycasso:
             image = dalle_provider.infill_image_from_image(prompt, image_base)
         return image
 
-    def load_historic_text(self):
-        return
-
     def prep_prompt_text(self, prompt_mode=PromptMode.PROMPT.value):
         # Build prompt, add metadata as we go
         metadata = PngImagePlugin.PngInfo()
@@ -387,6 +398,51 @@ class Pycasso:
 
         return provider_type
 
+    @staticmethod
+    def add_text_to_image(draw, font_file, image_height, epd_width, title_text="", artist_text="",
+                          title_location=ConfigConst.TEXT_TITLE_LOC, artist_location=ConfigConst.TEXT_ARTIST_LOC,
+                          padding=ConfigConst.TEXT_PADDING, opacity=ConfigConst.TEXT_OPACITY,
+                          title_size=ConfigConst.TEXT_TITLE_SIZE, artist_size=ConfigConst.TEXT_ARTIST_SIZE,
+                          box_to_floor=ConfigConst.TEXT_BOX_TO_FLOOR, box_to_edge=ConfigConst.TEXT_BOX_TO_EDGE,
+                          crop_left=0, crop_right=0):
+        if not os.path.exists(font_file):
+            warnings.warn("Font file path does not exist: '" + font_file + "'. Setting default font.")
+            title_font = ImageFont.load_default()
+            artist_font = ImageFont.load_default()
+        else:
+            title_font = ImageFont.truetype(font_file, title_size)
+            artist_font = ImageFont.truetype(font_file, artist_size)
+
+        artist_box = (0, image_height, 0, image_height)
+        title_box = artist_box
+
+        if artist_text != "" and artist_text is not None:
+            artist_box = draw.textbbox((epd_width / 2, image_height - artist_location),
+                                       artist_text, font=artist_font, anchor="mb")
+        if title_text != "" and title_text is not None:
+            title_box = draw.textbbox((epd_width / 2, image_height - title_location),
+                                      title_text, font=title_font, anchor="mb")
+
+        draw_box = ImageFunctions.max_area([artist_box, title_box])
+        draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
+
+        # Modify depending on box type
+        if box_to_floor:
+            draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_height)
+
+        if box_to_edge:
+            if crop_right == 0:
+                # Set crop right to the width of the screen if it hasn't been set
+                crop_right = epd_width
+            draw_box = ImageFunctions.set_tuple_sides(draw_box, -crop_left, crop_right)
+
+        draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
+        draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font,
+                  anchor="mb", fill=0)
+        draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font,
+                  anchor="mb", fill=0)
+        return draw
+
     def run(self):
         logging.info("pycasso has begun")
 
@@ -407,9 +463,6 @@ class Pycasso:
 
         try:
             provider_type = self.get_random_provider_mode()
-
-            artist_text = ""
-            title_text = ""
 
             if provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
@@ -451,6 +504,8 @@ class Pycasso:
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
             image_crop = ImageFunctions.get_crop_size(image_base.width, image_base.height, epd.width, epd.height)
+            crop_left = image_crop[0]
+            crop_right = image_crop[2]
 
             # Crop and prepare image
             image_base = image_base.crop(image_crop)
@@ -464,39 +519,10 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                if not os.path.exists(self.config.font_file):
-                    logging.info("Font file path does not exist: '" + self.config.font_file + "'")
-                    exit()
-
-                title_font = ImageFont.truetype(self.config.font_file, self.config.title_size)
-                artist_font = ImageFont.truetype(self.config.font_file, self.config.artist_size)
-
-                artist_box = (0, image_base.height, 0, image_base.height)
-                title_box = artist_box
-
-                if artist_text != "" and artist_text is not None:
-                    artist_box = draw.textbbox((epd.width / 2, image_base.height - self.config.artist_loc),
-                                               artist_text, font=artist_font, anchor="mb")
-                if title_text != "" and title_text is not None:
-                    title_box = draw.textbbox((epd.width / 2, image_base.height - self.config.title_loc),
-                                              title_text, font=title_font, anchor="mb")
-
-                draw_box = ImageFunctions.max_area([artist_box, title_box])
-                draw_box = tuple(numpy.add(draw_box, (-self.config.padding, -self.config.padding,
-                                                      self.config.padding, self.config.padding)))
-
-                # Modify depending on box type
-                if self.config.box_to_floor:
-                    draw_box = ImageFunctions.set_tuple_bottom(draw_box, image_base.height)
-
-                if self.config.box_to_edge:
-                    draw_box = ImageFunctions.set_tuple_sides(draw_box, -image_crop[0], image_crop[2])
-
-                draw.rectangle(draw_box, fill=(255, 255, 255, self.config.opacity))
-                draw.text((epd.width / 2, image_base.height - self.config.artist_loc), artist_text, font=artist_font,
-                          anchor="mb", fill=0)
-                draw.text((epd.width / 2, image_base.height - self.config.title_loc), title_text, font=title_font,
-                          anchor="mb", fill=0)
+                self.add_text_to_image(draw, self.config.font_file, image_base.height, epd.width, title_text,
+                                       artist_text, self.config.title_loc, self.config.artist_loc, self.config.padding,
+                                       self.config.opacity, self.config.title_size, self.config.artist_size,
+                                       self.config.box_to_floor, self.config.box_to_edge, crop_left, crop_right)
 
             self.display_image_on_epd(image_base, epd)
             logging.shutdown()
