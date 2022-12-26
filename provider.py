@@ -95,10 +95,10 @@ class StabilityProvider(Provider):
                     warnings.warn(
                         "Your request activated the APIs safety filters and could not be processed."
                         "Please modify the prompt and try again.")
-                    return None  # TODO: Handle this
+                    return None
                 if artifact.type == generation.ARTIFACT_IMAGE:
                     img = Image.open(io.BytesIO(artifact.binary))
-        return img  # TODO: fix logic in case there's no image
+        return img
 
     @staticmethod
     def add_secret(text):
