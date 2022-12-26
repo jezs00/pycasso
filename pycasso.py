@@ -178,8 +178,31 @@ class Pycasso:
         return
 
     # TODO: Functions to run to clean up switching the modes
-    def load_historic_image(self):
-        return
+
+    @staticmethod
+    def load_historic_image(location, extension=ConfigConst.FILE_IMAGE_FORMAT.value):
+        image_directory = location
+        if not os.path.exists(image_directory):
+            warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
+            exit()
+
+        # Get random image from folder
+        file = FileOperations(image_directory)
+        image_path = file.get_random_file_of_type(extension)
+        image_base = Image.open(image_path)
+        image_name = os.path.basename(image_path)
+        title_text = image_name
+        artist_text = None
+
+        # Get and apply metadata if it exists
+        metadata = image_base.text
+        if PropertiesConst.TITLE.value in metadata.keys():
+            title_text = metadata[PropertiesConst.TITLE.value]
+        elif PropertiesConst.PROMPT.value in metadata.keys():
+            title_text = metadata[PropertiesConst.PROMPT.value]
+        if PropertiesConst.ARTIST.value in metadata.keys():
+            artist_text = metadata[PropertiesConst.ARTIST.value]
+        return image_base, title_text, artist_text
 
     @staticmethod
     def load_stability_image(prompt, width, height, stability_key=None):
@@ -303,26 +326,8 @@ class Pycasso:
 
             elif provider_type == ProvidersConst.HISTORIC.value:
                 # Historic image previously saved
-                image_directory = self.config.generated_image_location
-                if not os.path.exists(image_directory):
-                    warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
-                    exit()
-
-                # Get random image from folder
-                file = FileOperations(image_directory)
-                image_path = file.get_random_file_of_type(self.config.image_format)
-                image_base = Image.open(image_path)
-                image_name = os.path.basename(image_path)
-                title_text = image_name
-
-                # Get and apply metadata if it exists
-                metadata = image_base.text
-                if PropertiesConst.TITLE.value in metadata.keys():
-                    title_text = metadata[PropertiesConst.TITLE.value]
-                elif PropertiesConst.PROMPT.value in metadata.keys():
-                    title_text = metadata[PropertiesConst.PROMPT.value]
-                if PropertiesConst.ARTIST.value in metadata.keys():
-                    artist_text = metadata[PropertiesConst.ARTIST.value]
+                image_base, title_text, artist_text = self.load_historic_image(self.config.generated_image_location,
+                                                                               self.config.image_format)
 
             else:
                 # Build prompt, add metadata as we go
@@ -361,10 +366,12 @@ class Pycasso:
 
                 # Pick between providers
                 if provider_type == ProvidersConst.STABLE.value:
+                    # Stable Diffusion
                     image_base = self.load_stability_image(prompt, fetch_width, fetch_height,
                                                            stability_key=self.stability_key)
 
                 elif provider_type == ProvidersConst.DALLE.value:
+                    # Dalle
                     image_base = self.load_dalle_image(prompt, fetch_width, fetch_height,
                                                        infill=self.config.infill, dalle_key=self.dalle_key)
 
