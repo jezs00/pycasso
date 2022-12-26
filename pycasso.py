@@ -177,7 +177,41 @@ class Pycasso:
         epd.close()
         return
 
-    # TODO: Functions to run to clean up switching the modes
+    @staticmethod
+    def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX,
+                            artist_regex=ConfigConst.TEXT_ARTIST_REGEX, remove_text=ConfigConst.TEXT_REMOVE_TEXT,
+                            parse_text=ConfigConst.TEXT_PARSE_TEXT.value,
+                            extension=ConfigConst.FILE_IMAGE_FORMAT.value):
+        image_directory = location
+        if not os.path.exists(image_directory):
+            warnings.warn("External image directory path does not exist: '" + image_directory + "'")
+            exit()
+
+        # Get random image from folder
+        file = FileOperations(image_directory)
+        image_path = file.get_random_file_of_type(extension)
+        image_base = Image.open(image_path)
+
+        # Add text to via parsing if necessary
+        image_name = os.path.basename(image_path)
+        title_text = image_name
+        artist_text = None
+
+        if parse_text:
+            title_text, artist_text = FileOperations.get_title_and_artist(image_name,
+                                                                          preamble_regex,
+                                                                          artist_regex,
+                                                                          extension)
+            title_text = FileOperations.remove_text(title_text, remove_text)
+            artist_text = FileOperations.remove_text(artist_text, remove_text)
+            title_text = title_text.title()
+            artist_text = artist_text.title()
+
+        # Resize to thumbnail size based on epd resolution
+        # TODO: allow users to choose between crop and resize
+        epd_res = (width, height)
+        image_base.thumbnail(epd_res)
+        return image_base, title_text, artist_text
 
     @staticmethod
     def load_historic_image(location, extension=ConfigConst.FILE_IMAGE_FORMAT.value):
@@ -295,39 +329,16 @@ class Pycasso:
 
             if provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
-                image_directory = self.config.external_image_location
-                if not os.path.exists(image_directory):
-                    warnings.warn("External image directory path does not exist: '" + image_directory + "'")
-                    exit()
-
-                # Get random image from folder
-                file = FileOperations(image_directory)
-                image_path = file.get_random_file_of_type(self.config.image_format)
-                image_base = Image.open(image_path)
-
-                # Add text to via parsing if necessary
-                image_name = os.path.basename(image_path)
-                title_text = image_name
-
-                if self.config.parse_text:
-                    title_text, artist_text = FileOperations.get_title_and_artist(image_name,
-                                                                                  self.config.preamble_regex,
-                                                                                  self.config.artist_regex,
-                                                                                  self.config.image_format)
-                    title_text = FileOperations.remove_text(title_text, self.config.remove_text)
-                    artist_text = FileOperations.remove_text(artist_text, self.config.remove_text)
-                    title_text = title_text.title()
-                    artist_text = artist_text.title()
-
-                # Resize to thumbnail size based on epd resolution
-                # TODO: allow users to choose between crop and resize
-                epd_res = (epd.width, epd.height)
-                image_base.thumbnail(epd_res)
+                mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
+                                                     self.config.preamble_regex, self.config.artist_regex,
+                                                     self.config.remove_text, self.config.parse_text,
+                                                     self.config.image_format)
+                image_base, title_text, artist_text = mode_list
 
             elif provider_type == ProvidersConst.HISTORIC.value:
                 # Historic image previously saved
-                image_base, title_text, artist_text = self.load_historic_image(self.config.generated_image_location,
-                                                                               self.config.image_format)
+                mode_list = self.load_historic_image(self.config.generated_image_location, self.config.image_format)
+                image_base, title_text, artist_text = mode_list
 
             else:
                 # Build prompt, add metadata as we go
@@ -409,10 +420,10 @@ class Pycasso:
                 artist_box = (0, image_base.height, 0, image_base.height)
                 title_box = artist_box
 
-                if artist_text != "":
+                if artist_text != "" and artist_text is not None:
                     artist_box = draw.textbbox((epd.width / 2, image_base.height - self.config.artist_loc),
                                                artist_text, font=artist_font, anchor="mb")
-                if title_text != "":
+                if title_text != "" and title_text is not None:
                     title_box = draw.textbbox((epd.width / 2, image_base.height - self.config.title_loc),
                                               title_text, font=title_font, anchor="mb")
 
