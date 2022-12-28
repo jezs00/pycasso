@@ -26,14 +26,7 @@ python3 pip install https://github.com/openai/openai-python.git
 
 
 ### Run on startup
-#### Option 1: RC setup
-Enable pycasso on startup by adding the following command to rc.local, crontab or whatever
-
-* If using dbus for key management: TODO
-* Otherwise: `python3 <Path to pycasso>/pycasso.py`
-
-#### Option 2: Pijuice setup
-Enable pycasso to interact with pijuice by adding the following command to rc.local
+Add the following command to rc.local:
 (rc.local works best as far as I can tell from testing)
 
 * If using dbus for key management: `sudo dbus-run-session -- bash <Path to pycasso>/run.sh`
