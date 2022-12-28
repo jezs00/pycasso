@@ -158,9 +158,10 @@ class FileOperations:
         return full_path
 
     @staticmethod
-    def parse_text(text):
+    def parse_text(text, bracket_one="(", bracket_two=")"):
         # Get everything inside brackets
-        brackets = re.findall(r"\(.*?\)", text)
+        regex = fr"\{bracket_one}.*?\{bracket_two}"
+        brackets = re.findall(regex, text)
         for bracket in brackets:
             # Get random item
             bracket = bracket.replace('(', '').replace(')', '')
@@ -168,7 +169,7 @@ class FileOperations:
             options = FileOperations.parse_weighted_lines(bracket.split('|'))
             option = random.choice(options)
             # Substitute brackets
-            text = re.sub(r"\(.*?\)", option, text, 1)
+            text = re.sub(regex, option, text, 1)
         return text
 
     @staticmethod
