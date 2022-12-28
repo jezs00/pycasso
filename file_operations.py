@@ -165,7 +165,8 @@ class FileOperations:
             # Get random item
             bracket = bracket.replace('(', '').replace(')', '')
             random.seed()
-            option = random.choice(bracket.split('|'))
+            options = FileOperations.parse_weighted_lines(bracket.split('|'))
+            option = random.choice(options)
             # Substitute brackets
             text = re.sub(r"\(.*?\)", option, text, 1)
         return text
