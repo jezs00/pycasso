@@ -143,11 +143,9 @@ class Configs:
 
             # Prompt
             self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-            self.prompt_preamble = config.get("Prompt", "prompt_preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
-            self.prompt_connector = config.get("Prompt", "prompt_connector",
-                                               fallback=ConfigConst.PROMPT_CONNECTOR.value)
-            self.prompt_postscript = config.get("Prompt", "prompt_postscript",
-                                                fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+            self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
+            self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
+            self.prompt_postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
 
             # Icon
             self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
