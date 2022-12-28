@@ -1,0 +1,56 @@
+[File]
+
+save_image=False
+image_format=jpg
+subjects_file=tests/test_pycasso_content/subjects.txt
+artists_file=tests/test_pycasso_content/artists.txt
+prompts_file=tests/test_pycasso_content/prompts.txt
+
+[Prompt]
+
+mode=2
+preamble=Preamble
+connector=Connector
+postscript=Postscript
+
+[Text]
+
+add_text = False
+parse_text = False
+preamble_regex =  test
+artist_regex =  test
+remove_text = test
+            test2
+            test3
+box_to_floor = False
+box_to_edge = False
+artist_loc = 20
+artist_size = 28
+title_loc = 56
+title_size = 40
+padding = 20
+opacity = 160
+
+[EPD]
+
+type=omni_epd.mock
+mode=color
+
+[Display]
+
+rotate = 0
+flip_horizontal=False
+flip_vertical=False
+
+[Image Enhancements]
+
+contrast=1
+brightness=1
+sharpness=1
+
+[Providers]
+
+external_amount = 51
+historic_amount = 52
+stability_amount = 0
+dalle_amount = 0
