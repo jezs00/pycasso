@@ -1,5 +1,6 @@
 # Unit tests for file_operations.py
 import os
+import collections
 from file_operations import FileOperations
 
 
@@ -148,3 +149,10 @@ def test_parse_text():
     result = FileOperations.parse_text(text)
     expected = ["part1 option1 part3", "part1 option2 part3"]
     assert result in expected
+
+
+def test_parse_weighted_lines():
+    lines = ["5:Five", "1:One", "0:Zero"]
+    result = FileOperations.parse_weighted_lines(lines)
+    expected = ["Five", "Five", "Five", "Five", "Five", "One"]
+    assert collections.Counter(result) == collections.Counter(expected)
