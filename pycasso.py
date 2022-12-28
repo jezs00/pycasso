@@ -107,7 +107,7 @@ class Pycasso:
         Do pycasso
     """
 
-    def __init__(self):
+    def __init__(self, config_path=None):
         self.file_path = os.path.dirname(os.path.abspath(__file__))
 
         # Config Dictionary for omni-epd
@@ -134,7 +134,7 @@ class Pycasso:
                 DalleProvider.add_secret(self.dalle_key)
 
         # Load config or set defaults
-        self.config = self.load_config()
+        self.config = self.load_config(config_path)
 
         return
 
