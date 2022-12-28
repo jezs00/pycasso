@@ -27,9 +27,10 @@ class ConfigConst(Enum):
     # Text Settings
     TEXT_ADD_TEXT = False
     TEXT_PARSE_TEXT = False
+    TEXT_PARSE_BRACKETS = "()\n[]\n{}"
     TEXT_PREAMBLE_REGEX = ".*- "
     TEXT_ARTIST_REGEX = " by "
-    TEXT_REMOVE_TEXT = [", digital art", "A painting of"]
+    TEXT_REMOVE_TEXT = ", digital art\nA painting of"
     TEXT_BOX_TO_FLOOR = True
     TEXT_BOX_TO_EDGE = True
     TEXT_ARTIST_LOC = 10

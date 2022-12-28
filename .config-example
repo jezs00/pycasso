@@ -91,13 +91,20 @@ add_text = True
 # The above may return "A Good Dog." or "A Bad Dog"
 parse_text = True
 
+# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
+# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
+# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
+parse_brackets = "()"
+                "[]"
+                "{}"
+
 # Filename parsing: regex to find split point between preamble and main text in external image names [string]
 preamble_regex = " .* -"
 
 # Filename parsing: regex to find split point between subject and artist in external document names [string]
 artist_regex =  in the style of
 
-# Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [string]
+# Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [strings]
 remove_text = ", digital art"
             "A painting of"
             "an oil painting of"
