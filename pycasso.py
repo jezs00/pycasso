@@ -404,11 +404,12 @@ class Pycasso:
 
     @staticmethod
     def add_text_to_image(draw, font_file, image_height, epd_width, title_text="", artist_text="",
-                          title_location=ConfigConst.TEXT_TITLE_LOC, artist_location=ConfigConst.TEXT_ARTIST_LOC,
-                          padding=ConfigConst.TEXT_PADDING, opacity=ConfigConst.TEXT_OPACITY,
-                          title_size=ConfigConst.TEXT_TITLE_SIZE, artist_size=ConfigConst.TEXT_ARTIST_SIZE,
-                          box_to_floor=ConfigConst.TEXT_BOX_TO_FLOOR, box_to_edge=ConfigConst.TEXT_BOX_TO_EDGE,
-                          crop_left=0, crop_right=0):
+                          title_location=ConfigConst.TEXT_TITLE_LOC.value,
+                          artist_location=ConfigConst.TEXT_ARTIST_LOC.value,
+                          padding=ConfigConst.TEXT_PADDING.value, opacity=ConfigConst.TEXT_OPACITY.value,
+                          title_size=ConfigConst.TEXT_TITLE_SIZE.value, artist_size=ConfigConst.TEXT_ARTIST_SIZE.value,
+                          box_to_floor=ConfigConst.TEXT_BOX_TO_FLOOR.value,
+                          box_to_edge=ConfigConst.TEXT_BOX_TO_EDGE.value, crop_left=0, crop_right=0):
         if not os.path.exists(font_file):
             warnings.warn("Font file path does not exist: '" + font_file + "'. Setting default font.")
             title_font = ImageFont.load_default()
