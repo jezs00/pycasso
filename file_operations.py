@@ -38,15 +38,19 @@ class FileOperations:
         returns a random line from file located at 'path'
 
     backup_file(primary_path, backup_path)
-        if primary_path does not exist, copies file at backup_path to primary_path.
-        returns primary_path if operation worked, otherwise returns None if both paths do not exist
+        if 'primary_path' does not exist, copies file at 'backup_path' to 'primary_path'.
+        returns 'primary_path' if operation worked, otherwise returns None if both paths do not exist
 
     get_full_path(path)
         Returns full file system path of path relative to config_wrapper.py file.
 
-
     parse_text(text)
         String parsing method that pulls out text with random options in it
+
+    parse_weighted_lines(weighted_lines)
+        Takes a list of strings 'weighted_lines' and parses leading integers in the string before a ':' character.
+        Adds that integers amount that line to the list
+        Returns the updated list of strings
     """
 
     def __init__(self, path=os.path.dirname(os.path.abspath(__file__))):
@@ -131,6 +135,7 @@ class FileOperations:
     @staticmethod
     def get_random_line(path):
         lines = FileOperations.get_lines(path)
+        lines = FileOperations.parse_weighted_lines(lines)
         size = len(lines)
         if size == 0:
             return
@@ -164,3 +169,18 @@ class FileOperations:
             # Substitute brackets
             text = re.sub(r"\(.*?\)", option, text, 1)
         return text
+
+    @staticmethod
+    def parse_weighted_lines(weighted_lines):
+        lines = []
+        # Find any colons at the start of the line, use preceding text if it's an integer
+        for line in weighted_lines:
+            amount = 1
+            split = line.split(':', maxsplit=1)
+            # If there is a valid colon, split it on the first one, add it that many times to list
+            if len(split) > 1 and split[0].isdigit():
+                amount = int(split[0])
+                line = split[1]
+            for i in range(amount):
+                lines.append(line)
+        return lines

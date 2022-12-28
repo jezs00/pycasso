@@ -1,9 +1,9 @@
-Salvador Dali
-Roy Lichtenstein
+2:Salvador Dali
+2:Roy Lichtenstein
 Michelangelo
 Banksy
 Vincent van Gogh
-Pablo Picasso
+2:Pablo Picasso
 Claude Monet
 Jackson Pollock
 Henri Matisse
