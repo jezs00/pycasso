@@ -5,7 +5,7 @@ from omni_epd import displayfactory
 
 from constants import PromptMode, PropertiesConst, ConfigConst, ProvidersConst
 from pycasso import Pycasso
-from PIL import Image, PngImagePlugin, ImageDraw, ImageShow
+from PIL import Image, PngImagePlugin, ImageDraw
 
 
 def test_parse_args():
@@ -147,7 +147,6 @@ def test_add_text_to_image():
     draw = ImageDraw.Draw(img, "RGBA")
 
     Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255)
-    ImageShow.show(img)
 
     pixel = img.getpixel((10, 350))
     expected = (255, 255, 255, 255)
@@ -163,7 +162,6 @@ def test_add_text_to_image_blank():
     draw = ImageDraw.Draw(img, "RGBA")
 
     Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255)
-    ImageShow.show(img)
 
     pixel = img.getpixel((10, 350))
     expected = (0, 0, 0, 0)
