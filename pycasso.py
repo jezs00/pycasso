@@ -175,7 +175,11 @@ class Pycasso:
                                 help="Displays a shape in the top left corner of the epd. Good for providing visual"
                                      "information while using a mostly disconnected headless setup."
                                      "\n0 - Square\n1 - Cross\n2 - Triangle\n3 - Circle")
-            args = parser.parse_args()
+
+            args, unknown = parser.parse_known_args()
+
+            if len(unknown) > 0:
+                logging.warning(f"Ignoring unknown argument(s): {unknown}")
 
         except argparse.ArgumentError as e:
             logging.error(e)
