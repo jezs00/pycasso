@@ -9,9 +9,9 @@ prompts_file=tests/test_pycasso_content/prompts.txt
 [Prompt]
 
 mode=2
-preamble=Preamble
-connector=Connector
-postscript=Postscript
+preamble="Preamble"
+connector="Connector"
+postscript="Postscript"
 
 [Text]
 

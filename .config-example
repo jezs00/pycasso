@@ -70,13 +70,13 @@ sharpness=1
 mode=1
 
 # Preamble text to insert before main prompt [string]
-preamble=
+preamble=""
 
 # Text to use as a connector between subject and artist [string]
-connector=by
+connector=" by "
 
 # Postscript text to insert after main prompt [string]
-postscript=, digital art, trending on artstation
+postscript=", digital art, trending on artstation"
 
 [Text]
 ################
@@ -92,17 +92,17 @@ add_text = True
 parse_text = True
 
 # Filename parsing: regex to find split point between preamble and main text in external image names [string]
-preamble_regex =  .* -
+preamble_regex = " .* -"
 
 # Filename parsing: regex to find split point between subject and artist in external document names [string]
 artist_regex =  in the style of
 
 # Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [string]
-remove_text = , digital art
-            A painting of
-            an oil painting of
-            a surrealist oil painting of
-            graffiti of
+remove_text = ", digital art"
+            "A painting of"
+            "an oil painting of"
+            "a surrealist oil painting of"
+            "graffiti of"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True

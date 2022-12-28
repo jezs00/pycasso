@@ -56,7 +56,7 @@ class Configs:
         self.parse_text = ConfigConst.TEXT_PARSE_TEXT.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
-        self.remove_text = ConfigConst.TEXT_REMOVE_TEXT.value
+        self.remove_text = []
         self.box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
         self.box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
         self.artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
@@ -127,10 +127,12 @@ class Configs:
             self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
             self.parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
             self.preamble_regex = config.get("Text", "preamble_regex",
-                                             fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
-            self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
-            self.remove_text = config.get("Text", "remove_text",
-                                          fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n")
+                                             fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)[1:-1]
+            self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)[1:-1]
+
+            for text in config.get("Text", "remove_text", fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n"):
+                self.remove_text.append(text[1:-1])
+
             self.box_to_floor = config.getboolean("Text", "box_to_floor",
                                                   fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
             self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
@@ -143,9 +145,10 @@ class Configs:
 
             # Prompt
             self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-            self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
-            self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
-            self.prompt_postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+            self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)[1:-1]
+            self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)[1:-1]
+            self.prompt_postscript = config.get("Prompt", "postscript",
+                                                fallback=ConfigConst.PROMPT_POSTSCRIPT.value)[1:-1]
 
             # Icon
             self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
