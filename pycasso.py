@@ -418,15 +418,20 @@ class Pycasso:
             title_font = ImageFont.truetype(font_file, title_size)
             artist_font = ImageFont.truetype(font_file, artist_size)
 
+        # proceed flag only to be set if set by prerequisite requirements
+        proceed = False
+
         artist_box = (0, image_height, 0, image_height)
         title_box = artist_box
 
         if artist_text != "" and artist_text is not None:
             artist_box = draw.textbbox((epd_width / 2, image_height - artist_location),
                                        artist_text, font=artist_font, anchor="mb")
+            proceed = True
         if title_text != "" and title_text is not None:
             title_box = draw.textbbox((epd_width / 2, image_height - title_location),
                                       title_text, font=title_font, anchor="mb")
+            proceed = True
 
         draw_box = ImageFunctions.max_area([artist_box, title_box])
         draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
@@ -441,11 +446,13 @@ class Pycasso:
                 crop_right = epd_width
             draw_box = ImageFunctions.set_tuple_sides(draw_box, -crop_left, crop_right)
 
-        draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
-        draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font,
-                  anchor="mb", fill=0)
-        draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font,
-                  anchor="mb", fill=0)
+        # Only draw if we previously set proceed flag
+        if proceed is True:
+            draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
+            draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font,
+                      anchor="mb", fill=0)
+            draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font,
+                      anchor="mb", fill=0)
         return draw
 
     def run(self):
