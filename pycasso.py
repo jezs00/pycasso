@@ -236,7 +236,7 @@ class Pycasso:
     @staticmethod
     def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX.value,
                             artist_regex=ConfigConst.TEXT_ARTIST_REGEX,
-                            remove_text=ConfigConst.TEXT_REMOVE_TEXT.value.split("\n"),
+                            remove_text=ConfigConst.TEXT_REMOVE_TEXT_LIST.value,
                             parse_text=ConfigConst.TEXT_PARSE_TEXT.value,
                             extension=ConfigConst.FILE_IMAGE_FORMAT.value):
         image_directory = location
@@ -360,7 +360,7 @@ class Pycasso:
         return prompt, metadata, artist_text, title_text
 
     @staticmethod
-    def parse_multiple_brackets(text, bracket_pairs):
+    def parse_multiple_brackets(text, bracket_pairs=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         pairs = bracket_pairs.copy()
         pairs.reverse()
         for brackets in pairs:
@@ -371,7 +371,7 @@ class Pycasso:
     def prep_subject_artist_prompt(artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                                    connector=ConfigConst.PROMPT_CONNECTOR.value,
                                    postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
-                                   brackets=ConfigConst.TEXT_PARSE_BRACKETS.value.split("\n")):
+                                   brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         artist_text = FileOperations.get_random_line(artists_file)
         artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
         title_text = FileOperations.get_random_line(subjects_file)
@@ -382,7 +382,7 @@ class Pycasso:
     @staticmethod
     def prep_normal_prompt(prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                            postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
-                           brackets=ConfigConst.TEXT_PARSE_BRACKETS.value.split("\n")):
+                           brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         title_text = FileOperations.get_random_line(prompts_file)
         title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
         prompt = preamble + title_text + postscript

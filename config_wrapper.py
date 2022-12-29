@@ -54,10 +54,10 @@ class Configs:
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
         self.parse_text = ConfigConst.TEXT_PARSE_TEXT.value
-        self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS.value.split("\n")
+        self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
-        self.remove_text = ConfigConst.TEXT_REMOVE_TEXT.value.split("\n")
+        self.remove_text = ConfigConst.TEXT_REMOVE_TEXT_LIST.value
         self.box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
         self.box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
         self.artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
