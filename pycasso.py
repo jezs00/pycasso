@@ -68,6 +68,10 @@ class Pycasso:
         API key should be provided in 'dalle_key'
         returns PIL image object
 
+    parse_multiple_brackets(text, bracket_pairs):
+        Takes 'text' and applies parsing based on all 2 string bracket strings in 'bracket_pairs' list, sequentially.
+        returns updated text
+
     prep_prompt_text(self, prompt_mode):
         Function to prepare prompt text based on current state of the class. Prompt mode to select which generation mode
         to be used.
@@ -230,8 +234,9 @@ class Pycasso:
         return
 
     @staticmethod
-    def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX,
-                            artist_regex=ConfigConst.TEXT_ARTIST_REGEX, remove_text=ConfigConst.TEXT_REMOVE_TEXT,
+    def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX.value,
+                            artist_regex=ConfigConst.TEXT_ARTIST_REGEX,
+                            remove_text=ConfigConst.TEXT_REMOVE_TEXT.value.split("\n"),
                             parse_text=ConfigConst.TEXT_PARSE_TEXT.value,
                             extension=ConfigConst.FILE_IMAGE_FORMAT.value):
         image_directory = location
@@ -334,7 +339,7 @@ class Pycasso:
             # Build prompt from artist/subject
             prompt_gen = self.prep_subject_artist_prompt(self.config.artists_file, self.config.subjects_file,
                                                          self.config.prompt_preamble, self.config.prompt_connector,
-                                                         self.config.prompt_postscript)
+                                                         self.config.prompt_postscript, self.config.parse_brackets)
             prompt, artist_text, title_text = prompt_gen
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
@@ -342,7 +347,7 @@ class Pycasso:
         elif prompt_mode == PromptMode.PROMPT.value:
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
-                                                 self.config.prompt_postscript)
+                                                 self.config.prompt_postscript, self.config.parse_brackets)
             prompt, title_text = prompt_gen
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
@@ -355,21 +360,31 @@ class Pycasso:
         return prompt, metadata, artist_text, title_text
 
     @staticmethod
+    def parse_multiple_brackets(text, bracket_pairs):
+        pairs = bracket_pairs.copy()
+        pairs.reverse()
+        for brackets in pairs:
+            text = FileOperations.parse_text(text, brackets[0], brackets[1])
+        return text
+
+    @staticmethod
     def prep_subject_artist_prompt(artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                                    connector=ConfigConst.PROMPT_CONNECTOR.value,
-                                   postscript=ConfigConst.PROMPT_POSTSCRIPT.value):
+                                   postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
+                                   brackets=ConfigConst.TEXT_PARSE_BRACKETS.value.split("\n")):
         artist_text = FileOperations.get_random_line(artists_file)
-        artist_text = FileOperations.parse_text(artist_text)
+        artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
         title_text = FileOperations.get_random_line(subjects_file)
-        title_text = FileOperations.parse_text(title_text)
+        title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
         prompt = (preamble + title_text + connector + artist_text + postscript)
         return prompt, artist_text, title_text
 
     @staticmethod
     def prep_normal_prompt(prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
-                           postscript=ConfigConst.PROMPT_POSTSCRIPT.value):
+                           postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
+                           brackets=ConfigConst.TEXT_PARSE_BRACKETS.value.split("\n")):
         title_text = FileOperations.get_random_line(prompts_file)
-        title_text = FileOperations.parse_text(title_text)
+        title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
         prompt = preamble + title_text + postscript
         return prompt, title_text
 

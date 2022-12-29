@@ -164,7 +164,7 @@ class FileOperations:
         brackets = re.findall(regex, text)
         for bracket in brackets:
             # Get random item
-            bracket = bracket.replace('(', '').replace(')', '')
+            bracket = bracket.replace(bracket_one, '').replace(bracket_two, '')
             random.seed()
             options = FileOperations.parse_weighted_lines(bracket.split('|'))
             option = random.choice(options)

@@ -81,6 +81,13 @@ def test_prep_prompt_text():
     assert tup[0] == expected_prompt
 
 
+def test_parse_multiple_brackets():
+    text = "Test(5:pass|0:fail|[pass|{pass|20:pass|0:fail}|0:fail])(1:pass|0:fail)"
+    result = Pycasso.parse_multiple_brackets(text, ["()", "[]", "{}"])
+    expected = "Testpasspass"
+    assert result == expected
+
+
 def test_prep_subject_artist_prompt():
     preamble = "Preamble"
     connector = "Connector"
@@ -167,3 +174,5 @@ def test_add_text_to_image_blank():
     expected = (0, 0, 0, 0)
 
     assert pixel == expected
+
+
