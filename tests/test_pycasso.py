@@ -11,13 +11,15 @@ from PIL import Image, PngImagePlugin, ImageDraw
 
 
 def test_parse_args():
-    instance = Pycasso()
+    config_path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
+    instance = Pycasso(config_path)
     expected = 0
     assert instance.args.savekeys == expected
 
 
 def test_load_config():
-    instance = Pycasso()
+    config_path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
+    instance = Pycasso(config_path)
     path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
     config = instance.load_config(path)
     expected = 160
