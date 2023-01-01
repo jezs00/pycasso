@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 
-from pijuice import PiJuice
-from pycasso import Pycasso
 import logging
 import os
 import sys
 import time
-from constants import PiJuiceConst, DisplayShape
+
+from pijuice import PiJuice
+
+from src import Pycasso
+from .constants import PiJuiceConst, DisplayShape
 
 
 class PiJuiceHandler:

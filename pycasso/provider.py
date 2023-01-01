@@ -1,18 +1,21 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Provider class to wrap APIs for web operations
 
 import io
 import logging
 import warnings
+from io import BytesIO
+
 import keyring
 import openai
 import requests
-
+import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from PIL import Image, ImageDraw
 from stability_sdk import client
-import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-from constants import ProvidersConst, StabilityConst, DalleConst
-from io import BytesIO
-from image_functions import ImageFunctions
+
+from .constants import ProvidersConst, StabilityConst, DalleConst
+from .image_functions import ImageFunctions
 
 
 class Provider(object):

@@ -1,28 +1,30 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Enums for constants to be used throughout pycasso
 
-from enum import Enum
 import logging
+from enum import Enum
 
 
 class ConfigConst(Enum):
     # Default settings that are loaded from config
     # Relative path to config
-    CONFIG_PATH = ".config"
-    CONFIG_PATH_EG = ".config-example"
+    CONFIG_PATH = "../.config"
+    CONFIG_PATH_EG = "../.config-example"
 
     # Defaults
     # File Settings
     FILE_SAVE_IMAGE = 1
-    FILE_EXTERNAL_IMAGE_LOCATION = "images/external"
-    FILE_GENERATED_IMAGE_LOCATION = "images/generated"
+    FILE_EXTERNAL_IMAGE_LOCATION = "../images/external"
+    FILE_GENERATED_IMAGE_LOCATION = "../images/generated"
     FILE_IMAGE_FORMAT = "png"
-    FILE_FONT_FILE = "fonts/Font.ttc"
-    FILE_SUBJECTS_FILE = "prompts/subjects.txt"
-    FILE_ARTISTS_FILE = "prompts/artists.txt"
-    FILE_PROMPTS_FILE = "prompts/prompts.txt"
-    FILE_SUBJECTS_EG = "prompts/subjects-example.txt"
-    FILE_ARTISTS_EG = "prompts/artists-example.txt"
-    FILE_PROMPTS_EG = "prompts/prompts-example.txt"
+    FILE_FONT_FILE = "../fonts/Font.ttc"
+    FILE_SUBJECTS_FILE = "../prompts/subjects.txt"
+    FILE_ARTISTS_FILE = "../prompts/artists.txt"
+    FILE_PROMPTS_FILE = "../prompts/prompts.txt"
+    FILE_SUBJECTS_EG = "../prompts/subjects-example.txt"
+    FILE_ARTISTS_EG = "../prompts/artists-example.txt"
+    FILE_PROMPTS_EG = "../prompts/prompts-example.txt"
 
     # Text Settings
     TEXT_ADD_TEXT = False
@@ -59,7 +61,7 @@ class ConfigConst(Enum):
     DISPLAY_TYPE = "omni_epd.mock"
 
     # Logging Settings
-    LOGGING_FILE = "pycasso.log"
+    LOGGING_FILE = "../pycasso.log"
     LOGGING_LEVEL = logging.DEBUG
 
     # Generation Settings

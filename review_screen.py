@@ -6,7 +6,7 @@
 import os
 import logging
 import time
-import config_wrapper
+from pycasso import config_wrapper
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image
 

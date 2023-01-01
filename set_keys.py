@@ -4,7 +4,7 @@
 # Small script to set keys
 import logging
 
-from provider import StabilityProvider, DalleProvider, ProvidersConst
+from src import StabilityProvider, DalleProvider, ProvidersConst
 
 logging.basicConfig(level=logging.DEBUG)
 

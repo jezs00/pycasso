@@ -1,5 +1,8 @@
-import logging
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+
 import glob
+import logging
 import os
 import random
 import re
@@ -53,7 +56,7 @@ class FileOperations:
         Returns the updated list of strings
     """
 
-    def __init__(self, path=os.path.dirname(os.path.abspath(__file__))):
+    def __init__(self, path=os.getcwd()):
         self.path = path
         return
 

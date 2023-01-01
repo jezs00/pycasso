@@ -1,7 +1,10 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Unit tests for file_operations.py
+
 import os
 import collections
-from file_operations import FileOperations
+from pycasso.file_operations import FileOperations
 
 
 def test_get_all_files():

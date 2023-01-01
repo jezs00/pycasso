@@ -1,6 +1,9 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Unit tests for config_wrapper.py
+
 import os
-from config_wrapper import Configs
+from pycasso.config_wrapper import Configs
 
 
 def test_init():

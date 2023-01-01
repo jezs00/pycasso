@@ -1,10 +1,11 @@
-# TODO: option to allow custom height/width not matching epd
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 
 import configparser
 import os
 
-from constants import ConfigConst, ProvidersConst
-from file_operations import FileOperations
+from .constants import ConfigConst, ProvidersConst
+from .file_operations import FileOperations
 
 
 class Configs:

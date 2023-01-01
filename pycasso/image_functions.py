@@ -1,5 +1,9 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+
 import numpy
-from constants import DisplayShape
+
+from .constants import DisplayShape
 
 
 class ImageFunctions:

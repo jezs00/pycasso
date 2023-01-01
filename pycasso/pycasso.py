@@ -1,25 +1,23 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
+# Main pycasso class to run
 
-import sys
+import argparse
+import logging
 import os
 import random
+import sys
 import warnings
-import argparse
+
 import numpy
-import logging
-
-from config_wrapper import Configs
-from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
-from file_operations import FileOperations
-from constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
-from provider import StabilityProvider, DalleProvider
-from image_functions import ImageFunctions
+from omni_epd import displayfactory, EPDNotFoundError
 
-lib_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "lib")
-if os.path.exists(lib_dir):
-    sys.path.append(lib_dir)
+from .config_wrapper import Configs
+from .constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
+from .file_operations import FileOperations
+from .image_functions import ImageFunctions
+from .provider import StabilityProvider, DalleProvider
 
 
 # noinspection PyTypeChecker
@@ -112,7 +110,7 @@ class Pycasso:
     """
 
     def __init__(self, config_path=None):
-        self.file_path = os.path.dirname(os.path.abspath(__file__))
+        self.file_path = os.getcwd()
 
         # Config Dictionary for omni-epd
         self.config_dict = {}

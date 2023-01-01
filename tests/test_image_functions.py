@@ -1,6 +1,9 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Unit tests for image_functions.py
+
 from PIL import Image, ImageDraw
-from image_functions import ImageFunctions
+from pycasso.image_functions import ImageFunctions
 
 
 def test_max_area():

@@ -1,10 +1,12 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
 # Unit tests for pycasso.py
+
 import os.path
 
 from omni_epd import displayfactory
-
-from constants import PromptMode, PropertiesConst, ConfigConst, ProvidersConst
-from pycasso import Pycasso
+from pycasso.constants import PromptMode, PropertiesConst, ConfigConst, ProvidersConst
+from pycasso.pycasso import Pycasso
 from PIL import Image, PngImagePlugin, ImageDraw
 
 
