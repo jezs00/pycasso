@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# -*- coding:utf-8 -*-
+# Handler file to run pycasso when using pijuice
 
 import logging
 import os
@@ -7,7 +9,7 @@ import time
 
 from pijuice import PiJuice
 
-from src import Pycasso
+from pycasso.pycasso import Pycasso
 from .constants import PiJuiceConst, DisplayShape
 
 
