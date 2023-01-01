@@ -8,7 +8,7 @@ import logging
 import os
 
 # Set up logging
-file_path = os.path.dirname(os.path.abspath(__file__))
+file_path = os.getcwd()
 logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
                     filename=os.path.join(file_path, ConfigConst.LOGGING_FILE.value),
                     format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

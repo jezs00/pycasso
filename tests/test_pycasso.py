@@ -18,7 +18,7 @@ def test_parse_args():
 
 def test_load_config():
     instance = Pycasso()
-    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", ".testconfig")
+    path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
     config = instance.load_config(path)
     expected = 160
     assert config.opacity == expected
@@ -46,7 +46,7 @@ def test_display_image_on_epd():
 
 
 def test_load_external_image():
-    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content")
+    path = os.path.join(os.getcwd(), "test_pycasso_content")
     tup = Pycasso.load_external_image(path, 400, 400)
     pixel = tup[0].getpixel((200, 200))
     expected = (158, 142, 138)
@@ -55,7 +55,7 @@ def test_load_external_image():
 
 
 def test_load_historic_image_load_image():
-    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content")
+    path = os.path.join(os.getcwd(), "test_pycasso_content")
     tup = Pycasso.load_historic_image(path)
     pixel = tup[0].getpixel((200, 200))
     expected = (158, 142, 138)
@@ -64,7 +64,7 @@ def test_load_historic_image_load_image():
 
 
 def test_load_historic_image_load_metadata():
-    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content")
+    path = os.path.join(os.getcwd(), "test_pycasso_content")
     tup = Pycasso.load_historic_image(path)
     title = tup[1]
     artist = tup[2]
@@ -76,7 +76,7 @@ def test_load_historic_image_load_metadata():
 
 
 def test_prep_prompt_text():
-    config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", ".testconfig")
+    config_path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
     instance = Pycasso(config_path)
     tup = instance.prep_prompt_text(PromptMode.PROMPT.value)
     expected_prompt = "PreambleTest PromptPostscript"
@@ -94,8 +94,8 @@ def test_prep_subject_artist_prompt():
     preamble = "Preamble"
     connector = "Connector"
     postscript = "Postscript"
-    artist_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", "artists.txt")
-    subject_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", "subjects.txt")
+    artist_path = os.path.join(os.getcwd(), "test_pycasso_content", "artists.txt")
+    subject_path = os.path.join(os.getcwd(), "test_pycasso_content", "subjects.txt")
     prompt, artist_text, title_text = Pycasso.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
                                                                          postscript)
     expected_prompt = "PreambleTest SubjectConnectorTest ArtistPostscript"
@@ -109,7 +109,7 @@ def test_prep_subject_artist_prompt():
 def test_prep_normal_prompt():
     preamble = "Preamble"
     postscript = "Postscript"
-    prompt_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", "prompts.txt")
+    prompt_path = os.path.join(os.getcwd(), "test_pycasso_content", "prompts.txt")
     prompt, title_text = Pycasso.prep_normal_prompt(prompt_path, preamble, postscript)
     expected_prompt = "PreambleTest PromptPostscript"
     expected_title = "Test Prompt"
@@ -119,7 +119,7 @@ def test_prep_normal_prompt():
 
 
 def test_save_image():
-    dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_temp")
+    dir_path = os.path.join(os.getcwd(), "test_temp")
     save_path = os.path.join(dir_path,
                              PropertiesConst.FILE_PREAMBLE.value + "TestPrompt." + ConfigConst.FILE_IMAGE_FORMAT.value)
     img = Image.new(mode="RGBA", size=(600, 400))
@@ -141,7 +141,7 @@ def test_save_image():
 
 
 def test_get_random_provider_mode():
-    config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", ".testconfig")
+    config_path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
     instance = Pycasso(config_path)
     provider = instance.get_random_provider_mode()
     expected = [ProvidersConst.EXTERNAL.value, ProvidersConst.HISTORIC.value]
@@ -151,7 +151,7 @@ def test_get_random_provider_mode():
 def test_add_text_to_image():
     title_text = "TITLE"
     artist_text = "ARTIST"
-    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", "Font.ttc")
+    font_path = os.path.join(os.getcwd(), "test_pycasso_content", "Font.ttc")
     img = Image.new(mode="RGBA", size=(600, 400))
     draw = ImageDraw.Draw(img, "RGBA")
 
@@ -166,7 +166,7 @@ def test_add_text_to_image():
 def test_add_text_to_image_blank():
     title_text = ""
     artist_text = ""
-    font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_pycasso_content", "Font.ttc")
+    font_path = os.path.join(os.getcwd(), "test_pycasso_content", "Font.ttc")
     img = Image.new(mode="RGBA", size=(600, 400))
     draw = ImageDraw.Draw(img, "RGBA")
 
