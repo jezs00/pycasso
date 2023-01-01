@@ -5,7 +5,7 @@
 import os.path
 
 from omni_epd import displayfactory
-from pycasso.constants import PromptMode, PropertiesConst, ConfigConst, ProvidersConst
+from pycasso.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst
 from pycasso.pycasso import Pycasso
 from PIL import Image, PngImagePlugin, ImageDraw
 
@@ -80,7 +80,7 @@ def test_load_historic_image_load_metadata():
 def test_prep_prompt_text():
     config_path = os.path.join(os.getcwd(), "test_pycasso_content", ".testconfig")
     instance = Pycasso(config_path)
-    tup = instance.prep_prompt_text(PromptMode.PROMPT.value)
+    tup = instance.prep_prompt_text(PromptModeConst.PROMPT.value)
     expected_prompt = "PreambleTest PromptPostscript"
     assert tup[0] == expected_prompt
 

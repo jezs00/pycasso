@@ -3,7 +3,7 @@
 
 import numpy
 
-from .constants import DisplayShape
+from .constants import DisplayShapeConst
 
 
 class ImageFunctions:
@@ -89,7 +89,7 @@ class ImageFunctions:
     def add_status_icon(draw, display_shape, icon_padding=5, icon_size=10, icon_width=3, icon_opacity=150):
         status_corner = icon_padding + icon_size
         status_box = (icon_padding, icon_padding, status_corner, status_corner)
-        if display_shape == DisplayShape.CROSS.value:
+        if display_shape == DisplayShapeConst.CROSS.value:
             draw.rectangle(status_box,
                            width=0,
                            fill=(0, 0, 0, icon_opacity))
@@ -100,14 +100,14 @@ class ImageFunctions:
             draw.line(status_box,
                       width=icon_width,
                       fill=(255, 255, 255, icon_opacity))
-        elif display_shape == DisplayShape.TRIANGLE.value:
+        elif display_shape == DisplayShapeConst.TRIANGLE.value:
             status_circle = (icon_padding + icon_size / 2, icon_padding
                              + icon_size / 2, icon_size / 2)
             draw.regular_polygon(status_circle,
                                  n_sides=3,
                                  fill=(0, 0, 0, icon_opacity),
                                  outline=(255, 255, 255, icon_opacity))
-        elif display_shape == DisplayShape.CIRCLE.value:
+        elif display_shape == DisplayShapeConst.CIRCLE.value:
             draw.ellipse(status_box,
                          width=icon_width,
                          fill=(0, 0, 0, icon_opacity),

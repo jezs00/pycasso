@@ -122,13 +122,13 @@ class PropertiesConst(Enum):
     PROMPT = "prompt"
 
 
-class PromptMode(Enum):
+class PromptModeConst(Enum):
     RANDOM = 0
     SUBJECT_ARTIST = 1
     PROMPT = 2
 
 
-class DisplayShape(Enum):
+class DisplayShapeConst(Enum):
     SQUARE = 0
     CROSS = 1
     TRIANGLE = 2

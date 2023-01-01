@@ -10,7 +10,7 @@ import time
 from pijuice import PiJuice
 
 from pycasso.pycasso import Pycasso
-from .constants import PiJuiceConst, DisplayShape
+from .constants import PiJuiceConst, DisplayShapeConst
 
 
 class PiJuiceHandler:
@@ -61,7 +61,7 @@ class PiJuiceHandler:
             logging.error(e)
             logging.error("Cannot create pijuice object. Running pycasso once with error display and exiting process.")
             # run pycasso with error symbol, then exit
-            instance.icon_shape = DisplayShape.CROSS.value
+            instance.icon_shape = DisplayShapeConst.CROSS.value
             instance.run()
 
             if shutdown:
@@ -76,7 +76,7 @@ class PiJuiceHandler:
             # Set icon if PiJuice has lower battery
             if charge_level < charge_display:
                 logging.info("Displaying icon due to low battery")
-                instance.icon_shape = DisplayShape.SQUARE.value
+                instance.icon_shape = DisplayShapeConst.SQUARE.value
 
             instance.run()
 

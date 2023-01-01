@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
 from .config_wrapper import Configs
-from .constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptMode
+from .constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptModeConst
 from .file_operations import FileOperations
 from .image_functions import ImageFunctions
 from .provider import StabilityProvider, DalleProvider
@@ -323,17 +323,17 @@ class Pycasso:
             image = dalle_provider.infill_image_from_image(prompt, image_base)
         return image
 
-    def prep_prompt_text(self, prompt_mode=PromptMode.PROMPT.value):
+    def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
         metadata = PngImagePlugin.PngInfo()
         artist_text = None
 
-        if prompt_mode == PromptMode.RANDOM.value:
+        if prompt_mode == PromptModeConst.RANDOM.value:
             # Pick random type of building
             random.seed()
             prompt_mode = random.randint(1, ConfigConst.PROMPT_MODES_COUNT.value)
 
-        if prompt_mode == PromptMode.SUBJECT_ARTIST.value:
+        if prompt_mode == PromptModeConst.SUBJECT_ARTIST.value:
             # Build prompt from artist/subject
             prompt_gen = self.prep_subject_artist_prompt(self.config.artists_file, self.config.subjects_file,
                                                          self.config.prompt_preamble, self.config.prompt_connector,
@@ -342,7 +342,7 @@ class Pycasso:
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
 
-        elif prompt_mode == PromptMode.PROMPT.value:
+        elif prompt_mode == PromptModeConst.PROMPT.value:
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                  self.config.prompt_postscript, self.config.parse_brackets)
