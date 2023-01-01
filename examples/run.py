@@ -15,7 +15,7 @@ logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
 
 instance = Pycasso()
 if instance.config.use_pijuice:
-    from src.pijuice_handler import PiJuiceHandler
+    from pycasso.pijuice_handler import PiJuiceHandler
 
     logging.info("Starting program using PiJuice")
     pijuice_instance = PiJuiceHandler()
