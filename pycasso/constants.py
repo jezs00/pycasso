@@ -133,3 +133,16 @@ class DisplayShapeConst(Enum):
     CROSS = 1
     TRIANGLE = 2
     CIRCLE = 3
+
+
+class TestConst(Enum):
+    TEST_FOLDER = "tests/"
+    FILE_OPERATIONS_FOLDER = "test_file_operations_content"
+    CONFIG_FILE = ".testconfig"
+    CONFIG_FOLDER = "test_config_wrapper_content"
+    TEMP_FOLDER = "test_temp"
+    PYCASSO_FOLDER = "test_pycasso_content"
+    ARTISTS_FILE = "artists.txt"
+    SUBJECTS_FILE = "subjects.txt"
+    PROMPTS_FILE = "prompts.txt"
+    FONT_FILE = "Font.ttc"

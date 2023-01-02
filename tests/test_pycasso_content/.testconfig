@@ -2,9 +2,9 @@
 
 save_image=False
 image_format=jpg
-subjects_file=test_pycasso_content/subjects.txt
-artists_file=test_pycasso_content/artists.txt
-prompts_file=test_pycasso_content/prompts.txt
+subjects_file=tests/test_pycasso_content/subjects.txt
+artists_file=tests/test_pycasso_content/artists.txt
+prompts_file=tests/test_pycasso_content/prompts.txt
 
 [Prompt]
 
