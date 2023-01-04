@@ -10,7 +10,7 @@ class ConfigConst(Enum):
     # Default settings that are loaded from config
     # Relative path to config
     CONFIG_PATH = ".config"
-    CONFIG_PATH_EG = ".config-example"
+    CONFIG_PATH_EG = "examples/.config-example"
 
     # Defaults
     # File Settings
@@ -22,9 +22,9 @@ class ConfigConst(Enum):
     FILE_SUBJECTS_FILE = "prompts/subjects.txt"
     FILE_ARTISTS_FILE = "prompts/artists.txt"
     FILE_PROMPTS_FILE = "prompts/prompts.txt"
-    FILE_SUBJECTS_EG = "prompts/subjects-example.txt"
-    FILE_ARTISTS_EG = "prompts/artists-example.txt"
-    FILE_PROMPTS_EG = "prompts/prompts-example.txt"
+    FILE_SUBJECTS_EG = "examples/prompts/subjects-example.txt"
+    FILE_ARTISTS_EG = "examples/prompts/artists-example.txt"
+    FILE_PROMPTS_EG = "examples/prompts/prompts-example.txt"
 
     # Text Settings
     TEXT_ADD_TEXT = False
