@@ -135,7 +135,7 @@ class DisplayShapeConst(Enum):
     CIRCLE = 3
 
 
-class TestConst(Enum):
+class UnitTestConst(Enum):
     TEST_FOLDER = "tests/"
     FILE_OPERATIONS_FOLDER = "test_file_operations_content"
     CONFIG_FILE = ".testconfig"

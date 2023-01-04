@@ -4,12 +4,12 @@
 
 import os
 from pycasso.config_wrapper import Configs
-from pycasso.constants import TestConst
+from pycasso.constants import UnitTestConst
 
 
 def test_init():
-    config_path = os.path.join(os.getcwd(), TestConst.TEST_FOLDER.value, TestConst.CONFIG_FOLDER.value,
-                               TestConst.CONFIG_FILE.value)
+    config_path = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.CONFIG_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     config = Configs(config_path)
 
     assert config.add_text is False
@@ -17,8 +17,8 @@ def test_init():
 
 
 def test_read_config():
-    config_path = os.path.join(os.getcwd(), TestConst.TEST_FOLDER.value, TestConst.CONFIG_FOLDER.value,
-                               TestConst.CONFIG_FILE.value)
+    config_path = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.CONFIG_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     config = Configs(config_path)
     config.read_config()
 
