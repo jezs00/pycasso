@@ -3,6 +3,9 @@
 save_image=False
 image_format=jpg
 
+subjects_file=tests/test_config_wrapper_content/subjects.txt
+artists_file=tests/test_config_wrapper_content/artists.txt
+prompts_file=tests/test_config_wrapper_content/prompts.txt
 
 [Text]
 
