@@ -14,10 +14,14 @@ RC_DIR=/etc/rc.local
 function install_linux_packages(){
   sudo apt-get update
   sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2
+  # Install pijuice. TODO: option this out
+  sudo apt-get install -y pijuice-gui
 }
 
 function install_python_packages(){
   pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
+  # Install pijuice. TODO: option this out
+  sudo pip3 install pijuice
   # Uninstall and reinstall grpcio manually until we can confirm another fix
   sudo pip3 uninstall grpcio grpcio-tools
   sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
