@@ -3,3 +3,5 @@ git+https://github.com/Stability-AI/stability-sdk.git
 git+https://github.com/openai/openai-python.git
 pillow
 keyring
+grpcio==1.44.0 --no-binary=grpcio
+grpcio-tools==1.44.0 --no-binary=grpcio-tools
