@@ -36,10 +36,6 @@ function setup_hardware(){
 
 function install_pycasso(){
 
-  git fetch
-  git checkout $GIT_BRANCH
-  git pull
-
   FIRST_TIME=1  # if this is a first time install
 
   if [ "$SKIP_DEPS" = false ]; then
@@ -93,3 +89,5 @@ function install_pycasso(){
 
   return $FIRST_TIME
 }
+
+install_pycasso
