@@ -6,6 +6,9 @@ GIT_REPO=https://github.com/jezs00/pycasso
 GIT_BRANCH=main
 SKIP_DEPS=false
 
+# set the local directory
+LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
+
 RC_DIR=/etc/rc.local
 
 function install_linux_packages(){
@@ -14,10 +17,10 @@ function install_linux_packages(){
 }
 
 function install_python_packages(){
-  pip3 install -r "$LOCAL_DIR/Install/requirements.txt" -U
+  pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
   # Uninstall and reinstall grpcio manually until we can confirm another fix
-  pip3 uninstall grpcio grpcio-tools
-  pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
 }
 
 function setup_hardware(){
@@ -38,7 +41,7 @@ function install_pycasso(){
 
   FIRST_TIME=1  # if this is a first time install
 
-  if [ "$SKIP_DEPS" = false ]; then
+  if [ "${SKIP_DEPS}" = false ]; then
     # install from apt
     install_linux_packages
 
@@ -50,13 +53,13 @@ function install_pycasso(){
 
   if [ -d "${LOCAL_DIR}" ]; then
     echo -e "Existing Install Found - Updating Repo"
-    cd "$LOCAL_DIR" || exit
+    cd "${LOCAL_DIR}" || exit
     git fetch
     git checkout $GIT_BRANCH
     git pull
   else
     echo -e "No Install Found - Cloning Repo"
-    git clone -b ${GIT_BRANCH} ${GIT_REPO} "${LOCAL_DIR}"
+    git clone -b "${GIT_BRANCH}" "${GIT_REPO}" "${LOCAL_DIR}"
     FIRST_TIME=0
   fi
 
@@ -83,7 +86,7 @@ function install_pycasso(){
 
   fi
 
-  cd "$LOCAL_DIR" || exit
+  cd "${LOCAL_DIR}" || exit
 
   echo -e "pycasso install/update complete. To test, run 'python3 ${LOCAL_DIR}/examples/review_screen.py'"
 
