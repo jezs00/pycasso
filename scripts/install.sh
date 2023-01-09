@@ -15,6 +15,9 @@ function install_linux_packages(){
 
 function install_python_packages(){
   pip3 install -r "$LOCAL_DIR/Install/requirements.txt" -U
+  # Uninstall and reinstall grpcio manually until we can confirm another fix
+  pip3 uninstall grpcio grpcio-tools
+  pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
 }
 
 function setup_hardware(){
