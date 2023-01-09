@@ -72,7 +72,24 @@ function install_pycasso(){
     cp "${LOCAL_DIR}/examples/.config-example" "${LOCAL_DIR}/.config"
   fi
 
+  if [ ! -f "${LOCAL_DIR}/prompts" ]; then
+    mkdir "${LOCAL_DIR}/prompts"
+  fi
+
+  if [ ! -f "${LOCAL_DIR}/images" ]; then
+    mkdir "${LOCAL_DIR}/images"
+  fi
+
+  if [ ! -f "${LOCAL_DIR}/images/generated" ]; then
+    mkdir "${LOCAL_DIR}/images/generated"
+  fi
+
+  if [ ! -f "${LOCAL_DIR}/images/external" ]; then
+    mkdir "${LOCAL_DIR}/images/external"
+  fi
+
   if [ ! -f "${LOCAL_DIR}/prompts/artists.txt" ]; then
+
     cp "${LOCAL_DIR}/examples/prompts/artists-example.txt" "${LOCAL_DIR}/prompts/artists.txt"
   fi
 
