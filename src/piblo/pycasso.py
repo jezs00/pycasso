@@ -235,7 +235,8 @@ class Pycasso:
                             artist_regex=ConfigConst.TEXT_ARTIST_REGEX,
                             remove_text=ConfigConst.TEXT_REMOVE_TEXT_LIST.value,
                             parse_text=ConfigConst.TEXT_PARSE_TEXT.value,
-                            extension=ConfigConst.FILE_IMAGE_FORMAT.value):
+                            extension=ConfigConst.FILE_IMAGE_FORMAT.value,
+                            resize_external=ConfigConst.FILE_RESIZE_EXTERNAL.value):
         image_directory = location
         if not os.path.exists(image_directory):
             warnings.warn("External image directory path does not exist: '" + image_directory + "'")
@@ -261,10 +262,14 @@ class Pycasso:
             title_text = title_text.title()
             artist_text = artist_text.title()
 
-        # Resize to thumbnail size based on epd resolution
-        # TODO: allow users to choose between crop and resize
-        epd_res = (width, height)
+        # Resize to thumbnail size based on epd resolution if option selected
+        if resize_external:
+            epd_res = (width, height)
+        else:
+            max_window = max(width, height)
+            epd_res = (max_window, max_window)
         image_base.thumbnail(epd_res)
+
         return image_base, title_text, artist_text
 
     @staticmethod
@@ -493,7 +498,7 @@ class Pycasso:
                 mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
                                                      self.config.preamble_regex, self.config.artist_regex,
                                                      self.config.remove_text, self.config.parse_text,
-                                                     self.config.image_format)
+                                                     self.config.image_format, self.config.resize_external)
                 image_base, title_text, artist_text = mode_list
 
             elif provider_type == ProvidersConst.HISTORIC.value:
