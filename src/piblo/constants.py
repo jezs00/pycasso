@@ -66,7 +66,8 @@ class ConfigConst(Enum):
     LOGGING_LEVEL = logging.DEBUG
 
     # Generation Settings
-    GENERATION_INFILL = 0
+    GENERATION_INFILL = False
+    GENERATION_INFILL_PERCENT = 10
 
     # PiJuice Settings
     USE_PIJUICE = False

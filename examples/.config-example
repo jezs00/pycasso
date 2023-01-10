@@ -177,7 +177,10 @@ dalle_amount = 0
 ##################################
 
 # Flag indicating whether to utilise 'infilling' to resend image back to provider and fill full frame [boolean]
-infill = True
+infill = False
+
+# If infill set to true, pop the image out by infill_percent. Helps to avoid images too zoomed in. [integer]
+infill_percent = 10
 
 [PiJuice]
 #########################

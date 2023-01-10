@@ -96,6 +96,7 @@ class Configs:
 
         # Generation Settings
         self.infill = ConfigConst.GENERATION_INFILL.value
+        self.infill_percent = ConfigConst.GENERATION_INFILL_PERCENT.value
 
         # PiJuice Settings
         self.use_pijuice = ConfigConst.USE_PIJUICE.value
@@ -185,6 +186,8 @@ class Configs:
 
             # Generation Settings
             self.infill = config.getboolean("Generation", "infill", fallback=ConfigConst.GENERATION_INFILL.value)
+            self.infill_percent = config.getint("Generation", "infill_percent",
+                                                fallback=ConfigConst.GENERATION_INFILL_PERCENT.value)
 
             # PiJuice Settings
             self.use_pijuice = config.getboolean("PiJuice", "use_pijuice", fallback=ConfigConst.USE_PIJUICE.value)
