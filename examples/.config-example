@@ -21,7 +21,7 @@ subjects_file=prompts/subjects.txt
 artists_file=prompts/artists.txt
 prompts_file=prompts/prompts.txt
 
-# Flag indicating whether to resize external images instead of resizing [boolean]
+# Flag indicating how to deal with larger images, resize_external set to 'False' to fully fill frame [boolean]
 resize_external=True
 
 [EPD]
