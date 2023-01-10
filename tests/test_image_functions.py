@@ -47,6 +47,22 @@ def test_max_tup():
     assert result == expected
 
 
+def test_resize_number_smaller():
+    number = 100
+    percent = 10
+    result = ImageFunctions.resize_number_smaller(number, percent)
+    expected = 90
+    assert result == expected
+
+
+def test_resize_tup_smaller():
+    tup = (100, 200, 500)
+    percent = 10
+    result = ImageFunctions.resize_tup_smaller(tup, percent)
+    expected = (90, 180, 450)
+    assert result == expected
+
+
 def test_get_crop_size():
     func = ImageFunctions()
     original_width = 800

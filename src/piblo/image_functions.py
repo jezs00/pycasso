@@ -33,6 +33,12 @@ class ImageFunctions:
     max_tup(tup)
         Takes tuple with 2 values, takes the maximum and returns a tuple both set to the maximum
 
+    resize_number_smaller(number, percent)
+        Returns integer 'number' smaller by 'percent' percent
+
+    resize_tup_smaller(tup, percent):
+        Returns tuple with all numbers smaller by 'percent' percent
+
     get_crop_size(original_width, original_height, new_width, new_height)
         Returns a tuple to use as crop coordinates when turning original width/height into new width/height
 
@@ -81,6 +87,16 @@ class ImageFunctions:
         a, b = tup
         max_size = max(a, b)
         tup = (max_size, max_size)
+        return tup
+
+    @staticmethod
+    def resize_number_smaller(number, percent):
+        number = number-((number/100)*percent)
+        return number
+
+    @staticmethod
+    def resize_tup_smaller(tup, percent):
+        tup = tuple(ImageFunctions.resize_number_smaller(x, percent) for x in tup)
         return tup
 
     @staticmethod
