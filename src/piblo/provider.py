@@ -164,9 +164,8 @@ class DalleProvider(Provider):
         return img
 
     @staticmethod
-    def infill_image_from_image(text, img):
+    def infill_image_from_image(text, img, infill_percent=0):
         # Infills image based on next size up possible from available image
-        # TODO: handle if there are no bigger sizes
         mask_size = (0, 0)
 
         for key in DalleConst.SIZES.value:
@@ -191,6 +190,13 @@ class DalleProvider(Provider):
 
         url = response['data'][0]['url']
         img = Image.open(BytesIO(requests.get(url).content))
+
+        # Resize image based on infill_percent
+        if infill_percent > 0:
+            res = (img.width, img.height)
+            new_res = ImageFunctions.resize_tup_smaller(res, infill_percent)
+            img.thumbnail(new_res)
+
         return img
 
     @staticmethod

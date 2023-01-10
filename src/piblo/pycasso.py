@@ -308,7 +308,8 @@ class Pycasso:
         return image
 
     @staticmethod
-    def load_dalle_image(prompt, width, height, infill=False, dalle_key=None):
+    def load_dalle_image(prompt, width, height, infill=ConfigConst.GENERATION_INFILL.value,
+                         infill_percent=ConfigConst.GENERATION_INFILL_PERCENT.value, dalle_key=None):
         logging.info("Loading Dalle API")
         if dalle_key is None:
             dalle_provider = DalleProvider()
@@ -320,7 +321,8 @@ class Pycasso:
 
         # Use infill to fill in sides of image instead of cropping
         if infill:
-            image = dalle_provider.infill_image_from_image(prompt, image_base)
+            image = dalle_provider.infill_image_from_image(prompt, image_base, infill_percent)
+
         return image
 
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
