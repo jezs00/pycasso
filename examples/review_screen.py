@@ -10,9 +10,6 @@ from piblo import config_wrapper
 from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image
 
-# Relative path to config
-CONFIG_PATH = "../.config"
-
 # Display Settings
 DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
 
@@ -20,10 +17,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 display_type = DEFAULT_DISPLAY_TYPE
 
+# Path to config
+config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".config"))
+
+# Path to image
+fileLocation = os.path.abspath(os.path.join(os.path.dirname(__file__), "images", "test.png"))
+
 try:
     # Load config
-    if os.path.exists(CONFIG_PATH):
-        config_load = config_wrapper.Configs(CONFIG_PATH)
+    if os.path.exists(config_path):
+        config_load = config_wrapper.Configs(config_path)
         config = config_load.read_config()
         logging.info("Loading config")
 
@@ -40,14 +43,10 @@ except KeyboardInterrupt:
 try:
     epd = displayfactory.load_display_driver(display_type)
 
-    content_directory = os.path.join(os.getcwd(), "../tests/test_file_operations_content")
-
     logging.info("pycasso test image display")
 
     logging.info("Init and clear screen")
     epd.prepare()
-
-    fileLocation = os.path.join(content_directory, "test.png")
 
     logging.info("Loading " + fileLocation)
     image_base = Image.open(fileLocation)
@@ -73,9 +72,6 @@ try:
 
     logging.info("Displaying image")
     epd.display(image_base)
-
-    # Show image if OS has an image viewer
-    time.sleep(2)
 
     logging.info("Go to sleep...")
     epd.close()
