@@ -9,7 +9,7 @@ SKIP_DEPS=false
 # set the local directory
 LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
 
-RC_DIR=/etc/rc.local
+RC_LOC=/etc/rc.local
 
 function install_linux_packages(){
   sudo apt-get update
@@ -21,8 +21,6 @@ function install_linux_packages(){
 function install_python_packages(){
   pip3 install git+https://github.com/jezs00/pycasso
   # pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
-  # Install pijuice. TODO: option this out
-  sudo pip3 install pijuice
   # Uninstall and reinstall grpcio manually until we can confirm another fix TODO: option this out
   # Commenting out for testing purposes
   # sudo pip3 uninstall grpcio grpcio-tools
