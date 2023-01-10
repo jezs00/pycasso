@@ -6,7 +6,6 @@ import argparse
 import logging
 import os
 import random
-import sys
 import warnings
 
 import numpy
