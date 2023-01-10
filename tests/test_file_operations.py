@@ -9,7 +9,7 @@ from piblo.constants import UnitTestConst
 
 
 def test_get_all_files():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     test_file = FileOperations(directory)
     result = test_file.get_all_files()
     expected = [os.path.join(directory, "lines.txt"),
@@ -20,7 +20,7 @@ def test_get_all_files():
 
 
 def test_get_all_files_of_type():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     test_file = FileOperations(directory)
     result = test_file.get_all_files_of_type("png")
     expected = os.path.join(directory, "test.png")
@@ -29,7 +29,7 @@ def test_get_all_files_of_type():
 
 
 def test_get_random_file():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     test_file = FileOperations(directory)
     result = test_file.get_random_file()
     expected = [os.path.join(directory, "lines.txt"),
@@ -39,7 +39,7 @@ def test_get_random_file():
 
 
 def test_get_random_file_of_type():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     test_file = FileOperations(directory)
     result = test_file.get_random_file_of_type("txt")
     expected = [os.path.join(directory, "lines.txt"),
@@ -74,7 +74,7 @@ def test_remove_text():
 
 
 def test_get_lines():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     path = os.path.join(directory, "lines.txt")
     result = FileOperations.get_lines(path)
     expected = ["first_line", "second_line", "third_line"]
@@ -82,7 +82,7 @@ def test_get_lines():
 
 
 def test_get_random_line():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     path = os.path.join(directory, "lines.txt")
     result = FileOperations.get_random_line(path)
     expected = ["first_line", "second_line", "third_line"]
@@ -90,7 +90,7 @@ def test_get_random_line():
 
 
 def test_backup_file_both_exist():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     primary_path = os.path.join(directory, "lines.txt")
     backup_path = os.path.join(directory, "lines.txt")
     result = FileOperations.backup_file(primary_path, backup_path)
@@ -99,8 +99,8 @@ def test_backup_file_both_exist():
 
 
 def test_backup_file_no_primary():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
-    temp_directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.TEMP_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    temp_directory = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value)
     primary_path = os.path.join(temp_directory, "new_file.txt")
     backup_path = os.path.join(directory, "lines.txt")
 
@@ -119,7 +119,7 @@ def test_backup_file_no_primary():
 
 
 def test_backup_file_fail():
-    temp_directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.TEMP_FOLDER.value)
+    temp_directory = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value)
     primary_path = os.path.join(temp_directory, "new_file.txt")
     backup_path = os.path.join(temp_directory, "non_existent.txt")
 
@@ -141,7 +141,7 @@ def test_backup_file_fail():
 
 
 def test_get_full_path():
-    directory = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
     test_file = FileOperations(directory)
     result = test_file.get_full_path("test.png")
     expected = os.path.join(directory, "test.png")

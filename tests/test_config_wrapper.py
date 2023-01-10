@@ -8,7 +8,7 @@ from piblo.constants import UnitTestConst
 
 
 def test_init():
-    config_path = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.CONFIG_FOLDER.value,
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.CONFIG_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)
     config = Configs(config_path)
 
@@ -17,7 +17,7 @@ def test_init():
 
 
 def test_read_config():
-    config_path = os.path.join(os.getcwd(), UnitTestConst.TEST_FOLDER.value, UnitTestConst.CONFIG_FOLDER.value,
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.CONFIG_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)
     config = Configs(config_path)
     config.read_config()
