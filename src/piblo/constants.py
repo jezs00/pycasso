@@ -25,6 +25,7 @@ class ConfigConst(Enum):
     FILE_SUBJECTS_EG = "examples/prompts/subjects-example.txt"
     FILE_ARTISTS_EG = "examples/prompts/artists-example.txt"
     FILE_PROMPTS_EG = "examples/prompts/prompts-example.txt"
+    FILE_CROP_EXTERNAL = False
 
     # Text Settings
     TEXT_ADD_TEXT = False

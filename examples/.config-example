@@ -21,6 +21,9 @@ subjects_file=prompts/subjects.txt
 artists_file=prompts/artists.txt
 prompts_file=prompts/prompts.txt
 
+# Flag indicating whether to crop external images instead of resizing [boolean]
+crop_external=False
+
 [EPD]
 ######################
 # EPD Information    #
@@ -126,7 +129,6 @@ padding = 10
 
 # Opacity of the text box [integer]
 opacity = 150
-
 
 [Icon]
 #################
