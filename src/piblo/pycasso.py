@@ -262,12 +262,10 @@ class Pycasso:
             title_text = title_text.title()
             artist_text = artist_text.title()
 
-        # Resize to thumbnail size based on epd resolution if option selected
-        if resize_external:
-            epd_res = (width, height)
-        else:
-            max_window = max(width, height)
-            epd_res = (max_window, max_window)
+        # Resize to thumbnail size based on epd resolution depending on if option selected
+        epd_res = (width, height)
+        if not resize_external:
+            epd_res = ImageFunctions.max_tup(epd_res)
         image_base.thumbnail(epd_res)
 
         return image_base, title_text, artist_text

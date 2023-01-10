@@ -30,6 +30,9 @@ class ImageFunctions:
     ceiling_multiple(number, multiple)
         Helper to find next multiple of 'multiple' for number
 
+    max_tup(tup)
+        Takes tuple with 2 values, takes the maximum and returns a tuple both set to the maximum
+
     get_crop_size(original_width, original_height, new_width, new_height)
         Returns a tuple to use as crop coordinates when turning original width/height into new width/height
 
@@ -72,6 +75,13 @@ class ImageFunctions:
     @staticmethod
     def ceiling_multiple(number, multiple):
         return int(multiple * numpy.ceil(number / multiple))
+
+    @staticmethod
+    def max_tup(tup):
+        a, b = tup
+        max_size = max(a, b)
+        tup = (max_size, max_size)
+        return tup
 
     @staticmethod
     def get_crop_size(original_width, original_height, new_width, new_height):
