@@ -19,12 +19,14 @@ function install_linux_packages(){
 }
 
 function install_python_packages(){
-  pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
+  pip3 install git+https://github.com/jezs00/pycasso
+  # pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
   # Install pijuice. TODO: option this out
   sudo pip3 install pijuice
-  # Uninstall and reinstall grpcio manually until we can confirm another fix
-  sudo pip3 uninstall grpcio grpcio-tools
-  sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  # Uninstall and reinstall grpcio manually until we can confirm another fix TODO: option this out
+  # Commenting out for testing purposes
+  # sudo pip3 uninstall grpcio grpcio-tools
+  # sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
 }
 
 function setup_hardware(){
@@ -104,7 +106,6 @@ function install_pycasso(){
   if [ "$SKIP_DEPS" = false ]; then
     # install any needed python packages
     install_python_packages
-
   fi
 
   cd "${LOCAL_DIR}" || exit
