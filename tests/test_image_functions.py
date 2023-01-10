@@ -40,6 +40,13 @@ def test_ceiling_multiple():
     assert result == expected
 
 
+def test_max_tup():
+    tup = (10, 20)
+    result = ImageFunctions.max_tup(tup)
+    expected = (20, 20)
+    assert result == expected
+
+
 def test_get_crop_size():
     func = ImageFunctions()
     original_width = 800
