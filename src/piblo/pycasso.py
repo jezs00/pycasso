@@ -304,9 +304,7 @@ class Pycasso:
             stability_provider = StabilityProvider(key=stability_key)
 
         logging.info("Getting Image")
-        fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
-        fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
-        image = stability_provider.get_image_from_string(prompt, fetch_height, fetch_width)
+        image = stability_provider.get_image_from_string(prompt, height, width)
         return image
 
     @staticmethod

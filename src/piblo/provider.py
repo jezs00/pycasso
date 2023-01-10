@@ -30,6 +30,9 @@ class Provider(object):
     get_image_from_string(text)
         Retrieves image from API. Returns PIL Image object.
 
+    resize_image(img, width, height)
+        Resizes image object img to fill width, height
+
     add_secret(text):
         Adds a secret 'text' to the keyring for the appropriate provider
 
@@ -42,6 +45,13 @@ class Provider(object):
 
     def get_image_from_string(self, text):
         return
+
+    @staticmethod
+    def resize_image(img, width, height):
+        tup = (width, height)
+        tup = ImageFunctions.max_tup(tup)
+        img.thumbnail(tup)
+        return img
 
     @staticmethod
     def add_secret(text):
@@ -80,6 +90,8 @@ class StabilityProvider(Provider):
         return
 
     def get_image_from_string(self, text, height=0, width=0):
+        fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
+        fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
         if height == 0 or width == 0:
             answers = self.stability_api.generate(
                 prompt=text,
@@ -87,8 +99,8 @@ class StabilityProvider(Provider):
         else:
             answers = self.stability_api.generate(
                 prompt=text,
-                height=height,
-                width=width
+                height=fetch_height,
+                width=fetch_width
             )
 
         # iterating over the generator produces the api response
@@ -101,6 +113,7 @@ class StabilityProvider(Provider):
                     return None
                 if artifact.type == generation.ARTIFACT_IMAGE:
                     img = Image.open(io.BytesIO(artifact.binary))
+        img = self.resize_image(img, width, height)
         return img
 
     @staticmethod
