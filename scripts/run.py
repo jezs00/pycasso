@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Python script to run pycasso - chooses between using pijuice or not based on config
 
-from pycasso.pycasso import Pycasso
-from pycasso.constants import ConfigConst
+from piblo.pycasso import Pycasso
+from piblo.constants import ConfigConst
 import logging
 import os
 
@@ -15,7 +15,7 @@ logging.basicConfig(level=ConfigConst.LOGGING_LEVEL.value,
 
 instance = Pycasso()
 if instance.config.use_pijuice:
-    from pycasso.pijuice_handler import PiJuiceHandler
+    from piblo.pijuice_handler import PiJuiceHandler
 
     logging.info("Starting program using PiJuice")
     pijuice_instance = PiJuiceHandler()

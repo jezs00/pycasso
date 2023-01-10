@@ -5,8 +5,8 @@
 import os.path
 
 from omni_epd import displayfactory
-from pycasso.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst
-from pycasso.pycasso import Pycasso
+from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst
+from piblo.pycasso import Pycasso
 from PIL import Image, PngImagePlugin, ImageDraw
 
 

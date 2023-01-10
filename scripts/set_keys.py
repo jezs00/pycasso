@@ -4,7 +4,7 @@
 # Small script to set keys
 import logging
 
-from pycasso.provider import StabilityProvider, DalleProvider, ProvidersConst
+from piblo.provider import StabilityProvider, DalleProvider, ProvidersConst
 
 logging.basicConfig(level=logging.DEBUG)
 

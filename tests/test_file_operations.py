@@ -4,8 +4,8 @@
 
 import os
 import collections
-from pycasso.file_operations import FileOperations
-from pycasso.constants import UnitTestConst
+from piblo.file_operations import FileOperations
+from piblo.constants import UnitTestConst
 
 
 def test_get_all_files():

@@ -9,7 +9,7 @@ import time
 
 from pijuice import PiJuice
 
-from pycasso.pycasso import Pycasso
+from piblo.pycasso import Pycasso
 from .constants import PiJuiceConst, DisplayShapeConst
 
 

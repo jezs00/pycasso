@@ -3,8 +3,8 @@
 # Unit tests for config_wrapper.py
 
 import os
-from pycasso.config_wrapper import Configs
-from pycasso.constants import UnitTestConst
+from piblo.config_wrapper import Configs
+from piblo.constants import UnitTestConst
 
 
 def test_init():

@@ -5,7 +5,7 @@
 import logging
 import os
 
-from pycasso.provider import StabilityProvider
+from piblo.provider import StabilityProvider
 
 logging.basicConfig(level=logging.DEBUG)
 

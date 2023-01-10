@@ -3,7 +3,7 @@
 # Unit tests for image_functions.py
 
 from PIL import Image, ImageDraw
-from pycasso.image_functions import ImageFunctions
+from piblo.image_functions import ImageFunctions
 
 
 def test_max_area():
