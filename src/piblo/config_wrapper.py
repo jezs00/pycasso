@@ -51,7 +51,7 @@ class Configs:
         self.subjects_example = self.file.get_full_path(ConfigConst.FILE_SUBJECTS_EG.value)
         self.artists_example = self.file.get_full_path(ConfigConst.FILE_ARTISTS_EG.value)
         self.prompts_example = self.file.get_full_path(ConfigConst.FILE_PROMPTS_EG.value)
-        self.crop_external = ConfigConst.FILE_CROP_EXTERNAL.value
+        self.resize_external = ConfigConst.FILE_RESIZE_EXTERNAL.value
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
@@ -125,7 +125,8 @@ class Configs:
             self.subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
             self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
             self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
-            self.crop_external = config.get("File", "crop_external", fallback=ConfigConst.FILE_CROP_EXTERNAL.value)
+            self.resize_external = config.get("File", "resize_external",
+                                              fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
 
             # Text Settings
             self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
