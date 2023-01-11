@@ -105,7 +105,7 @@ parse_brackets = "()"
 preamble_regex = " .* -"
 
 # Filename parsing: regex to find split point between subject and artist in external document names [string]
-artist_regex =  in the style of
+artist_regex =  "in the style of"
 
 # Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [strings]
 remove_text = ", digital art"
