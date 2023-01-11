@@ -14,7 +14,7 @@ SERVICE_DIR=/etc/systemd/system
 SERVICE_FILE=pycasso.service
 SERVICE_FILE_TEMPLATE=pycasso.service.template
 KEY_SCRIPT=scripts/set_keys.py
-LED_SCRIPT=pijuice_disable_leds.py
+LED_SCRIPT=scripts/pijuice_disable_leds.py
 
 # Color code variables
 RED="\e[0;91m"
