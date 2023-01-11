@@ -33,6 +33,9 @@ function install_pijuice_package(){
 
 function install_python_packages(){
   sudo pip3 install git+https://github.com/jezs00/pycasso
+  sudo pip3 install grpcio grpcio-tools
+  sudo pip3 install stability-sdk @ git+https://github.com/Stability-AI/stability-sdk.git --ignore-installed grpcio grpcio-tools
+  sudo pip3 install openai @ git+https://github.com/openai/openai-python.git
 }
 
 function uninstall_python_packages(){
