@@ -77,15 +77,20 @@ class Provider(object):
         return key
 
     @staticmethod
-    def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN):
-        keyring.get_keyring()
-        keyring.set_password(keychain, keyname, text)
+    def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN.value):
+        if mode:
+            keyring.get_keyring()
+            keyring.set_password(keychain, keyname, text)
         return
 
     @staticmethod
-    def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN):
-        keyring.get_keyring()
-        return keyring.get_password(keychain, keyname)
+    def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value):
+        if mode:
+            keyring.get_keyring()
+            key = keyring.get_password(keychain, keyname)
+        else:
+            key = Provider.read_creds(keyname)
+        return key
 
     @staticmethod
     def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
@@ -152,12 +157,12 @@ class StabilityProvider(Provider):
 
 
     @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value):
         Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text, mode)
         return
 
     @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value):
         return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, mode)
 
 
@@ -251,10 +256,10 @@ class DalleProvider(Provider):
         return img
 
     @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value):
         Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text, mode)
         return
 
     @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value):
         return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode)
