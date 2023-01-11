@@ -26,7 +26,7 @@ function install_linux_packages(){
 
 function install_pijuice_package(){
   # Install pijuice.
-  sudo apt-get install -y pijuice-gui
+  sudo apt-get install -y pijuice-base pijuice-gui
 }
 
 function install_python_packages(){
