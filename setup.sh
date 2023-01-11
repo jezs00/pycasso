@@ -13,6 +13,8 @@ LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
 SERVICE_DIR=/etc/systemd/system
 SERVICE_FILE=pycasso.service
 SERVICE_FILE_TEMPLATE=pycasso.service.template
+KEY_SCRIPT=scripts/set_keys.py
+LED_SCRIPT=pijuice_disable_leds.py
 
 # Color code variables
 RED="\e[0;91m"
@@ -38,10 +40,16 @@ function uninstall_python_packages(){
 }
 
 function fix_grpcio(){
-  pip3 install git+https://github.com/jezs00/pycasso
-  # Uninstall and reinstall grpcio manually until we can confirm another fix TODO: option this out
   sudo pip3 uninstall grpcio grpcio-tools
   sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+}
+
+function set_key(){
+  python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
+}
+
+function disable_leds(){
+  python3 "${LOCAL_DIR}/${LED_SCRIPT}"
 }
 
 function setup_hardware(){
@@ -198,70 +206,91 @@ function install_pycasso(){
   return $FIRST_TIME
 }
 
-INSTALL_OPTION=$(whiptail --menu "\
- PYCASSO
+INSTALL_OPTION=0
 
- Repo set to '${GIT_REPO}/${GIT_BRANCH}'
- Setting up in local directory '${LOCAL_DIR}'
+while [ $INSTALL_OPTION -ne 9 ]
+  do
+  INSTALL_OPTION=$(whiptail --menu "\
+   █ ▄▄ ▀▄    ▄ ▄█▄    ██      ▄▄▄▄▄    ▄▄▄▄▄   ████▄
+█   █  █  █  █▀ ▀▄  █ █    █     ▀▄ █     ▀▄ █   █
+█▀▀▀    ▀█   █   ▀  █▄▄█ ▄  ▀▀▀▀▄ ▄  ▀▀▀▀▄   █   █
+█       █    █▄  ▄▀ █  █  ▀▄▄▄▄▀   ▀▄▄▄▄▀    ▀████
+ █    ▄▀     ▀███▀     █
+  ▀                   █
+                     ▀
 
- Choose what you want to do." 0 0 0 \
-1 "Install/Upgrade pycasso" \
-2 "Install pycasso Service" \
-3 "Install pijuice" \
-4 "Apply GRPCIO Fix" \
-5 "Uninstall pycasso" \
-6 "Uninstall pycasso Service" \
-3>&1 1>&2 2>&3)
+   Repo set to '${GIT_REPO}/${GIT_BRANCH}'
+   Setting up in local directory '${LOCAL_DIR}'
 
-: "${INSTALL_OPTION:=4}"
+   Choose what you want to do." 0 0 0 \
+  1 "Install/Upgrade pycasso" \
+  2 "Install pycasso Service" \
+  3 "Install pijuice" \
+  4 "Apply GRPCIO Fix" \
+  5 "Set an API key" \
+  6 "Disable pijuice LEDs" \
+  7 "Uninstall pycasso" \
+  8 "Uninstall pycasso Service" \
+  9 "Exit Setup" \
+  3>&1 1>&2 2>&3)
 
-if [ $INSTALL_OPTION -eq 1 ]; then
+  : "${INSTALL_OPTION:=9}"
 
-  # Prompt for service install if the first time being run (whiptail 1=No)
-  INSTALL_SERVICE=1
-  if [ ! -d "${LOCAL_DIR}" ]; then
-    if whiptail --yesno "Would you like to install the pycasso Service to start on boot?" 0 0; then
-      INSTALL_SERVICE=0
-    else
-      INSTALL_SERVICE=1
+  if [ $INSTALL_OPTION -eq 1 ]; then
+
+    # Prompt for service install if the first time being run (whiptail 1=No)
+    INSTALL_SERVICE=1
+    if [ ! -d "${LOCAL_DIR}" ]; then
+      if whiptail --yesno "Would you like to install the pycasso service to start on boot?" 0 0; then
+        INSTALL_SERVICE=0
+      else
+        INSTALL_SERVICE=1
+      fi
     fi
-  fi
 
-	# Install or update
-  install_pycasso
+    # Install or update
+    install_pycasso
 
-  # Install service, if desired
-  if [ $INSTALL_SERVICE -eq 0 ]; then
+    # Install service, if desired
+    if [ $INSTALL_SERVICE -eq 0 ]; then
+      install_service
+    fi
+
+    if whiptail --yesno "Would you like to install pijuice?" 0 0; then
+      INSTALL_PIJUICE=0
+    else
+      INSTALL_PIJUICE=1
+    fi
+
+    if [ $INSTALL_PIJUICE -eq 0 ]; then
+      install_pijuice_package
+    fi
+
+  elif [ $INSTALL_OPTION -eq 2 ]; then
+    # Install the service
     install_service
-  fi
-
-  if whiptail --yesno "Would you like to install pijuice?" 0 0; then
-    INSTALL_PIJUICE=0
-  else
-    INSTALL_PIJUICE=1
-  fi
-
-  if [ $INSTALL_PIJUICE -eq 0 ]; then
+  elif [ $INSTALL_OPTION -eq 3 ]; then
+    # Install the service
     install_pijuice_package
+  elif [ $INSTALL_OPTION -eq 4 ]; then
+    # Fix GRPCIO with version decrement
+    fix_grpcio
+  elif [ $INSTALL_OPTION -eq 5 ]; then
+    # Uninstall pycasso
+    set_key
+  elif [ $INSTALL_OPTION -eq 6 ]; then
+    # Uninstall the service
+    disable_leds
+  elif [ $INSTALL_OPTION -eq 7 ]; then
+    # Uninstall pycasso
+    uninstall_python_packages
+    uninstall_service
+  elif [ $INSTALL_OPTION -eq 8 ]; then
+    # Uninstall the service
+    uninstall_service
   fi
+done
 
-elif [ $INSTALL_OPTION -eq 2 ]; then
-	# Install the service
-  install_service
-elif [ $INSTALL_OPTION -eq 3 ]; then
-	# Install the service
-  install_pijuice_package
-elif [ $INSTALL_OPTION -eq 4 ]; then
-	# Fix GRPCIO with version decrement
-  fix_grpcio
-elif [ $INSTALL_OPTION -eq 5 ]; then
-	# Uninstall pycasso
-  uninstall_python_packages
-  uninstall_service
-elif [ $INSTALL_OPTION -eq 6 ]; then
-	# Uninstall the service
-  uninstall_service
-fi
 
 if [ "${RESTART_SERVICE}" = "TRUE" ] && (service_installed); then
   sudo systemctl start pycasso
