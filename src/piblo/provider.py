@@ -15,7 +15,7 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from PIL import Image, ImageDraw
 from stability_sdk import client
 
-from .constants import ProvidersConst, StabilityConst, DalleConst, ConfigConst
+from .constants import ProvidersConst, StabilityConst, DalleConst
 from .file_operations import FileOperations
 from .image_functions import ImageFunctions
 
@@ -77,11 +77,22 @@ class Provider(object):
         return key
 
     @staticmethod
-    def add_secret(text):
+    def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN):
+        keyring.get_keyring()
+        keyring.set_password(keychain, keyname, text)
+        return
+
+    @staticmethod
+    def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN):
+        keyring.get_keyring()
+        return keyring.get_password(keychain, keyname)
+
+    @staticmethod
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
         pass
 
     @staticmethod
-    def get_secret():
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
         pass
 
 
@@ -139,16 +150,15 @@ class StabilityProvider(Provider):
         img = self.resize_image(img, width, height)
         return img
 
+
     @staticmethod
-    def add_secret(text):
-        keyring.get_keyring()
-        keyring.set_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text)
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
+        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text, mode)
         return
 
     @staticmethod
-    def get_secret():
-        keyring.get_keyring()
-        return keyring.get_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value)
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
+        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, mode)
 
 
 class DalleProvider(Provider):
@@ -241,12 +251,10 @@ class DalleProvider(Provider):
         return img
 
     @staticmethod
-    def add_secret(text):
-        keyring.get_keyring()
-        keyring.set_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text)
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
+        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text, mode)
         return
 
     @staticmethod
-    def get_secret():
-        keyring.get_keyring()
-        return keyring.get_password(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value)
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
+        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode)
