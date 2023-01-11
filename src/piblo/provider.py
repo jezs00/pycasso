@@ -93,14 +93,18 @@ class Provider(object):
         return
 
     @staticmethod
-    def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN.value):
+    def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN.value,
+                           path=ProvidersConst.CREDENTIAL_PATH.value):
         if mode:
             keyring.get_keyring()
             keyring.set_password(keychain, keyname, text)
+        else:
+            Provider.write_creds(keyname, text)
         return
 
     @staticmethod
-    def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value):
+    def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value,
+                           path=ProvidersConst.CREDENTIAL_PATH.value):
         if mode:
             keyring.get_keyring()
             key = keyring.get_password(keychain, keyname)
@@ -109,11 +113,11 @@ class Provider(object):
         return key
 
     @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN):
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
         pass
 
     @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN):
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
         pass
 
 
@@ -173,13 +177,15 @@ class StabilityProvider(Provider):
 
 
     @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value):
-        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text, mode)
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
+        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text, mode,
+                                    path)
         return
 
     @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value):
-        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, mode)
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
+        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, mode,
+                                           path)
 
 
 class DalleProvider(Provider):
@@ -272,10 +278,11 @@ class DalleProvider(Provider):
         return img
 
     @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value):
-        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text, mode)
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
+        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text, mode, path)
         return
 
     @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value):
-        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode)
+    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
+        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode,
+                                           path)

@@ -5,8 +5,9 @@
 import logging
 
 from piblo.provider import StabilityProvider, DalleProvider, ProvidersConst
+from piblo.pycasso import Pycasso
 
-logging.basicConfig(level=logging.DEBUG)
+instance = Pycasso()
 
 print("Set key for provider")
 mode = int(input(f"---Available Providers---\n"
@@ -17,8 +18,8 @@ mode = int(input(f"---Available Providers---\n"
 key = input("\nAPI key:")
 
 if mode == ProvidersConst.STABLE.value:
-    StabilityProvider.add_secret(key)
+    StabilityProvider.add_secret(key, instance.config.use_keychain, instance.config.credential_path)
 elif mode == ProvidersConst.DALLE.value:
-    DalleProvider.add_secret(key)
+    DalleProvider.add_secret(key, instance.config.use_keychain, instance.config.credential_path)
 
 print("Added key OK")
