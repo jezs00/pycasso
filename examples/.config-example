@@ -172,10 +172,10 @@ stability_amount = 0
 dalle_amount = 0
 
 # Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
-credential_path = .creds
+use_keychain = False
 
 # File path to credentials file
-use_keychain = False
+credential_path = .creds
 
 [Generation]
 ##################################
