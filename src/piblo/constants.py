@@ -11,6 +11,8 @@ class ConfigConst(Enum):
     # Relative path to config
     CONFIG_PATH = ".config"
     CONFIG_PATH_EG = "examples/.config-example"
+    CREDENTIAL_PATH = "creds"
+    CREDENTIAL_PATH_EG = "creds-example"
 
     # Defaults
     # File Settings

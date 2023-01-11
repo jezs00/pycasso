@@ -145,3 +145,6 @@ api_output.png
 # Ignore log files
 pycasso.log
 pijuice.log
+
+# Ignore credential file
+creds
