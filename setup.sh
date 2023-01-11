@@ -48,10 +48,12 @@ function fix_grpcio(){
 }
 
 function set_key(){
+  cd "${LOCAL_DIR}" || exit
   sudo dbus-run-session python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
 }
 
 function disable_leds(){
+  cd "${LOCAL_DIR}" || exit
   sudo python3 "${LOCAL_DIR}/${LED_SCRIPT}"
 }
 
