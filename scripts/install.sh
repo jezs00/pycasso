@@ -33,6 +33,10 @@ function install_python_packages(){
   pip3 install git+https://github.com/jezs00/pycasso
 }
 
+function uninstall_python_packages(){
+  pip3 uninstall piblo
+}
+
 function fix_grpcio(){
   pip3 install git+https://github.com/jezs00/pycasso
   # Uninstall and reinstall grpcio manually until we can confirm another fix TODO: option this out
@@ -205,7 +209,8 @@ INSTALL_OPTION=$(whiptail --menu "\
 2 "Install pycasso Service" \
 3 "Install pijuice" \
 4 "Apply GRPCIO Fix" \
-5 "Uninstall pycasso Service" \
+5 "Uninstall pycasso" \
+6 "Uninstall pycasso Service" \
 3>&1 1>&2 2>&3)
 
 : "${INSTALL_OPTION:=4}"
@@ -250,6 +255,10 @@ elif [ $INSTALL_OPTION -eq 4 ]; then
 	# Fix GRPCIO with version decrement
   fix_grpcio
 elif [ $INSTALL_OPTION -eq 5 ]; then
+	# Uninstall pycasso
+  uninstall_python_packages
+  uninstall_service
+elif [ $INSTALL_OPTION -eq 6 ]; then
 	# Uninstall the service
   uninstall_service
 fi
