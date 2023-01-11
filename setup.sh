@@ -272,7 +272,7 @@ do
    # Install the service
    install_service
  elif [ $INSTALL_OPTION -eq 3 ]; then
-   # Install the service
+   # Install pijuice
    install_pijuice_package
  elif [ $INSTALL_OPTION -eq 4 ]; then
    # Fix GRPCIO with version decrement
@@ -281,7 +281,7 @@ do
    # Uninstall pycasso
    set_key
  elif [ $INSTALL_OPTION -eq 6 ]; then
-   # Uninstall the service
+   # Run python script to disable leds on pijuice
    disable_leds
  elif [ $INSTALL_OPTION -eq 7 ]; then
    # Uninstall pycasso
