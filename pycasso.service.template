@@ -1,0 +1,13 @@
+[Unit]
+Description=pycasso EPD Service
+After=rc-local.service
+
+[Service]
+User=root
+WorkingDirectory=${HOME}/pycasso/
+ExecStart=dbus-run-session -- bash ${HOME}/pycasso/scripts/run.sh
+Type=idle
+RemainAfterExit=false
+
+[Install]
+WantedBy=multi-user.target
