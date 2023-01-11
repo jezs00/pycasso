@@ -32,11 +32,11 @@ function install_pijuice_package(){
 }
 
 function install_python_packages(){
-  pip3 install git+https://github.com/jezs00/pycasso
+  sudo pip3 install git+https://github.com/jezs00/pycasso
 }
 
 function uninstall_python_packages(){
-  pip3 uninstall piblo
+  sudo pip3 uninstall piblo
 }
 
 function fix_grpcio(){
@@ -45,11 +45,11 @@ function fix_grpcio(){
 }
 
 function set_key(){
-  python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
+  sudo dbus-run-session python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
 }
 
 function disable_leds(){
-  python3 "${LOCAL_DIR}/${LED_SCRIPT}"
+  sudo python3 "${LOCAL_DIR}/${LED_SCRIPT}"
 }
 
 function setup_hardware(){
