@@ -39,6 +39,13 @@ class PiJuiceHandler:
         os.system("shutdown /s /t 1")
         sys.exit()
 
+    @staticmethod
+    def pijuice_led_disable():
+        led_config = {'function': 'NOT_USED', 'parameter': {'r': 0, 'g': 0, 'b': 0}}
+        pijuice.config.SetLedConfiguration('D1', led_config)
+        pijuice.config.SetLedConfiguration('D2', led_config)
+        return
+
     def run(self):
         instance = Pycasso()
 
