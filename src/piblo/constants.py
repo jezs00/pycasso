@@ -153,3 +153,5 @@ class UnitTestConst(Enum):
     SUBJECTS_FILE = "subjects.txt"
     PROMPTS_FILE = "prompts.txt"
     FONT_FILE = "Font.ttc"
+    PROVIDER_FOLDER = "test_provider_content"
+    PROVIDER_CRED = ".creds-test"

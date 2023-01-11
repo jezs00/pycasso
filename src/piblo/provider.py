@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Provider class to wrap APIs for web operations
-
+import configparser
 import io
 import logging
+import os
 import warnings
 from io import BytesIO
 
@@ -14,7 +15,8 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from PIL import Image, ImageDraw
 from stability_sdk import client
 
-from .constants import ProvidersConst, StabilityConst, DalleConst
+from .constants import ProvidersConst, StabilityConst, DalleConst, ConfigConst
+from .file_operations import FileOperations
 from .image_functions import ImageFunctions
 
 
@@ -32,6 +34,11 @@ class Provider(object):
 
     resize_image(img, width, height)
         Resizes image object img to fill width, height
+
+    read_creds(keyname, path, example_path)
+        Reads credentials from .creds file with variable name 'keyname'. 'path' and 'example_path' default to constant
+        location.
+        Returns the key as a string
 
     add_secret(text):
         Adds a secret 'text' to the keyring for the appropriate provider
@@ -52,6 +59,22 @@ class Provider(object):
         tup = ImageFunctions.max_tup(tup)
         img.thumbnail(tup)
         return img
+
+    @staticmethod
+    def read_creds(keyname, path=ProvidersConst.CREDENTIAL_PATH.value,
+                   example_path=ProvidersConst.CREDENTIAL_PATH_EG.value):
+        # Create new config file if necessary
+        path = FileOperations.backup_file(path, example_path)
+
+        # Method to read config file settings
+        config = configparser.ConfigParser()
+        config.read(path)
+
+        key = ""
+        if os.path.exists(path):
+            key = config.get(ProvidersConst.CREDENTIAL_SECTION.value, keyname)
+
+        return key
 
     @staticmethod
     def add_secret(text):
