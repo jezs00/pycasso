@@ -1,5 +1,5 @@
 [Unit]
-Description=pycasso EPD Service
+Description=A system to send AI generated art to an E-Paper display through a Raspberry PI unit
 After=rc-local.service
 
 [Service]
