@@ -77,6 +77,22 @@ class Provider(object):
         return key
 
     @staticmethod
+    def write_creds(keyname, key, path=ProvidersConst.CREDENTIAL_PATH.value,
+                    example_path=ProvidersConst.CREDENTIAL_PATH_EG.value):
+        # Create new config file if necessary
+        path = FileOperations.backup_file(path, example_path)
+
+        # Method to read config file settings
+        config = configparser.ConfigParser()
+        config.read(path)
+
+        if os.path.exists(path):
+            config.set(ProvidersConst.CREDENTIAL_SECTION.value, keyname, key)
+            with open(path, 'w') as file:
+                config.write(file)
+        return
+
+    @staticmethod
     def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN.value):
         if mode:
             keyring.get_keyring()

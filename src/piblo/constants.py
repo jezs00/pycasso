@@ -155,3 +155,4 @@ class UnitTestConst(Enum):
     FONT_FILE = "Font.ttc"
     PROVIDER_FOLDER = "test_provider_content"
     PROVIDER_CRED = ".creds-test"
+    PROVIDER_CRED_NEW = ".creds-test-new"
