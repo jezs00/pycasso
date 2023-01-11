@@ -90,7 +90,7 @@ class Configs:
         self.stability_amount = ProvidersConst.STABLE_AMOUNT.value
         self.dalle_amount = ProvidersConst.DALLE_AMOUNT.value
         self.use_keychain = ProvidersConst.USE_KEYCHAIN.value
-        self.credential_path = ProvidersConst.CREDENTIAL_PATH.value
+        self.credential_path = self.file.get_full_path(ProvidersConst.CREDENTIAL_PATH.value)
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -215,6 +215,7 @@ class Configs:
             self.external_image_location = self.file.get_full_path(self.external_image_location)
             self.generated_image_location = self.file.get_full_path(self.generated_image_location)
             self.font_file = self.file.get_full_path(self.font_file)
+            self.credential_path = self.file.get_full_path(self.credential_path)
 
         return config
 

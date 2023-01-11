@@ -91,7 +91,7 @@ class ProvidersConst(Enum):
 
     USE_KEYCHAIN = False
     CREDENTIAL_PATH = ".creds"
-    CREDENTIAL_PATH_EG = ".creds-example"
+    CREDENTIAL_PATH_EG = "examples/.creds-example"
     CREDENTIAL_SECTION = "Keys"
 
     KEYCHAIN = "PYCASSO"
