@@ -171,6 +171,12 @@ historic_amount = 0
 stability_amount = 0
 dalle_amount = 0
 
+# Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
+credential_path = .creds
+
+# File path to credentials file
+use_keychain = False
+
 [Generation]
 ##################################
 # Image Generation Configuration #

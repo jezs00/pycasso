@@ -11,8 +11,6 @@ class ConfigConst(Enum):
     # Relative path to config
     CONFIG_PATH = ".config"
     CONFIG_PATH_EG = "examples/.config-example"
-    CREDENTIAL_PATH = "creds"
-    CREDENTIAL_PATH_EG = "creds-example"
 
     # Defaults
     # File Settings
@@ -90,6 +88,11 @@ class ProvidersConst(Enum):
     HISTORIC_AMOUNT = 0
     STABLE_AMOUNT = 0
     DALLE_AMOUNT = 0
+
+    USE_KEYCHAIN = False
+    CREDENTIAL_PATH = ".creds"
+    CREDENTIAL_PATH_EG = ".creds-example"
+    CREDENTIAL_SECTION = "Keys"
 
     KEYCHAIN = "PYCASSO"
     STABLE_KEYNAME = "STABILITY"

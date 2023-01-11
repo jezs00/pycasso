@@ -89,6 +89,8 @@ class Configs:
         self.historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
         self.stability_amount = ProvidersConst.STABLE_AMOUNT.value
         self.dalle_amount = ProvidersConst.DALLE_AMOUNT.value
+        self.use_keychain = ProvidersConst.USE_KEYCHAIN.value
+        self.credential_path = ProvidersConst.CREDENTIAL_PATH.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -179,6 +181,10 @@ class Configs:
                                                   fallback=ProvidersConst.STABLE_AMOUNT.value)
             self.dalle_amount = config.getint("Providers", "dalle_amount",
                                               fallback=ProvidersConst.DALLE_AMOUNT.value)
+            self.use_keychain = config.getboolean("Providers", "use_keychain",
+                                              fallback=ProvidersConst.USE_KEYCHAIN.value)
+            self.credential_path = config.get("Providers", "credential_path",
+                                              fallback=ProvidersConst.CREDENTIAL_PATH.value)
 
             # Logging Settings
             self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
