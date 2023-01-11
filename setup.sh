@@ -170,6 +170,10 @@ function install_pycasso(){
     cp "${LOCAL_DIR}/examples/.config-example" "${LOCAL_DIR}/.config"
   fi
 
+  if [ ! -f "${LOCAL_DIR}/.creds" ]; then
+    cp "${LOCAL_DIR}/examples/.creds" "${LOCAL_DIR}/.creds"
+  fi
+
   if [ ! -f "${LOCAL_DIR}/prompts" ]; then
     mkdir "${LOCAL_DIR}/prompts"
   fi
