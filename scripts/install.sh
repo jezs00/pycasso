@@ -6,25 +6,38 @@ GIT_REPO=https://github.com/jezs00/pycasso
 GIT_BRANCH=main
 SKIP_DEPS=false
 
-# set the local directory
+# Set the local directory
 LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
 
-RC_LOC=/etc/rc.local
+# File paths
+SERVICE_DIR=/etc/systemd/system
+SERVICE_FILE=pycasso.service
+SERVICE_FILE_TEMPLATE=pycasso.service.template
+
+# Color code variables
+RED="\e[0;91m"
+YELLOW="\e[0;93m"
+RESET="\e[0m"
 
 function install_linux_packages(){
   sudo apt-get update
   sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2
-  # Install pijuice. TODO: option this out
+}
+
+function install_pijuice_package(){
+  # Install pijuice.
   sudo apt-get install -y pijuice-gui
 }
 
 function install_python_packages(){
   pip3 install git+https://github.com/jezs00/pycasso
-  # pip3 install -r "${LOCAL_DIR}/requirements.txt" -U
+}
+
+function fix_grpcio(){
+  pip3 install git+https://github.com/jezs00/pycasso
   # Uninstall and reinstall grpcio manually until we can confirm another fix TODO: option this out
-  # Commenting out for testing purposes
-  # sudo pip3 uninstall grpcio grpcio-tools
-  # sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
 }
 
 function setup_hardware(){
@@ -41,7 +54,75 @@ function setup_hardware(){
   fi
 }
 
+function service_installed(){
+  # return 0 if the service is installed, 1 if no
+  if [ -f "$SERVICE_DIR/$SERVICE_FILE" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function copy_service_file(){
+  sudo mv $SERVICE_FILE $SERVICE_DIR
+  sudo systemctl daemon-reload
+}
+
+function install_service(){
+  if [ -d "${LOCAL_DIR}" ]; then
+    cd "$LOCAL_DIR" || return
+
+    # generate the service file
+    envsubst <$SERVICE_FILE_TEMPLATE > $SERVICE_FILE
+
+    if ! (service_installed); then
+      # install the service files and enable
+      copy_service_file
+      sudo systemctl enable pycasso
+
+      echo -e "pycasso service installed! Use ${YELLOW}sudo systemctl start pycasso${RESET} to test"
+    else
+      echo -e "${YELLOW}pycasso service is installed, checking if it needs an update${RESET}"
+      if ! (cmp -s "pycasso.service" "/etc/systemd/system/pycasso.service"); then
+        copy_service_file
+        echo -e "Updating pycasso service file"
+      else
+        # remove the generated service file
+        echo -e "No update needed"
+        rm $SERVICE_FILE
+      fi
+    fi
+  else
+    echo -e "${RED}pycasso repo does not exist! Use option 1 - Install/Upgrade pycasso first${RESET}"
+  fi
+
+  # go back to home
+  cd "$HOME" || return
+}
+
+function uninstall_service(){
+  if (service_installed); then
+    # stop if running and remove service files
+    sudo systemctl stop pycasso
+    sudo systemctl disable pycasso
+    sudo rm "${SERVICE_DIR}/${SERVICE_FILE}"
+    sudo systemctl daemon-reload
+
+    echo -e "pycasso service was successfully uninstalled"
+  else
+    echo -e "${RED}pycasso service is already uninstalled.${RESET}"
+  fi
+}
+
 function install_pycasso(){
+
+  # check if service is currently running and stop if it is
+  RESTART_SERVICE="FALSE"
+
+  if (systemctl is-active --quiet pycasso); then
+    sudo systemctl stop pycasso
+    RESTART_SERVICE="TRUE"
+  fi
 
   FIRST_TIME=1  # if this is a first time install
 
@@ -108,9 +189,71 @@ function install_pycasso(){
 
   cd "${LOCAL_DIR}" || exit
 
-  echo -e "pycasso install/update complete. To test, run 'python3 ${LOCAL_DIR}/examples/review_screen.py'"
+  echo -e "pycasso install/update complete. To test, run ${YELLOW}'python3 ${LOCAL_DIR}/examples/review_screen.py'${RESET}"
 
   return $FIRST_TIME
 }
 
-install_pycasso
+INSTALL_OPTION=$(whiptail --menu "\
+ PYCASSO
+
+ Repo set to '${GIT_REPO}/${GIT_BRANCH}'
+ Setting up in local directory '${LOCAL_DIR}'
+
+ Choose what you want to do." 0 0 0 \
+1 "Install/Upgrade pycasso" \
+2 "Install pycasso Service" \
+3 "Install pijuice" \
+4 "Apply GRPCIO Fix" \
+5 "Uninstall pycasso Service" \
+3>&1 1>&2 2>&3)
+
+: "${INSTALL_OPTION:=4}"
+
+if [ $INSTALL_OPTION -eq 1 ]; then
+
+  # Prompt for service install if the first time being run (whiptail 1=No)
+  INSTALL_SERVICE=1
+  if [ ! -d "${LOCAL_DIR}" ]; then
+    if whiptail --yesno "Would you like to install the pycasso Service to start on boot?" 0 0; then
+      INSTALL_SERVICE=0
+    else
+      INSTALL_SERVICE=1
+    fi
+  fi
+
+	# Install or update
+  install_pycasso
+
+  # Install service, if desired
+  if [ $INSTALL_SERVICE -eq 0 ]; then
+    install_service
+  fi
+
+  if whiptail --yesno "Would you like to install pijuice?" 0 0; then
+    INSTALL_PIJUICE=0
+  else
+    INSTALL_PIJUICE=1
+  fi
+
+  if [ $INSTALL_PIJUICE -eq 0 ]; then
+    install_pijuice_package
+  fi
+
+elif [ $INSTALL_OPTION -eq 2 ]; then
+	# Install the service
+  install_service
+elif [ $INSTALL_OPTION -eq 3 ]; then
+	# Install the service
+  install_pijuice_package
+elif [ $INSTALL_OPTION -eq 4 ]; then
+	# Fix GRPCIO with version decrement
+  fix_grpcio
+elif [ $INSTALL_OPTION -eq 5 ]; then
+	# Uninstall the service
+  uninstall_service
+fi
+
+if [ "${RESTART_SERVICE}" = "TRUE" ] && (service_installed); then
+  sudo systemctl start pycasso
+fi
