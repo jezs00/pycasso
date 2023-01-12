@@ -15,9 +15,9 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from PIL import Image, ImageDraw
 from stability_sdk import client
 
-from .constants import ProvidersConst, StabilityConst, DalleConst
-from .file_operations import FileOperations
-from .image_functions import ImageFunctions
+from piblo.constants import ProvidersConst, StabilityConst, DalleConst
+from piblo.file_operations import FileOperations
+from piblo.image_functions import ImageFunctions
 
 
 class Provider(object):

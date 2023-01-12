@@ -4,8 +4,8 @@
 import configparser
 import os
 
-from .constants import ConfigConst, ProvidersConst
-from .file_operations import FileOperations
+from piblo.constants import ConfigConst, ProvidersConst
+from piblo.file_operations import FileOperations
 
 
 class Configs:

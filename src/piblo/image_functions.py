@@ -3,7 +3,7 @@
 
 import numpy
 
-from .constants import DisplayShapeConst
+from piblo.constants import DisplayShapeConst
 
 
 class ImageFunctions:

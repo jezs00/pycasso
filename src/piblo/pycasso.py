@@ -12,11 +12,11 @@ import numpy
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
-from .config_wrapper import Configs
-from .constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptModeConst
-from .file_operations import FileOperations
-from .image_functions import ImageFunctions
-from .provider import StabilityProvider, DalleProvider
+from piblo.config_wrapper import Configs
+from piblo.constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptModeConst
+from piblo.file_operations import FileOperations
+from piblo.image_functions import ImageFunctions
+from piblo.provider import StabilityProvider, DalleProvider
 
 
 # noinspection PyTypeChecker
