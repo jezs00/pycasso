@@ -321,9 +321,9 @@ class Pycasso:
 
         # Use infill to fill in sides of image instead of cropping
         if infill:
-            image = dalle_provider.infill_image_from_image(prompt, image_base, infill_percent)
+            image_base = dalle_provider.infill_image_from_image(prompt, image_base, infill_percent)
 
-        return image
+        return image_base
 
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
