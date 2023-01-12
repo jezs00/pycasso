@@ -9,3 +9,4 @@ import logging
 pijuice = PiJuice(1, 0x14)
 PiJuiceHandler.pijuice_led_disable(pijuice)
 logging.info("LEDs disabled on pijuice unit")
+print("LEDs disabled on pijuice unit")
