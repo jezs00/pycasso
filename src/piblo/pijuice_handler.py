@@ -47,7 +47,11 @@ class PiJuiceHandler:
         return
 
     def run(self):
-        instance = Pycasso()
+        try:
+            instance = Pycasso()
+        except Exception as e:
+            logging.error("Cannot create Pycasso object. Exiting process.")
+            sys.exit()
 
         # Set config variables based on config that pycasso loaded
         sleep_time = instance.config.wait_to_run
@@ -72,7 +76,8 @@ class PiJuiceHandler:
             instance.run()
 
             if shutdown:
-                logging.info("Shutting down if possible")
+                logging.info(f"Shutting down if possible. Waiting {sleep_time} seconds before sending signal")
+                time.sleep(sleep_time)
                 self.system_shutdown()
                 sys.exit()
 
@@ -97,7 +102,8 @@ class PiJuiceHandler:
 
             # shutdown if we've configured pycasso to do so
             if shutdown:
-                logging.info("Shutting down if possible")
+                logging.info(f"Shutting down if possible. Waiting {sleep_time} seconds before sending signal")
+                time.sleep(sleep_time)
                 self.safe_pijuice_shutdown(pijuice)
             sys.exit()
 
