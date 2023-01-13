@@ -1,7 +1,7 @@
 # pycasso
 System to send AI generated art to an E-Paper display through a Raspberry PI unit
 
-![Pycasso On The Wall](https://imgur.com/a/not1K4p)
+![Pycasso On The Wall](https://i.imgur.com/AUPlb3y.jpg)
 
 ## Acknowledgments
 
