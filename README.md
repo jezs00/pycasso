@@ -35,7 +35,7 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * Select "Yes" to enable service on boot if that is what you want to do _(it is probably what you want to do)_
 * OPTIONAL: If you want to use pijuice, select "Yes" to install PiJuice
 * OPTIONAL: Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
-* OPTIONAL: Select `Option 5 - API Key`, enter your provider and enter your key. You can run this multiple times to add multiple providers or update your keys. _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default this will be stored in a plaintext file in the application folder. This is not ideal but it is the best I have figured out until I can get GRPCIO playing nicely.)_
+* Select `Option 5 - API Key`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys) and [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default this will be stored in a plaintext file in the application folder. This is not ideal but it is the best I have figured out until I can get GRPCIO playing nicely.)_
 * OPTIONAL: Select `Option 6 - Disable pijuice LEDs`. IF you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
 
 ### Configure pycasso
@@ -52,7 +52,24 @@ more information. My preferred configuration is to set a wakeup timer to start a
 ### Run pycasso
 * Run `sudo systemctl restart pycasso` and see if it worked!
 
+### Customise pycasso
+* If you have run through the install and pycasso is working, it will run on startup. Normal behaviour is to run once and close, if you have an always-on system, you may wish to disable the service and just run pycasso or start the service through cron.
+* With a PiJuice, you can configure `shutdown_on_battery` to automatically shut down and remove power to the board when pycasso is done, to complete a headless fully battery driven process. Be a little careful with this as to save battery, it prefers to shutdown above all else, even on exception. If you experience a program error you will only have `wait_to_run` (default 30) seconds to connect to the pi and disable the service to fix.
+* Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
+* Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
+  * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
+  * You can use hierarchical brackets to randomise elements in the prompt
+    * EG `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. Option picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`
+  * You can add weights to entire lines or brackets to increase their likelihood. Integers only.
+    * EG You could expect `A (4:Good|Bad|0:Happy) Dog` should return `A Good Dog` around 4 times for every `A Bad Dog`. `A Happy Dog` would never appear.
+  * Have a play around with the prompts and see what works for you
+
 ## Troubleshooting
+
+### There is a symbol on the top left of the screen
+By default, pycasso puts a faint symbol on the top left of the EPD to inform of system events. By default these are:
+* Square for low battery _(low battery warning level configurable in `.config`, default 15%)_
+* Cross for exception _(likely PiJuice failing to load if you are using it, try a longer `wait_to_run`)_
 
 ### GLIBC_2.33 not found
 I have experienced this error even with the most recent release of raspbian.
@@ -64,3 +81,6 @@ sudo pip3 install grpcio==1.44.0 --no-binary=grpcio
 sudo pip3 install grpcio-tools==1.44.0 --no-binary=grpcio-tools
 ```
 If you can't store your credentials in keyring, you'll have to set the `use_keyring` option in `.config` to False, and provide your credentials using `setup.sh` option 5 or `set_keys.py`
+
+### Log an issue
+If you're experiencing a bug or issue, or have a feature request, please visit the [Issues](https://github.com/jezs00/pycasso/issues) page to let us know. Recommend including the relevant information provided in `pycasso.log` and your current `.config`
