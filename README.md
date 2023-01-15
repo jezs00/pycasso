@@ -45,7 +45,7 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * run `python3 examples/review_screen.py` and see if it works on your screen. _(If your screen is not displaying an image there's most likely a problem with your EPD, you can also check pycasso.log to troubleshoot)_
 
 ### Configure PiJuice
-* Run `pijuice_cli` or `pijuice_gui` to configure your PiJuice unit.
+* Run `pijuice_cli` to configure your PiJuice unit.
 * See [PiJuice documentation](https://github.com/PiSupply/PiJuice/blob/master/Software/README.md) for
 more information. My preferred configuration is to set a wakeup timer to start at a preferred time daily, but you can set this as you see fit.
 
