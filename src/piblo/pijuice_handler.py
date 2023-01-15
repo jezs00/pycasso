@@ -56,6 +56,7 @@ class PiJuiceHandler:
         # Set config variables based on config that pycasso loaded
         sleep_time = instance.config.wait_to_run
         shutdown = instance.config.shutdown_on_battery
+        shutdown_ex = instance.config.shutdown_on_exception
         charge_display = instance.config.charge_display
 
         power_status = None
@@ -75,7 +76,7 @@ class PiJuiceHandler:
             instance.icon_shape = DisplayShapeConst.CROSS.value
             instance.run()
 
-            if shutdown:
+            if shutdown_ex:
                 logging.info(f"Shutting down if possible. Waiting {sleep_time} seconds before sending signal")
                 time.sleep(sleep_time)
                 self.system_shutdown()
@@ -101,7 +102,7 @@ class PiJuiceHandler:
             logging.error(e)
 
             # shutdown if we've configured pycasso to do so
-            if shutdown:
+            if shutdown_ex:
                 logging.info(f"Shutting down if possible. Waiting {sleep_time} seconds before sending signal")
                 time.sleep(sleep_time)
                 self.safe_pijuice_shutdown(pijuice)
