@@ -23,7 +23,7 @@ RESET="\e[0m"
 
 function install_linux_packages(){
   sudo apt-get update
-  sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2
+  sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2 jq
 }
 
 function install_pijuice_package(){
@@ -32,7 +32,7 @@ function install_pijuice_package(){
 }
 
 function install_python_packages(){
-  sudo pip3 install git+https://github.com/jezs00/pycasso
+  sudo pip3 install "git+https://github.com/jezs00/pycasso@$(curl -s https://api.github.com/repos/jezs00/pycasso/releases/latest | jq -r "release")"
   sudo pip3 install stability-sdk @ git+https://github.com/Stability-AI/stability-sdk.git
   sudo pip3 install openai @ git+https://github.com/openai/openai-python.git
 }
