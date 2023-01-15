@@ -103,6 +103,7 @@ class Configs:
         # PiJuice Settings
         self.use_pijuice = ConfigConst.USE_PIJUICE.value
         self.shutdown_on_battery = ConfigConst.SHUTDOWN_ON_BATTERY.value
+        self.shutdown_on_exception = ConfigConst.SHUTDOWN_ON_EXCEPTION.value
         self.wait_to_run = ConfigConst.WAIT_TO_RUN.value
         self.charge_display = ConfigConst.CHARGE_DISPLAY.value
         return
@@ -199,6 +200,8 @@ class Configs:
             self.use_pijuice = config.getboolean("PiJuice", "use_pijuice", fallback=ConfigConst.USE_PIJUICE.value)
             self.shutdown_on_battery = config.getboolean("PiJuice", "shutdown_on_battery",
                                                          fallback=ConfigConst.SHUTDOWN_ON_BATTERY.value)
+            self.shutdown_on_exception = config.getboolean("PiJuice", "shutdown_on_exception",
+                                                           fallback=ConfigConst.SHUTDOWN_ON_EXCEPTION.value)
             self.wait_to_run = config.getint("PiJuice", "wait_to_run", fallback=ConfigConst.WAIT_TO_RUN.value)
             self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
 

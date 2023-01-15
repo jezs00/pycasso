@@ -199,6 +199,11 @@ use_pijuice = False
 # Flag indicating whether to shutdown after pycasso if running on PiJuice battery (not charging) [boolean]
 shutdown_on_battery = True
 
+# Flag indicating whether to shutdown after pycasso if program. Used to stop battery running down if program errors out
+# (WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after
+# failures you may not be able to SSH in even after a wait time) [boolean]
+shutdown_on_exception = False
+
 # Time to wait in seconds before running pycasso. Can help in ensuring PiJuice is ready [integer]
 wait_to_run = 30
 
