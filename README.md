@@ -1,7 +1,9 @@
 # pycasso
 System to send AI generated art to an E-Paper display through a Raspberry PI unit
 
-![Pycasso On The Wall](https://i.imgur.com/AUPlb3y.jpg)
+| ![Pycasso At Home](https://i.imgur.com/GxhmODU.jpg) | 
+|:--:| 
+| *Yee-ha.* |
 
 ## Acknowledgments
 
@@ -49,6 +51,16 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * See [PiJuice documentation](https://github.com/PiSupply/PiJuice/blob/master/Software/README.md) for
 more information. My preferred configuration is to set a wakeup timer to start at a preferred time daily, but you can set this as you see fit.
 
+
+| ![PiJuice CLI Menu](https://i.imgur.com/npZJSTK.png) | 
+|:--:| 
+| *PiJuice CLI Menu* |
+
+
+| ![PiJuice CLI Wakeup](https://i.imgur.com/w6i53wM.png) | 
+|:--:| 
+| PiJuice CLI Wakeup Configuration |
+
 ### Run pycasso
 * Run `sudo systemctl restart pycasso` and see if it worked!
 
@@ -63,6 +75,10 @@ more information. My preferred configuration is to set a wakeup timer to start a
   * You can add weights to entire lines or brackets to increase their likelihood. Integers only.
     * EG You could expect `A (4:Good|Bad|0:Happy) Dog` should return `A Good Dog` around 4 times for every `A Bad Dog`. `A Happy Dog` would never appear.
   * Have a play around with the prompts and see what works for you
+
+### Administration
+* Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically tracked [here](https://github.com/jezs00/pycasso/issues/19).
+* If you have set `shutdown_on_battery` to true, you should be able to 
 
 ## Troubleshooting
 
