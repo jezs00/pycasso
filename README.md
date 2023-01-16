@@ -1,6 +1,8 @@
 # pycasso
 System to send AI generated art to an E-Paper display through a Raspberry PI unit
 
+An article has been published on pycasso's development [here](https://jezs00.medium.com/pycasso-how-to-build-a-picture-frame-to-show-you-random-ai-art-every-day-44a1d3d78237).
+
 | ![Pycasso At Home](https://i.imgur.com/GxhmODU.jpg) | 
 |:--:| 
 | *Yee-ha.* |
