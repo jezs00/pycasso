@@ -166,16 +166,20 @@ log_level = 10
 # Comparative chances whether any particular provider is used [integer]
 # EG "external_amount = 0", "historic_amount = 1" and "stability_amount = 2" would result in:
 # External images never appearing, and approximately 1 historic image appearing for every 2 stable diffusion images
-external_amount = 1
+external_amount = 0
 historic_amount = 0
 stability_amount = 0
 dalle_amount = 0
 
 # Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
+# [boolean]
 use_keychain = False
 
-# File path to credentials file
+# File path to credentials file [string]
 credential_path = .creds
+
+# If all other modes fail or are not selected, show a test image [boolean]
+test_enabled = True
 
 [Generation]
 ##################################

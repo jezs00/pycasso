@@ -86,7 +86,7 @@ class ProvidersConst(Enum):
     DALLE = 3
     MIDJOURNEY = 4
 
-    EXTERNAL_AMOUNT = 1
+    EXTERNAL_AMOUNT = 0
     HISTORIC_AMOUNT = 0
     STABLE_AMOUNT = 0
     DALLE_AMOUNT = 0
@@ -95,6 +95,8 @@ class ProvidersConst(Enum):
     CREDENTIAL_PATH = ".creds"
     CREDENTIAL_PATH_EG = "examples/.creds-example"
     CREDENTIAL_SECTION = "Keys"
+
+    TEST_ENABLED = 1
 
     KEYCHAIN = "PYCASSO"
     STABLE_KEYNAME = "STABILITY"
