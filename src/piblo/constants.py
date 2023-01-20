@@ -163,3 +163,13 @@ class ImageConst(Enum):
     CONVERT_MODE = "RGB"
     DRAW_MODE = "RGBA"
     SUPPORTED_MODES = ["RGB", "RGBA"]
+
+
+class EPDConst(Enum):
+    COLOR = "color"
+    BW = "bw"
+    YELLOW = "yellow"
+    RED = "red"
+    PALETTE = "palette"
+    FOUR_COLOR = "4color"
+    FOUR_GRAY = "gray4"
