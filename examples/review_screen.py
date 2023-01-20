@@ -31,16 +31,21 @@ try:
 
         # Display Settings
         display_type = config.get("EPD", "type")
+    else:
+        logging.warning(f"Path '{config_path}' does not exist. Unable to load config")
+        exit()
 
 except IOError as e:
     logging.error(e)
+    exit()
 
 except KeyboardInterrupt:
     logging.info("ctrl + c:")
     exit()
 
+
 try:
-    epd = displayfactory.load_display_driver(display_type)
+    epd = displayfactory.load_display_driver(display_type, config)
 
     logging.info("pycasso test image display")
 
