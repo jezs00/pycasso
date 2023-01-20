@@ -73,7 +73,9 @@ class FileOperations:
         # returns path for a random file in the current path
         all_files = self.get_all_files()
         size = len(all_files)
-        # TODO: handle if no files
+        if size == 0:
+            logging.warning(f"Unable to find any files in '{self.path}'")
+            return
         random.seed()
         r = random.randint(0, size - 1)
         return all_files[r]
@@ -84,6 +86,7 @@ class FileOperations:
         all_files = self.get_all_files_of_type(file_type)
         size = len(all_files)
         if size == 0:
+            logging.warning(f"Unable to find any files of type '{file_type}' in '{self.path}'")
             return
         random.seed()
         r = random.randint(0, size - 1)
@@ -141,6 +144,7 @@ class FileOperations:
         lines = FileOperations.parse_weighted_lines(lines)
         size = len(lines)
         if size == 0:
+            logging.warning(f"No lines to parse found in file {path}")
             return
         random.seed()
         r = random.randint(0, size - 1)
@@ -154,6 +158,7 @@ class FileOperations:
             logging.info(f"{primary_path} does not exist. Copying {backup_path} to {primary_path}")
             shutil.copy2(backup_path, primary_path)
             return primary_path
+        logging.warning(f"Unable to find file at '{primary_path}' or at backup path '{backup_path}'")
         return None
 
     def get_full_path(self, path):
