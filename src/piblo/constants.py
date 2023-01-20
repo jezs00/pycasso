@@ -79,6 +79,7 @@ class ConfigConst(Enum):
 
 class ProvidersConst(Enum):
     # Settings and defaults for providers
+    TEST = 99
     HISTORIC = 0
     EXTERNAL = 1
     STABLE = 2
