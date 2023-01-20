@@ -131,7 +131,7 @@ class Configs:
             self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
             self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
             self.resize_external = config.getboolean("File", "resize_external",
-                                              fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
+                                                     fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
 
             # Text Settings
             self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
@@ -187,7 +187,7 @@ class Configs:
                                                   fallback=ProvidersConst.USE_KEYCHAIN.value)
             self.credential_path = config.get("Providers", "credential_path",
                                               fallback=ProvidersConst.CREDENTIAL_PATH.value)
-            self.test_enabled = config.getboolean("Providers", "use_keychain",
+            self.test_enabled = config.getboolean("Providers", "test_enabled",
                                                   fallback=ProvidersConst.TEST_ENABLED.value)
 
             # Logging Settings

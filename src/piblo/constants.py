@@ -96,7 +96,8 @@ class ProvidersConst(Enum):
     CREDENTIAL_PATH_EG = "examples/.creds-example"
     CREDENTIAL_SECTION = "Keys"
 
-    TEST_ENABLED = 1
+    TEST_ENABLED = True
+    TEST_FILE = "examples/images/test.png"
 
     KEYCHAIN = "PYCASSO"
     STABLE_KEYNAME = "STABILITY"
