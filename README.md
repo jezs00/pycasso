@@ -1,6 +1,8 @@
 # pycasso
 System to send AI generated art to an E-Paper display through a Raspberry PI unit
 
+An article has been published on pycasso's development [here](https://jezs00.medium.com/pycasso-how-to-build-a-picture-frame-to-show-you-random-ai-art-every-day-44a1d3d78237).
+
 | ![Pycasso At Home](https://i.imgur.com/GxhmODU.jpg) | 
 |:--:| 
 | *Yee-ha.* |
@@ -50,6 +52,7 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * Run `pijuice_cli` to configure your PiJuice unit.
 * See [PiJuice documentation](https://github.com/PiSupply/PiJuice/blob/master/Software/README.md) for
 more information. My preferred configuration is to set a wakeup timer to start at a preferred time daily, but you can set this as you see fit.
+* You can configure the buttons on the PiJuice to perform different functions. I recommend leaving the first switch as power on device, as this is very useful for cycling the image or for turning the device on while powered to administer.
 
 
 | ![PiJuice CLI Menu](https://i.imgur.com/npZJSTK.png) | 
@@ -77,15 +80,16 @@ more information. My preferred configuration is to set a wakeup timer to start a
   * Have a play around with the prompts and see what works for you
 
 ### Administration
-* Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically tracked [here](https://github.com/jezs00/pycasso/issues/19).
-* If you have set `shutdown_on_battery` to true, you should be able to 
+* Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
+* If you have set `shutdown_on_battery` to true, you should be able to plug your PiJuice into power to ensure it stays on when you start it.
+* If a disaster occurs and you have `shutdown_on_battery` and `shutdown_on_exception` both set to True and you cannot keep the device on long enough to log in, you might need to unplug the SD card and try to fix the config. If this option is not available to you, it's possible you might need to flash it and start from scratch. A possible solution to these issues while maintaining a priority on extending battery life is being tracked [here](https://github.com/jezs00/pycasso/issues/20).
 
 ## Troubleshooting
 
 ### There is a symbol on the top left of the screen
 By default, pycasso puts a faint symbol on the top left of the EPD to inform of system events. By default these are:
 * Square for low battery _(low battery warning level configurable in `.config`, default 15%)_
-* Cross for exception _(likely PiJuice failing to load if you are using it, try a longer `wait_to_run`)_
+* Cross for exception _(likely PiJuice failing to load if you are using it, try a longer `wait_to_run`)_ . If you have anything odd in your `pycasso.log` file you can post it [here](https://github.com/jezs00/pycasso/issues).
 
 ### GLIBC_2.33 not found
 I have experienced this error even with the most recent release of raspbian.
