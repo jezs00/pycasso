@@ -157,3 +157,9 @@ class UnitTestConst(Enum):
     PROVIDER_FOLDER = "test_provider_content"
     PROVIDER_CRED = ".creds-test"
     PROVIDER_CRED_NEW = ".creds-test-new"
+
+
+class ImageConst(Enum):
+    CONVERT_MODE = "RGB"
+    DRAW_MODE = "RGBA"
+    SUPPORTED_MODES = ["RGB", "RGBA"]

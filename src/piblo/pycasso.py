@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
-from piblo.constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptModeConst
+from piblo.constants import ProvidersConst, StabilityConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider
@@ -536,7 +536,9 @@ class Pycasso:
 
             # Crop and prepare image
             image_base = image_base.crop(image_crop)
-            draw = ImageDraw.Draw(image_base, "RGBA")
+            if image_base.mode not in ImageConst.SUPPORTED_MODES.value:
+                image_base = image_base.convert(ImageConst.CONVERT_MODE.value)
+            draw = ImageDraw.Draw(image_base, ImageConst.DRAW_MODE.value)
 
             # Draw status shape if provided
             if self.icon_shape is not None:
