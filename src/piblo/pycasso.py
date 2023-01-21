@@ -394,6 +394,9 @@ class Pycasso:
         artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
         title_text = FileOperations.get_random_line(subjects_file)
         title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
+        preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
+        connector = Pycasso.parse_multiple_brackets(connector, brackets)
+        postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
         prompt = (preamble + title_text + connector + artist_text + postscript)
         return prompt, artist_text, title_text
 
@@ -403,6 +406,8 @@ class Pycasso:
                            brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         title_text = FileOperations.get_random_line(prompts_file)
         title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
+        preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
+        postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
         prompt = preamble + title_text + postscript
         return prompt, title_text
 

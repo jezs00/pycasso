@@ -76,10 +76,10 @@ mode=1
 preamble=""
 
 # Text to use as a connector between subject and artist [string]
-connector=" by "
+connector=" (by|in the style of) "
 
 # Postscript text to insert after main prompt [string]
-postscript=", digital art, trending on artstation"
+postscript=", (10:digital art|fantasy art), trending on artstation"
 
 [Text]
 ################
