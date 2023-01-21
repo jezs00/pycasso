@@ -231,6 +231,24 @@ class Pycasso:
         return
 
     @staticmethod
+    def load_test_image(width, height, image_path=ProvidersConst.TEST_FILE.value,
+                        resize_external=ConfigConst.FILE_RESIZE_EXTERNAL.value):
+        # Get test image
+        image_base = Image.open(image_path)
+
+        # Add text
+        title_text = "It Works!"
+        artist_text = "See pycasso.log for more information"
+
+        # Resize to thumbnail size based on epd resolution depending on if option selected
+        epd_res = (width, height)
+        if not resize_external:
+            epd_res = ImageFunctions.max_tup(epd_res)
+        image_base.thumbnail(epd_res)
+
+        return image_base, title_text, artist_text
+
+    @staticmethod
     def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX.value,
                             artist_regex=ConfigConst.TEXT_ARTIST_REGEX,
                             remove_text=ConfigConst.TEXT_REMOVE_TEXT_LIST.value,
@@ -406,15 +424,23 @@ class Pycasso:
             ProvidersConst.DALLE.value
         ]
 
-        # Pick random provider based on weight
-        random.seed()
-        provider_type = random.choices(provider_types, k=1, weights=(
+        provider_weights = (
             self.config.external_amount,
             self.config.historic_amount,
             self.config.stability_amount,
             self.config.dalle_amount
-        ))[0]
+        )
 
+        # If no weights provided, return test provider
+        total_amounts = 0
+        for i in provider_weights:
+            total_amounts += i
+        if total_amounts <= 0:
+            logging.info("No provider weights used. Returning test mode.")
+            return ProvidersConst.TEST.value
+        # Pick random provider based on weight
+        random.seed()
+        provider_type = random.choices(provider_types, k=1, weights=provider_weights)[0]
         return provider_type
 
     @staticmethod
@@ -491,7 +517,14 @@ class Pycasso:
         try:
             provider_type = self.get_random_provider_mode()
 
-            if provider_type == ProvidersConst.EXTERNAL.value:
+            if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
+                # Test run
+                logging.info(
+                    "Running test mode as no other provider selected. Configure providers in '.config' to enable your "
+                    "preferred functionality. Set 'test_enabled = False' to prevent test mode from ever running again."
+                    )
+                image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height)
+            elif provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
                 mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
                                                      self.config.preamble_regex, self.config.artist_regex,

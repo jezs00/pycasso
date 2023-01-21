@@ -48,12 +48,18 @@ def test_display_image_on_epd():
         os.remove(output_path)
 
 
+def test_load_test_image():
+    tup = Pycasso.load_test_image(400, 400)
+    pixel = tup[0].getpixel((100, 100))
+    expected = (85, 149, 194)
+    assert pixel == expected
+
+
 def test_load_external_image():
     path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value)
     tup = Pycasso.load_external_image(path, 400, 400)
     pixel = tup[0].getpixel((200, 200))
     expected = (158, 142, 138)
-
     assert pixel == expected
 
 
@@ -186,3 +192,4 @@ def test_add_text_to_image_blank():
     expected = (0, 0, 0, 0)
 
     assert pixel == expected
+
