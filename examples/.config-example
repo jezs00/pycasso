@@ -214,7 +214,7 @@ wait_to_run = 30
 # Battery percentage that pycasso should start showing low battery symbol at [integer]
 charge_display = 15
 
-[DEBUG]
+[Debug]
 #######################
 # Debug Configuration #
 #######################
