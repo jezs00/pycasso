@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
+import math
 
 import numpy
 
@@ -32,6 +33,10 @@ class ImageFunctions:
 
     max_tup(tup)
         Takes tuple with 2 values, takes the maximum and returns a tuple both set to the maximum
+
+    min_possible_tup(tup, large_tup)
+        Takes a tuple tup, with a larger tuple large_tup, and provide a tuple with the same ratio as large_tup, as small
+        as possible, without either number being smaller than tup.
 
     resize_number_smaller(number, percent)
         Returns integer 'number' smaller by 'percent' percent
@@ -88,6 +93,22 @@ class ImageFunctions:
         max_size = max(a, b)
         tup = (max_size, max_size)
         return tup
+
+    @staticmethod
+    def min_possible_tup(tup, large_tup):
+        a, b = tup
+        al, bl = large_tup
+
+        fac_a = al/a
+        fac_b = bl/b
+
+        if fac_a > fac_b:
+            factor = fac_b
+        else:
+            factor = fac_a
+
+        min_tup = (math.ceil(al / factor), math.ceil(bl / factor))
+        return min_tup
 
     @staticmethod
     def resize_number_smaller(number, percent):

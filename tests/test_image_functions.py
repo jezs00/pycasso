@@ -47,6 +47,22 @@ def test_max_tup():
     assert result == expected
 
 
+def test_min_possible_tup_a():
+    large_tup = (50, 40)
+    tup = (10, 20)
+    result = ImageFunctions.min_possible_tup(tup, large_tup)
+    expected = (25, 20)
+    assert result == expected
+
+
+def test_min_possible_tup_b():
+    large_tup = (23, 77)
+    tup = (10, 20)
+    result = ImageFunctions.min_possible_tup(tup, large_tup)
+    expected = (10, 34)
+    assert result == expected
+
+
 def test_resize_number_smaller():
     number = 100
     percent = 10
