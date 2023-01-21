@@ -183,7 +183,7 @@ class StabilityProvider(Provider):
                     return None
                 if artifact.type == generation.ARTIFACT_IMAGE:
                     img = Image.open(io.BytesIO(artifact.binary))
-        img = self.resize_image(img, width, height)
+        img = self.fit_image(img, width, height)
         return img
 
 
