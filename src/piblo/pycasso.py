@@ -506,6 +506,10 @@ class Pycasso:
 
         try:
             epd = displayfactory.load_display_driver(self.config.display_type, self.config_dict)
+            # If display is mock, apply height and width to it
+            if self.config.display_type == ConfigConst.DISPLAY_TYPE.value:
+                epd.width = self.config.test_epd_width
+                epd.height = self.config.test_epd_height
 
         except EPDNotFoundError:
             logging.error(f"Couldn't find {self.config.display_type}")
