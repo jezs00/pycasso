@@ -107,6 +107,11 @@ class Configs:
         self.shutdown_on_exception = ConfigConst.SHUTDOWN_ON_EXCEPTION.value
         self.wait_to_run = ConfigConst.WAIT_TO_RUN.value
         self.charge_display = ConfigConst.CHARGE_DISPLAY.value
+
+        # Debug Settings
+        self.test_epd_width = ConfigConst.TEST_EPD_WIDTH.value
+        self.test_epd_height = ConfigConst.TEST_EPD_HEIGHT.value
+
         return
 
     def read_config(self):
@@ -207,6 +212,10 @@ class Configs:
                                                            fallback=ConfigConst.SHUTDOWN_ON_EXCEPTION.value)
             self.wait_to_run = config.getint("PiJuice", "wait_to_run", fallback=ConfigConst.WAIT_TO_RUN.value)
             self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
+
+            # Debug Settings
+            self.test_epd_width = config.getint("Debug", "test_epd_width", fallback=ConfigConst.TEST_EPD_WIDTH.value)
+            self.test_epd_height = config.getint("Debug", "test_epd_height", fallback=ConfigConst.TEST_EPD_HEIGHT.value)
 
             # Create new prompts if necessary and make them full paths
             self.subjects_file = self.file.get_full_path(self.subjects_file)

@@ -76,6 +76,10 @@ class ConfigConst(Enum):
     WAIT_TO_RUN = 30
     CHARGE_DISPLAY = 15
 
+    # Debug Settings
+    TEST_EPD_WIDTH = 500
+    TEST_EPD_HEIGHT = 300
+
 
 class ProvidersConst(Enum):
     # Settings and defaults for providers

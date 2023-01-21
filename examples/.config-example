@@ -213,3 +213,13 @@ wait_to_run = 30
 
 # Battery percentage that pycasso should start showing low battery symbol at [integer]
 charge_display = 15
+
+[DEBUG]
+#######################
+# Debug Configuration #
+#######################
+# The following settings are only relevant for development. Only use them if you know what you're doing.
+
+# Width and height to use with mock EPD, to test different display sizes while developing without an EPD.
+test_epd_width = 500
+test_epd_height = 300
