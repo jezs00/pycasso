@@ -3,8 +3,45 @@
 # Unit tests for provider.py
 import os
 
+from PIL import Image
 from piblo.constants import UnitTestConst, ProvidersConst
 from piblo.provider import Provider
+
+
+def test_resize_image_high():
+    size = (50, 100)
+    img = Image.new(mode="RGBA", size=size)
+    img = Provider.resize_image(img, 45, 80)
+    result = (img.width, img.height)
+    expected = (40, 80)
+    assert result == expected
+
+
+def test_resize_image_wide():
+    size = (100, 50)
+    img = Image.new(mode="RGBA", size=size)
+    img = Provider.resize_image(img, 50, 80)
+    result = (img.width, img.height)
+    expected = (80, 40)
+    assert result == expected
+
+
+def test_fit_image_high():
+    size = (50, 100)
+    img = Image.new(mode="RGBA", size=size)
+    img = Provider.fit_image(img, 45, 80)
+    result = (img.width, img.height)
+    expected = (45, 90)
+    assert result == expected
+
+
+def test_fit_image_wide():
+    size = (100, 50)
+    img = Image.new(mode="RGBA", size=size)
+    img = Provider.fit_image(img, 75, 25)
+    result = (img.width, img.height)
+    expected = (75, 38)
+    assert result == expected
 
 
 def test_read_creds():

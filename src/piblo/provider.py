@@ -33,7 +33,10 @@ class Provider(object):
         Retrieves image from API. Returns PIL Image object.
 
     resize_image(img, width, height)
-        Resizes image object img to fill width, height
+        Resizes image object img to fill width, height. Returns PIL Image object.
+
+    fit_image(img, width, height)
+        Resizes image object so that it can be shown on screen with no black space. Returns PIL Image object.
 
     read_creds(keyname, path, example_path)
         Reads credentials from .creds file with variable name 'keyname'. 'path' and 'example_path' default to constant
@@ -57,6 +60,14 @@ class Provider(object):
     def resize_image(img, width, height):
         tup = (width, height)
         tup = ImageFunctions.max_tup(tup)
+        img.thumbnail(tup)
+        return img
+
+    @staticmethod
+    def fit_image(img, width, height):
+        tup = (width, height)
+        large_tup = (img.width, img.height)
+        tup = ImageFunctions.min_possible_tup(tup, large_tup)
         img.thumbnail(tup)
         return img
 
