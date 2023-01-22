@@ -18,7 +18,7 @@ SERVICE_FILE_TEMPLATE=pycasso.service.template
 KEY_SCRIPT=scripts/set_keys.py
 LED_SCRIPT=scripts/pijuice_disable_leds.py
 SMB_DEFAULT_LOCATION=/etc/samba/smb.conf
-SMB_PYCASSO_LOCATION=/etc/smb/pycasso.conf
+SMB_PYCASSO_LOCATION=/etc/samba/pycasso.conf
 
 # Color code variables
 RED="\e[0;91m"
