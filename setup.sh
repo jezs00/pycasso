@@ -173,7 +173,7 @@ function setup_smb(){
         echo "'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}"
   else
         echo "Adding '${SMB_PYCASSO_LOCATION}' to ${SMB_DEFAULT_LOCATION}"
-        echo "include = /etc/smb/pycasso.conf" | sudo tee -a /etc/samba/smb.conf
+        echo "include = ${SMB_PYCASSO_LOCATION}" | sudo tee -a /etc/samba/smb.conf
   fi
 
   sudo systemctl enable smbd
