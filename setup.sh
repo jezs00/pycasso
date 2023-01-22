@@ -8,6 +8,8 @@ SKIP_DEPS=false
 
 # Set the local directory
 LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
+PROMPTS_DIR="${LOCAL_DIR}/prompts/"
+IMAGES_DIR="${LOCAL_DIR}/images/"
 
 # File paths
 SERVICE_DIR=/etc/systemd/system
@@ -15,6 +17,8 @@ SERVICE_FILE=pycasso.service
 SERVICE_FILE_TEMPLATE=pycasso.service.template
 KEY_SCRIPT=scripts/set_keys.py
 LED_SCRIPT=scripts/pijuice_disable_leds.py
+SMB_DEFAULT_LOCATION=/etc/samba/smb.conf
+SMB_PYCASSO_LOCATION=/etc/smb/pycasso.conf
 
 # Color code variables
 RED="\e[0;91m"
@@ -29,6 +33,7 @@ function install_linux_packages(){
 function install_pijuice_package(){
   # Install pijuice.
   sudo apt-get install -y pijuice-base pijuice-gui
+  echo -e "PiJuice installed"
 }
 
 function install_python_packages(){
@@ -37,14 +42,20 @@ function install_python_packages(){
   sudo pip3 install openai @ git+https://github.com/openai/openai-python.git
 }
 
+function install_python_minimal(){
+  sudo pip3 install "git+https://github.com/jezs00/pycasso@$(curl -s https://api.github.com/repos/jezs00/pycasso/releases/latest | jq -r ".tag_name")" --no-dependencies
+}
+
 function uninstall_python_packages(){
   sudo pip3 uninstall piblo
+  echo -e "pycasso (piblo) package uninstalled"
 }
 
 function fix_grpcio(){
   sudo pip3 install grpcio grpcio-tools --upgrade
   #sudo pip3 uninstall grpcio grpcio-tools
   #sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  echo -e "GRPCIO fix applied"
 }
 
 function set_key(){
@@ -55,6 +66,7 @@ function set_key(){
 function disable_leds(){
   cd "${LOCAL_DIR}" || exit
   sudo python3 "${LOCAL_DIR}/${LED_SCRIPT}"
+  echo -e "PiJuice LEDS disabled"
 }
 
 function setup_hardware(){
@@ -131,6 +143,44 @@ function uninstall_service(){
   fi
 }
 
+function setup_smb(){
+  sudo apt update
+  sudo apt install samba -y
+
+  echo "
+    [prompts]
+    comment = Prompts folder for pycasso
+    path = ${PROMPTS_DIR}
+    public = yes
+    writable = yes
+    guest ok = yes
+    security = SHARE
+
+    [images]
+    comment = Images folder for pycasso
+    path = ${IMAGES_DIR}
+    public = yes
+    writable = yes
+    guest ok = yes
+    security = SHARE
+    " > "${SMB_PYCASSO_LOCATION}"
+
+    sudo chmod -R 777 "${PROMPTS_DIR}"
+    sudo chmod -R 777 "${IMAGES_DIR}"
+
+  if grep -Fxq "${SMB_PYCASSO_LOCATION}" ${SMB_DEFAULT_LOCATION}
+  then
+        echo "'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}"
+  else
+        echo "Adding '${SMB_PYCASSO_LOCATION}' to ${SMB_DEFAULT_LOCATION}"
+        echo "include = /etc/smb/pycasso.conf" >> sudo tee -a /etc/samba/smb.conf
+  fi
+
+  sudo systemctl enable smbd
+  sudo systemctl restart smbd
+  echo "SMB installed and folders '${PROMPTS_DIR}' and '${IMAGES_DIR}' shared with full permissions"
+}
+
 function install_pycasso(){
 
   # check if service is currently running and stop if it is
@@ -192,20 +242,24 @@ function install_pycasso(){
 
   if [ ! -f "${LOCAL_DIR}/prompts/artists.txt" ]; then
 
-    cp "${LOCAL_DIR}/examples/prompts/artists-example.txt" "${LOCAL_DIR}/prompts/artists.txt"
+    cp "${LOCAL_DIR}/examples/prompts/artists-example.txt" "${PROMPTS_DIR}/artists.txt"
   fi
 
   if [ ! -f "${LOCAL_DIR}/prompts/subjects.txt" ]; then
-    cp "${LOCAL_DIR}/examples/prompts/subjects-example.txt" "${LOCAL_DIR}/prompts/subjects.txt"
+    cp "${LOCAL_DIR}/examples/prompts/subjects-example.txt" "${PROMPTS_DIR}/subjects.txt"
   fi
 
   if [ ! -f "${LOCAL_DIR}/prompts/prompts.txt" ]; then
-    cp "${LOCAL_DIR}/examples/prompts/prompts-example.txt" "${LOCAL_DIR}/prompts/prompts.txt"
+    cp "${LOCAL_DIR}/examples/prompts/prompts-example.txt" "${PROMPTS_DIR}/prompts.txt"
   fi
 
   if [ "$SKIP_DEPS" = false ]; then
     # install any needed python packages
-    install_python_packages
+    if [ $1 = true ]; then
+      install_python_minimal
+    else
+      install_python_packages
+    fi
   fi
 
   cd "${LOCAL_DIR}" || exit
@@ -234,18 +288,20 @@ do
   Setting up in local directory '${LOCAL_DIR}'
 
   Choose what you want to do." 0 0 0 \
- 1 "Install/Upgrade pycasso" \
- 2 "Install pycasso Service" \
- 3 "Install pijuice" \
- 4 "Apply GRPCIO Fix" \
- 5 "Set an API key" \
- 6 "Disable pijuice LEDs" \
- 7 "Uninstall pycasso" \
- 8 "Uninstall pycasso Service" \
- 9 "Exit Setup" \
+ 1 "Install/Upgrade pycasso (Full)" \
+ 2 "Upgrade pycasso minimally (Do not update requirements)" \
+ 3 "Install pycasso Service" \
+ 4 "Install pijuice" \
+ 5 "Apply GRPCIO Fix" \
+ 6 "Set an API key" \
+ 7 "Disable pijuice LEDs" \
+ 8 "Install SMB and default shares" \
+ 9 "Uninstall pycasso" \
+ 10 "Uninstall pycasso Service" \
+ 0 "Exit Setup" \
  3>&1 1>&2 2>&3)
 
- : "${INSTALL_OPTION:=9}"
+ : "${INSTALL_OPTION:=0}"
 
  if [ $INSTALL_OPTION -eq 1 ]; then
 
@@ -259,44 +315,49 @@ do
      fi
    fi
 
-   # Install or update
-   install_pycasso
-
-   # Install service, if desired
-   if [ $INSTALL_SERVICE -eq 0 ]; then
-     install_service
-   fi
-
    if whiptail --yesno "Would you like to install pijuice?" 0 0; then
      INSTALL_PIJUICE=0
    else
      INSTALL_PIJUICE=1
    fi
 
+   # Install or update
+   install_pycasso false
+
+   # Install service, if desired
+   if [ $INSTALL_SERVICE -eq 0 ]; then
+     install_service
+   fi
+
    if [ $INSTALL_PIJUICE -eq 0 ]; then
      install_pijuice_package
    fi
-
  elif [ $INSTALL_OPTION -eq 2 ]; then
+   # Install pycasso min
+   install_pycasso true
+ elif [ $INSTALL_OPTION -eq 3 ]; then
    # Install the service
    install_service
- elif [ $INSTALL_OPTION -eq 3 ]; then
+ elif [ $INSTALL_OPTION -eq 4 ]; then
    # Install pijuice
    install_pijuice_package
- elif [ $INSTALL_OPTION -eq 4 ]; then
+ elif [ $INSTALL_OPTION -eq 5 ]; then
    # Fix GRPCIO with version decrement
    fix_grpcio
- elif [ $INSTALL_OPTION -eq 5 ]; then
+ elif [ $INSTALL_OPTION -eq 6 ]; then
    # Uninstall pycasso
    set_key
- elif [ $INSTALL_OPTION -eq 6 ]; then
+ elif [ $INSTALL_OPTION -eq 7 ]; then
    # Run python script to disable leds on pijuice
    disable_leds
- elif [ $INSTALL_OPTION -eq 7 ]; then
+ elif [ $INSTALL_OPTION -eq 8 ]; then
+   # Set up SMB
+   setup_smb
+ elif [ $INSTALL_OPTION -eq 9 ]; then
    # Uninstall pycasso
    uninstall_python_packages
    uninstall_service
- elif [ $INSTALL_OPTION -eq 8 ]; then
+ elif [ $INSTALL_OPTION -eq 10 ]; then
    # Uninstall the service
    uninstall_service
  fi
