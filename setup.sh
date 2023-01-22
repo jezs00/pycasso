@@ -342,10 +342,10 @@ do
    # Install pijuice
    install_pijuice_package
  elif [ $INSTALL_OPTION -eq 5 ]; then
-   # Fix GRPCIO with version decrement
+   # Fix GRPCIO with updated version
    fix_grpcio
  elif [ $INSTALL_OPTION -eq 6 ]; then
-   # Uninstall pycasso
+   # Run python3 script to set key
    set_key
  elif [ $INSTALL_OPTION -eq 7 ]; then
    # Run python script to disable leds on pijuice
