@@ -255,7 +255,7 @@ function install_pycasso(){
 
   if [ "$SKIP_DEPS" = false ]; then
     # install any needed python packages
-    if [ $1 = true ]; then
+    if [ "$1" = true ]; then
       install_python_minimal
     else
       install_python_packages
