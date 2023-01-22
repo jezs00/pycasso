@@ -163,7 +163,7 @@ function setup_smb(){
     writable = yes
     guest ok = yes
     security = SHARE
-    " | tee "${SMB_PYCASSO_LOCATION}"
+    " | sudo tee "${SMB_PYCASSO_LOCATION}"
 
     sudo chmod -R 777 "${PROMPTS_DIR}"
     sudo chmod -R 777 "${IMAGES_DIR}"
