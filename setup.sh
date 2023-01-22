@@ -168,7 +168,7 @@ function setup_smb(){
     sudo chmod -R 777 "${PROMPTS_DIR}"
     sudo chmod -R 777 "${IMAGES_DIR}"
 
-  if grep -Fxq "${SMB_PYCASSO_LOCATION}" ${SMB_DEFAULT_LOCATION}
+  if grep -Fq "${SMB_PYCASSO_LOCATION}" ${SMB_DEFAULT_LOCATION}
   then
         echo "'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}"
   else
