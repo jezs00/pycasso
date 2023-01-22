@@ -163,7 +163,7 @@ function setup_smb(){
     writable = yes
     guest ok = yes
     security = SHARE
-    " > "${SMB_PYCASSO_LOCATION}"
+    " | tee "${SMB_PYCASSO_LOCATION}"
 
     sudo chmod -R 777 "${PROMPTS_DIR}"
     sudo chmod -R 777 "${IMAGES_DIR}"
@@ -173,7 +173,7 @@ function setup_smb(){
         echo "'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}"
   else
         echo "Adding '${SMB_PYCASSO_LOCATION}' to ${SMB_DEFAULT_LOCATION}"
-        echo "include = /etc/smb/pycasso.conf" >> sudo tee -a /etc/samba/smb.conf
+        echo "include = /etc/smb/pycasso.conf" | sudo tee -a /etc/samba/smb.conf
   fi
 
   sudo systemctl enable smbd
