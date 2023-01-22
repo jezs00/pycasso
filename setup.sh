@@ -269,7 +269,7 @@ function install_pycasso(){
   return $FIRST_TIME
 }
 
-INSTALL_OPTION=0
+INSTALL_OPTION=-1
 
 while [ $INSTALL_OPTION -ne 0 ]
 do
