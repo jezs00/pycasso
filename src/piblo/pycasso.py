@@ -367,6 +367,7 @@ class Pycasso:
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                  self.config.prompt_postscript, self.config.parse_brackets)
             prompt, title_text = prompt_gen
+            artist_text = ""
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
