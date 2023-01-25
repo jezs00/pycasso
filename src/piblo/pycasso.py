@@ -231,19 +231,22 @@ class Pycasso:
         return
 
     @staticmethod
-    def load_test_image(width, height, image_path=ProvidersConst.TEST_FILE.value,
+    def load_test_image(width, height, title_text="", artist_text="",
+                        image_path=ProvidersConst.TEST_FILE.value,
                         resize_external=ConfigConst.FILE_RESIZE_EXTERNAL.value):
         # Get test image
         image_base = Image.open(image_path)
 
+        text = title_text
+
         # Add text
-        title_text = "It Works!"
-        artist_text = "See pycasso.log for more information"
+        artist_text = f"I could have been '{text}'"
+        title_text = "It Works! Explore .config to customise!"
 
         # Resize to thumbnail size based on epd resolution depending on if option selected
         epd_res = (width, height)
-        if not resize_external:
-            epd_res = ImageFunctions.max_tup(epd_res)
+        img_res = (image_base.width, image_base.height)
+        epd_res = ImageFunctions.min_possible_tup(epd_res, img_res)
         image_base.thumbnail(epd_res)
 
         return image_base, title_text, artist_text
@@ -527,14 +530,7 @@ class Pycasso:
         try:
             provider_type = self.get_random_provider_mode()
 
-            if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
-                # Test run
-                logging.info(
-                    "Running test mode as no other provider selected. Configure providers in '.config' to enable your "
-                    "preferred functionality. Set 'test_enabled = False' to prevent test mode from ever running again."
-                    )
-                image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height)
-            elif provider_type == ProvidersConst.EXTERNAL.value:
+            if provider_type == ProvidersConst.EXTERNAL.value:
                 # External image load
                 mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
                                                      self.config.preamble_regex, self.config.artist_regex,
@@ -553,7 +549,17 @@ class Pycasso:
                 logging.info(f"Requesting \'{prompt}\'")
 
                 # Pick between providers
-                if provider_type == ProvidersConst.STABLE.value:
+                if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
+                    # Test run
+                    logging.info(
+                        "Running test mode as no other provider selected. Configure providers in '.config' to enable"
+                        "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever"
+                        "running again."
+                    )
+                    image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,
+                                                                               artist_text)
+
+                elif provider_type == ProvidersConst.STABLE.value:
                     # Stable Diffusion
                     image_base = self.load_stability_image(prompt, epd.width, epd.height,
                                                            stability_key=self.stability_key)
