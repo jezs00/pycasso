@@ -37,6 +37,9 @@ type=omni_epd.mock
 # Mode of display [string]
 mode=color
 
+# Palette filter for dithering. See https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options for more info
+#palette_filter=[[0, 0, 0], [255, 255, 255], [0, 255, 0], [0, 0, 255], [255, 0, 0], [255, 255, 0], [255, 128, 0]]
+
 [Display]
 #########################
 # Display Modifications #
@@ -49,6 +52,11 @@ rotate = 0
 # Flag indicating whether to flip image on display horizontally and vertically [boolean]
 flip_horizontal=False
 flip_vertical=False
+
+# Dither mode. See https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options for more info
+#dither=FloydSteinberg
+#dither_strength=1.0
+#dither_serpentine=False
 
 [Image Enhancements]
 #######################
