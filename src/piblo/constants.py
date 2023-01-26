@@ -159,6 +159,7 @@ class UnitTestConst(Enum):
     CONFIG_FOLDER = "test_config_wrapper_content"
     TEMP_FOLDER = "test_temp"
     PYCASSO_FOLDER = "test_pycasso_content"
+    PYCASSO_CONFIG_RUN = ".config_run"
     PYCASSO_CONFIG_COMPLETE = ".config_complete"
     ARTISTS_FILE = "test_artists.txt"
     SUBJECTS_FILE = "test_subjects.txt"
