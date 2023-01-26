@@ -127,9 +127,9 @@ class Configs:
 
             # File Settings
             self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
-            self.external_image_location = config.get("File", "image_location",
+            self.external_image_location = config.get("File", "external_image_location",
                                                       fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
-            self.generated_image_location = config.get("File", "image_location",
+            self.generated_image_location = config.get("File", "generated_image_location",
                                                        fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
             self.image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
             self.font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
