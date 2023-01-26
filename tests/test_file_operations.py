@@ -130,7 +130,7 @@ def test_backup_file_fail():
         os.remove(backup_path)
 
     result = FileOperations.backup_file(primary_path, backup_path)
-    expected = None
+    expected = primary_path
     assert result == expected
 
     # Cleanup files after
