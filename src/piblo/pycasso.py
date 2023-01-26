@@ -108,8 +108,8 @@ class Pycasso:
         Do pycasso
     """
 
-    def __init__(self, config_path=None):
-        self.file_path = os.getcwd()
+    def __init__(self, config_path=None, file_path=os.getcwd()):
+        self.file_path = file_path
 
         # Config Dictionary for omni-epd
         self.config_dict = {}
@@ -198,7 +198,7 @@ class Pycasso:
                     if self.args.configpath is not None:
                         config_path = self.args.configpath
 
-            config = Configs(config_path)
+            config = Configs(config_path=config_path, path=self.file_path)
 
             self.config_dict = config.read_config()
 
