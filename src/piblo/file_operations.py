@@ -159,7 +159,7 @@ class FileOperations:
             shutil.copy2(backup_path, primary_path)
             return primary_path
         logging.warning(f"Unable to find file at '{primary_path}' or at backup path '{backup_path}'")
-        return None
+        return primary_path
 
     def get_full_path(self, path):
         full_path = os.path.join(self.path, path)
