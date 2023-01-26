@@ -31,12 +31,13 @@ class Configs:
         Sets config file via terminal prompts
     """
 
-    def __init__(self, path=ConfigConst.CONFIG_PATH.value, example_path=ConfigConst.CONFIG_PATH_EG.value):
+    def __init__(self, path=os.getcwd(), config_path=ConfigConst.CONFIG_PATH.value,
+                 example_config_path=ConfigConst.CONFIG_PATH_EG.value):
         # Paths
-        self.file = FileOperations()
+        self.file = FileOperations(path)
 
-        self.path = self.file.get_full_path(path)
-        self.example_path = self.file.get_full_path(example_path)
+        self.config_path = self.file.get_full_path(config_path)
+        self.example_path = self.file.get_full_path(example_config_path)
 
         # Set Defaults
         # File Settings
@@ -117,13 +118,13 @@ class Configs:
 
     def read_config(self):
         # Create new config file if necessary
-        self.path = FileOperations.backup_file(self.path, self.example_path)
+        self.config_path = FileOperations.backup_file(self.config_path, self.example_path)
 
         # Method to read config file settings
         config = configparser.ConfigParser()
-        config.read(self.path)
+        config.read(self.config_path)
 
-        if os.path.exists(self.path):
+        if os.path.exists(self.config_path):
 
             # File Settings
             self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
