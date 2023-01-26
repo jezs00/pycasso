@@ -7,8 +7,8 @@
 save_image=True
 
 # File paths to external and generated images folder [string]
-external_image_location=.
-generated_image_location=.
+external_image_location=test_pycasso_content/external
+generated_image_location=test_pycasso_content/generated
 
 # Image format (most of the time it will be png) [string]
 image_format=png
@@ -121,6 +121,8 @@ remove_text = ", digital art"
             "an oil painting of"
             "a surrealist oil painting of"
             "graffiti of"
+            ", test removal"
+            ", tending on artstation"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True
