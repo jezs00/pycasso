@@ -6,6 +6,7 @@ import os.path
 
 from omni_epd import displayfactory
 from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst
+from piblo.file_operations import FileOperations
 from piblo.pycasso import Pycasso
 from PIL import Image, PngImagePlugin, ImageDraw
 
@@ -21,7 +22,7 @@ def test_parse_args():
 def test_load_config():
     config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)
-    instance = Pycasso(config_path)
+    instance = Pycasso(config_path=config_path)
     config = instance.load_config(config_path)
     expected = 160
     assert config.opacity == expected
@@ -85,9 +86,9 @@ def test_load_historic_image_load_metadata():
 
 
 def test_prep_prompt_text():
-    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
-                               UnitTestConst.CONFIG_FILE.value)
-    instance = Pycasso(config_path)
+    here = os.path.dirname(__file__)
+    config_path = os.path.join(here, UnitTestConst.PYCASSO_FOLDER.value, UnitTestConst.CONFIG_FILE.value)
+    instance = Pycasso(config_path, here)
     tup = instance.prep_prompt_text(PromptModeConst.PROMPT.value)
     expected_prompt = "PreambleTest PromptPostscript"
     assert tup[0] == expected_prompt
@@ -193,3 +194,98 @@ def test_add_text_to_image_blank():
 
     assert pixel == expected
 
+
+def test_run_normal():
+
+    assert True
+
+
+def test_major_complete_config():
+    here = os.path.dirname(__file__)
+    test_folder = UnitTestConst.PYCASSO_FOLDER.value
+    config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_COMPLETE.value)
+
+    instance = Pycasso(config_path, file_path=os.path.dirname(__file__))
+    file = FileOperations(here)
+    config_dict = instance.config.read_config()
+    # File Settings
+    assert instance.config.save_image is False
+    assert instance.config.external_image_location == file.get_full_path("test_location")
+    assert instance.config.generated_image_location == file.get_full_path("test_location")
+    assert instance.config.image_format == "jpg"
+    assert instance.config.font_file == file.get_full_path("test_location/Font.ttc")
+    assert instance.config.subjects_file == file.get_full_path("test_pycasso_content/test_subjects.txt")
+    assert instance.config.artists_file == file.get_full_path("test_pycasso_content/test_artists.txt")
+    assert instance.config.prompts_file == file.get_full_path("test_pycasso_content/test_prompts.txt")
+    assert instance.config.resize_external is False
+
+    # Text Settings
+    assert instance.config.add_text is False
+    assert instance.config.parse_text is False
+    assert instance.config.parse_brackets == ["{}", "()", "[]"]
+    assert instance.config.preamble_regex == " .* - test - "
+    assert instance.config.artist_regex == "test_artist"
+    assert instance.config.remove_text == ["test _ one", "test element two", "test element 3"]
+    assert instance.config.box_to_floor is False
+    assert instance.config.box_to_edge is False
+    assert instance.config.artist_loc == 50
+    assert instance.config.artist_size == 30
+    assert instance.config.title_loc == 70
+    assert instance.config.title_size == 40
+    assert instance.config.padding == 20
+    assert instance.config.opacity == 220
+
+    # Icon Settings
+    assert instance.config.icon_padding == 20
+    assert instance.config.icon_size == 30
+    assert instance.config.icon_width == 6
+    assert instance.config.icon_opacity == 190
+
+    # Prompt Settings
+    assert instance.config.prompt_mode == 2
+    assert instance.config.prompt_preamble == "test preamble"
+    assert instance.config.prompt_connector == "test connector"
+    assert instance.config.prompt_postscript == "{test postscript|0:don't display this}"
+    
+    # Display Settings
+    assert instance.config.display_type == "test_display"
+    assert config_dict.get("EPD", "mode") == "bw"
+    assert config_dict.get("EPD", "palette_filter") == "[[0, 0, 0], [255, 255, 255], [0, 255, 0], [0, 0, 255], " \
+                                                       "[255, 0, 0], [255, 255, 0], [255, 128, 0]]"
+    assert config_dict.getint("Display", "rotate") == 180
+    assert config_dict.getboolean("Display", "flip_horizontal") is True
+    assert config_dict.getboolean("Display", "flip_vertical") is True
+    assert config_dict.get("Display", "dither") == "FloydSteinberg"
+    assert config_dict.getfloat("Display", "dither_strength") == 1.0
+    assert config_dict.getboolean("Display", "dither_serpentine") is False
+    assert config_dict.getint("Image Enhancements", "contrast") == 2
+    assert config_dict.getint("Image Enhancements", "brightness") == 2
+    assert config_dict.getint("Image Enhancements", "sharpness") == 2
+    
+    # Provider Settings
+    assert instance.config.external_amount == 12
+    assert instance.config.historic_amount == 74
+    assert instance.config.stability_amount == 23
+    assert instance.config.dalle_amount == 56
+    assert instance.config.use_keychain is True
+    assert instance.config.credential_path == file.get_full_path(".test_creds")
+    assert instance.config.test_enabled is False
+
+    # Logging Settings
+    assert instance.config.log_file == "pycasso_test.log"
+    assert instance.config.log_level == 50
+
+    # Generation Settings
+    assert instance.config.infill is True
+    assert instance.config.infill_percent == 40
+    
+    # PiJuice Settings
+    assert instance.config.use_pijuice is True
+    assert instance.config.shutdown_on_battery is False
+    assert instance.config.shutdown_on_exception is True
+    assert instance.config.wait_to_run == 50
+    assert instance.config.charge_display == 30
+    
+    # Debug Settings
+    assert instance.config.test_epd_width == 900
+    assert instance.config.test_epd_height == 500
