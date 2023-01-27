@@ -102,10 +102,10 @@ Here are a few more examples of how one may use these to make simple prompts mor
 `A (|Happy|Sad) (Dog|Cat|Bird)` could result in:
 * `A Dog`, `A Happy Dog`, `A Sad Dog`, `A Cat`, `A Happy Cat`, `A Sad Cat`, `A Cat`, `A Happy Bird` or `A Sad Bird`. All options have the same probability of occurring.
 
-`A (Dog|Cat) (|[Carrying|Stealing] A[n Apple|Banana])` could result in:
+`A (Dog|Cat) (|[Carrying|Stealing] A[n Apple| Banana])` could result in:
 * **1/4** of the time `A Dog`, **1/4** of the time `A Cat`, **1/16** of the time `A Dog Carrying An Apple`, **1/16** of the time `A Dog Carrying A Banana`, **1/16** of the time `A Dog Stealing An Apple`, **1/16** of the time `A Dog Stealing A Banana`, **1/16** of the time `A Cat Carrying An Apple`, **1/16** of the time `A Cat Stealing An Apple`, **1/16** of the time `A Cat Stealing An Apple` or **1/16** of the time `A Cat Stealing A Banana`
 
-`A(5: Friendly|2:n Uncommon|Rare) (3:Dog|Cat)` could result in:
+`A(5: Friendly|2:n Uncommon| Rare) (3:Dog|Cat)` could result in:
 * **15/32** of the time `A Friendly Dog`, **3/16** of the time `An Uncommon Dog`, **3/32** of the time `A Rare Dog`, **5/32** of the time `A Friendly Cat`, **1/16** of the time `An Uncommon Cat` or **1/32** of the time `A Rare Cat`
 
 ## Configuration
