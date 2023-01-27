@@ -72,17 +72,155 @@ more information. My preferred configuration is to set a wakeup timer to start a
 * With a PiJuice, you can configure `shutdown_on_battery` to automatically shut down and remove power to the board when pycasso is done, to complete a headless fully battery driven process. Be a little careful with this as to save battery, it prefers to shutdown above all else, even on exception. If you experience a program error you will only have `wait_to_run` (default 30) seconds to connect to the pi and disable the service to fix.
 * Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
 * Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
-  * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
-  * You can use hierarchical brackets to randomise elements in the prompt
-    * EG `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. Option picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`
-  * You can add weights to entire lines or brackets to increase their likelihood. Integers only.
-    * EG You could expect `A (4:Good|Bad|0:Happy) Dog` should return `A Good Dog` around 4 times for every `A Bad Dog`. `A Happy Dog` would never appear.
-  * Have a play around with the prompts and see what works for you
+  * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt.
+  * See [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) for more information on setting up dynamic prompts.
+
 
 ### Administration
 * Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
 * If you have set `shutdown_on_battery` to true, you should be able to plug your PiJuice into power to ensure it stays on when you start it.
 * If a disaster occurs and you have `shutdown_on_battery` and `shutdown_on_exception` both set to True and you cannot keep the device on long enough to log in, you might need to unplug the SD card and try to fix the config. If this option is not available to you, it's possible you might need to flash it and start from scratch. A possible solution to these issues while maintaining a priority on extending battery life is being tracked [here](https://github.com/jezs00/pycasso/issues/20).
+
+### Hierarchical Bracket Wildcards
+To enhance dynamic prompt generation within pycasso, many text files and strings in pycasso are parsed to replace wildcard text. This allows more flexibility when defining prompts.
+
+By default the three types of brackets used are:
+1. ()
+2. []
+3. {}
+These can be added to, removed, or customised in `.config`.
+
+Different options are separated by a pipe, for example `(Option 1|Option 2|\[Option {3|4|5|6}|Option 7\])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
+
+At the start of any segment, you can also provide a weighting for a particular option. For example `(20:Option A|Option B|0:Option C)` should provide `Option A` about 20 times more often than `Option B`. `Option C` would never appear. These weightings can also be used at the start of every line in one of the prompt-building text files to specify the likelihood of that line being chosen.
+
+Have a play around with the strings and see what works for you. You can leave the EPD in test mode with no provider modes selected, and the test display will show you what subject it would have fetched. 
+
+Here are a few more examples of how one may use these to make simple prompts more complex:
+
+`A (|Happy|Sad) (Dog|Cat|Bird)` could result in:
+* `A Dog`, `A Happy Dog`, `A Sad Dog`, `A Cat`, `A Happy Cat`, `A Sad Cat`, `A Cat`, `A Happy Bird` or `A Sad Bird`. All options have the same probability of occurring.
+
+`A (Dog|Cat) (|[Carrying|Stealing] A[n Apple|Banana])` could result in:
+* **1/4** of the time `A Dog`, **1/4** of the time `A Cat`, **1/16** of the time `A Dog Carrying An Apple`, **1/16** of the time `A Dog Carrying A Banana`, **1/16** of the time `A Dog Stealing An Apple`, **1/16** of the time `A Dog Stealing A Banana`, **1/16** of the time `A Cat Carrying An Apple`, **1/16** of the time `A Cat Stealing An Apple`, **1/16** of the time `A Cat Stealing An Apple` or **1/16** of the time `A Cat Stealing A Banana`
+
+`A(5: Friendly|2:n Uncommon|Rare) (3:Dog|Cat)` could result in:
+* **15/32** of the time `A Friendly Dog`, **3/16** of the time `An Uncommon Dog`, **3/32** of the time `A Rare Dog`, **5/32** of the time `A Friendly Cat`, **1/16** of the time `An Uncommon Cat` or **1/32** of the time `A Rare Cat`
+
+## Configuration
+You can run `nano .config` in the pycasso install folder to configure the way pycasso runs. There are a lot of options to configure your experience and it is highly recommended to play around with these options to find the settings that work best for your setup. If at any time you wish to roll back to the default configuration you can find it is `/examples/.config-example`, or you can delete .config and running pycasso will restore the defaults automatically. If you are running pycasso frequently to see what changes your updates make, it is recommended to either use the test mode by setting all providers to 0, or using external/generated modes so that you are not being charged by your provider for each time you run the program. Below you will find a full explanation of all configuration sections and items.
+
+### File
+Settings related to file operations within pycasso.
+
+* `save_image`: A boolean flag that instructs pycasso whether to save images retrieved from providers or not. If 'True', pycasso will always save images retrieved in a defined location. If 'False' pycasso will only display the image on the EPD, once the EPD is updated again this image will be lost. `(Boolean)`
+* `external_image_location`: A file path relative to the pycasso working directory to load external images from, when using **external** mode. `(String)`
+* `generated_image_location`: A file path relative to the pycasso working directory to save generated images to when using a provider, and load them from when using **generated** mode. `(String)`
+* `image_format`: The file type to look for when loading images from external or generated image folders. Most of the time it will be "png". `(String)`
+* `font_file`: A file path relative to the pycasso working directory to load a font file from. This supports drawing text on the EPD. `(String)`
+* `subjects_file`: A file path relative to the pycasso working directory to load 'subjects' from when using prompt mode 1. `(String)`
+* `artists_file`: A file path relative to the pycasso working directory to load 'artists' from when using prompt mode 1. `(String)`
+* `subjects_file`: A file path relative to the pycasso working directory to load 'prompts' from when using prompt mode 2. `(String)`
+* `resize_external`: A boolean flag that instructs pycasso whether to resize external images. If 'True', pycasso will resize images provided to it so that the whole image will fit in the EPD. If 'False', pycasso will fill the whole screen with the image by resizing to a smaller extent, and then cropping. `(Boolean)`
+
+### EPD
+These settings are consumed by omni-epd to customise the EPD information. See [omni-epd](https://github.com/robweber/omni-epd) for supported displays for more information on omni-epd options
+
+* `type`: The type of EPD display being used. See [omni-epd](https://github.com/robweber/omni-epd#displays-implemented) for supported displays and their names. `(String)`
+* `mode`: The color mode to run the EPD with. See [omni-epd](https://github.com/robweber/omni-epd#displays-implemented) for supported modes of each display. `(String)`
+* `palette_filter`: By default not required and commented out. Uncomment and configure based on information provided [here](https://github.com/robweber/omni-epd#virtualepd-object) if you wish to customise the palette. Required for dithering. `(Tuple)`
+
+### Display
+These settings are consumed by omni-epd to customise the display on the EPD. See [omni-epd](https://github.com/robweber/omni-epd) for more information on these options.
+
+* `rotate`: Rotation of the image in degrees `(Integer)`
+* `flip_horizontal`: A boolean flag that instructs the EPD to flip the image horizontally or not `(Boolean)`
+* `flip_vertical`: A boolean flag that instructs the EPD to flip the image vertically or not `(Boolean)`
+* `dither`: By default commented out. Uncomment to set a dithering mode to use. See [the omni-epd wiki](https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options) for supported modes and more information. `(String)`
+* `dither_strength`: By default commented out. Uncomment if using `dither`. Sets the strength of the dithering algorithm. See [the omni-epd wiki](https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options) for more information. `(Float)`
+* `dither_serpentine`: By default commented out. Uncomment if using `dither`. A boolean flag that instructs the dithering algorithm to use serpentine dithering or not. See [the omni-epd wiki](https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options) for more information. `(Boolean)`
+
+### Image Enhancements
+These settings are consumed by omni-epd to customise the display on the EPD. See [omni-epd](https://github.com/robweber/omni-epd) for more information on these options.
+
+* `contrast`: Sets contrast amount for EPD. 1 is normal. `(Integer)`
+* `brightness`: Sets brightness amount for EPD. 1 is normal. `(Integer)`
+* `sharpness`: Sets sharpness amount for EPD. 1 is normal. `(Integer)`
+
+### Prompt
+Settings related to creation of prompts for submission and requests from AI art providers.
+
+* `mode`: The mode to use in prompt generation. `(Integer)` This currently supports 3 different types of modes:
+  * `1` -  (`preamble` - **subjects.txt** - `connector` - **artists.txt** - `postscript`)
+  * `2` -  (`preamble` - **prompts.txt** - `postscript`)
+  * `0` -  Any of the above (randomly chooses one of the above options)
+* `preamble`: Text that fills in the `preamble` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
+* `connector`: Text that fills in the `connector` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
+* `postscript`: Text that fills in the `postscript` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
+
+### Text
+Settings related to parsing text of filenames and strings, and text display on the EPD
+
+* `add_text`: A boolean flag that instructs pycasso whether to display a textbox on the EPD or not. `(Boolean)`
+* `parse_file_text`: A boolean flag that instructs pycasso whether to parse filenames in external image mode or not. `(Boolean)`
+* `preamble_regex`: Normal regex to find the split point between the preamble and the main text in external image names. `(String)`
+* `artist_regex`: Normal regex to find the split point between the subject and artist in external image names. `(String)`
+* `remove_text`: A list of strings to find and completely remove from any file names to parse into pycasso. `(List)`
+* `parse_random_text`: A boolean flag that instructs pycasso whether to interpret certain strings using [hierarchical bracket wildcards](#hierarchical-bracket-wildcards) or not. `(Boolean)`
+* `parse_brackets`: A list of bracket pairs in order of the highest to the lowest level in hierarchy. `(List)`
+* `box_to_floor`: A boolean flag that instructs pycasso whether to draw the text box all the way to the bottom of the image instead of just appearing around the text. `(Boolean)`
+* `box_to_edge`: A boolean flag that instructs pycasso whether to draw the text box all the way to the edges of the image instead of just appearing around the text. `(Boolean)`
+* `artist_loc`: Distance in pixels of the artist text away from the bottom of the image. `(Integer)`
+* `artist_size`: Font size of the artist text. `(Integer)`
+* `title_loc`: Distance in pixels of the title text away from the bottom of the image. `(Integer)`
+* `title_size`: Font size of the title text. `(Integer)`
+* `padding`: Padding of the text box containing title and artist text. `(Integer)`
+* `opacity`: Opacity of the text box. 0 for fully transparent and 255 for fully opaque. `(Integer)`
+
+### Icon
+Settings related to status icons to display on EPD
+
+* `icon_padding`: Padding from the top left corner in pixels to place the icon `(Integer)`
+* `icon_size`: Size of the status icon in pixels `(Integer)`
+* `icon_width`: The width of the line of the status icon in pixels `(Integer)`
+* `icon_opacity`: Opacity of the status icon. 0 for fully transparent and 255 for fully opaque. `(Integer)`
+
+### Logging
+Settings related to error and information logging from pycasso
+* `log_file`: A file path relative to the pycasso working directory to save log file `(String)`
+* `log_level`: Minimum logging level to save to log file. Possible options - CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0 `(Integer)`
+
+### Providers
+Settings related to image providers.
+
+* The following items are integers providing the 'comparative chance' they will be chosen. This means you could choose multiple provider modes and pycasso will randomly choose one of them. The higher integer gives a higher chance of being picked. For example, `external_amount = 0`, `historic_amount = 1` and `stability_amount = 2` would result in **External** images never appearing, and approximately 1 **Historic** image appearing for every 2 **Stable Diffusion** images. If all options are set to 0, pycasso will either exit or run its test mode depending on the value of `test_enabled`.
+  * `external_amount`: The comparative chance of pycasso running External mode (loading an image from the `external_image_location` folder). `(Integer)`
+  * `historic_amount`: The comparative chance of pycasso running Historic mode (loading an image from the `generated_image_location` folder). `(Integer)`
+  * `stability_amount`: The comparative chance of pycasso running Stable Diffusion mode (loading an image online from Stable Diffusion). `(Integer)`
+  * `dalle_amount`: The comparative chance of pycasso running DALLE mode (loading an image online from DALLE). `(Integer)`
+* `use_keychain`: A boolean flag that instructs pycasso whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it. Please note that keychain is not currently recommended due to [grpcio issues](https://github.com/jezs00/pycasso/issues/1) on raspberry pi. `(Boolean)`
+* `credential_path`: A file path relative to the pycasso working directory to find API credentials. `(String)`
+* `test_enabled`: A boolean flag that instructs pycasso to run a test mode when all other providers are set to 0. `(Boolean)`
+
+### Generation
+Settings related to generation of images with AI image providers
+
+* `infill`: A boolean flag that instructs pycasso to request an image to be infilled again if original image does not fill out the whole frame. `(Boolean)`
+* `infill_percent`: If infill is set to true, this will make the original image request smaller by this percentage, and then infill the rest of the image to fit the frame. `(Integer)`
+
+### PiJuice
+Settings related to PiJuice HAT configuration.
+
+* `use_pijuice`: A boolean flag that instructs the run script whether to use PiJuice classes. `(Boolean)`
+* `shutdown_on_battery`: A boolean flag that instructs the run script whether to shut down the raspberry pi if PiJuice is running on battery (not plugged in to power). `(Boolean)`
+* `shutdown_on_exception`: A boolean flag that instructs the run script whether to shut down if program encounters an exception. Used to stop battery running down on error. **WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after failures you may not be able to SSH in even after a wait time**. `(Boolean)`
+* `wait_to_run`: Time to wait in seconds before running pycasso. Can help in ensuring PiJuice class is ready, and gives a buffer to SSH into device if encountering issues. `(Integer)`
+* `charge_display`: Battery percentage that pycasso should start showing low battery symbol. `(Integer)`
+
+### Debug
+The following settings are only relevant for development. Only use them if you know what you're doing.
+* `test_epd_width`: Width in pixels to set the mock EPD to. Mostly for testing purposes. `(Integer)`
+* `test_epd_height`: Height in pixels to set the mock EPD to. Mostly for testing purposes. `(Integer)`
 
 ## Troubleshooting
 
