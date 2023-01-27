@@ -72,9 +72,12 @@ more information. My preferred configuration is to set a wakeup timer to start a
 * With a PiJuice, you can configure `shutdown_on_battery` to automatically shut down and remove power to the board when pycasso is done, to complete a headless fully battery driven process. Be a little careful with this as to save battery, it prefers to shutdown above all else, even on exception. If you experience a program error you will only have `wait_to_run` (default 30) seconds to connect to the pi and disable the service to fix.
 * Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
 * Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
-  * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt.
-  * See [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) for more information on setting up dynamic prompts.
-
+  * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
+  * You can use hierarchical brackets to randomise elements in the prompt
+    * EG `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. Option picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`
+  * You can add weights to entire lines or brackets to increase their likelihood. Integers only.
+    * EG You could expect `A (4:Good|Bad|0:Happy) Dog` should return `A Good Dog` around 4 times for every `A Bad Dog`. `A Happy Dog` would never appear.
+  * Have a play around with the prompts and see what works for you
 
 ### Administration
 * Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
