@@ -97,17 +97,8 @@ postscript=" (1:test postscript|0:never)"
 # Flag indicating whether to add text to the display or not [boolean]
 add_text = True
 
-# Flag indicating whether to parse text from files with custom randomisation [boolean]
-# Custom randomisation looks like: "A (Good|Bad) Dog".
-# The above may return "A Good Dog." or "A Bad Dog"
-parse_text = True
-
-# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
-# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
-# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
-parse_brackets = "()"
-                "[]"
-                "{}"
+# Flag indicating whether to parse text from file names for use in pycasso [boolean]
+parse_file_text = True
 
 # Filename parsing: regex to find split point between preamble and main text in external image names [string]
 preamble_regex = " .* -"
@@ -122,7 +113,20 @@ remove_text = ", digital art"
             "a surrealist oil painting of"
             "graffiti of"
             ", test removal"
-            ", tending on artstation"
+            ", trending on artstation"
+
+
+# Flag indicating whether to parse text from files with custom randomisation [boolean]
+# Custom randomisation looks like: "A (Good|Bad) Dog".
+# The above may return "A Good Dog." or "A Bad Dog"
+parse_random_text = True
+
+# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
+# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
+# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
+parse_brackets = "()"
+                "[]"
+                "{}"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True

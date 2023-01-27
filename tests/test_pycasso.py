@@ -268,11 +268,12 @@ def test_major_complete_config():
 
     # Text Settings
     assert instance.config.add_text is False
-    assert instance.config.parse_text is False
-    assert instance.config.parse_brackets == ["{}", "()", "[]"]
+    assert instance.config.parse_file_text is True
     assert instance.config.preamble_regex == " .* - test - "
     assert instance.config.artist_regex == "test_artist"
     assert instance.config.remove_text == ["test _ one", "test element two", "test element 3"]
+    assert instance.config.parse_random_text is False
+    assert instance.config.parse_brackets == ["{}", "()", "[]"]
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False
     assert instance.config.artist_loc == 50
