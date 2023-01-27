@@ -55,7 +55,8 @@ class Configs:
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
-        self.parse_text = ConfigConst.TEXT_PARSE_TEXT.value
+        self.parse_file_text = ConfigConst.TEXT_PARSE_FILE_TEXT.value
+        self.parse_random_text = ConfigConst.TEXT_PARSE_RANDOM_TEXT.value
         self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
@@ -140,7 +141,10 @@ class Configs:
 
             # Text Settings
             self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
-            self.parse_text = config.getboolean("Text", "parse_text", fallback=ConfigConst.TEXT_PARSE_TEXT.value)
+            self.parse_file_text = config.getboolean("Text", "parse_file_text",
+                                                     fallback=ConfigConst.TEXT_PARSE_FILE_TEXT.value)
+            self.parse_random_text = config.getboolean("Text", "parse_random_text",
+                                                       fallback=ConfigConst.TEXT_PARSE_RANDOM_TEXT.value)
             self.parse_brackets = []
             for text in config.get("Text", "parse_brackets",
                                    fallback=ConfigConst.TEXT_PARSE_BRACKETS.value).split("\n"):

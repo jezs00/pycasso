@@ -29,7 +29,8 @@ class ConfigConst(Enum):
 
     # Text Settings
     TEXT_ADD_TEXT = False
-    TEXT_PARSE_TEXT = False
+    TEXT_PARSE_FILE_TEXT = False
+    TEXT_PARSE_RANDOM_TEXT = True
     TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\"\n\"{}\""
     TEXT_PARSE_BRACKETS_LIST = ["()", "[]", "{}"]
     TEXT_PREAMBLE_REGEX = ".*- "

@@ -255,7 +255,7 @@ class Pycasso:
     def load_external_image(location, width, height, preamble_regex=ConfigConst.TEXT_PREAMBLE_REGEX.value,
                             artist_regex=ConfigConst.TEXT_ARTIST_REGEX,
                             remove_text=ConfigConst.TEXT_REMOVE_TEXT_LIST.value,
-                            parse_text=ConfigConst.TEXT_PARSE_TEXT.value,
+                            parse_text=ConfigConst.TEXT_PARSE_FILE_TEXT.value,
                             extension=ConfigConst.FILE_IMAGE_FORMAT.value,
                             resize_external=ConfigConst.FILE_RESIZE_EXTERNAL.value):
         image_directory = location
@@ -360,7 +360,8 @@ class Pycasso:
             # Build prompt from artist/subject
             prompt_gen = self.prep_subject_artist_prompt(self.config.artists_file, self.config.subjects_file,
                                                          self.config.prompt_preamble, self.config.prompt_connector,
-                                                         self.config.prompt_postscript, self.config.parse_brackets)
+                                                         self.config.prompt_postscript, self.config.parse_brackets,
+                                                         self.config.parse_random_text)
             prompt, artist_text, title_text = prompt_gen
             metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
             metadata.add_text(PropertiesConst.TITLE.value, title_text)
@@ -368,7 +369,8 @@ class Pycasso:
         elif prompt_mode == PromptModeConst.PROMPT.value:
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
-                                                 self.config.prompt_postscript, self.config.parse_brackets)
+                                                 self.config.prompt_postscript, self.config.parse_brackets,
+                                                 self.config.parse_random_text)
             prompt, title_text = prompt_gen
             artist_text = ""
         else:
@@ -393,25 +395,33 @@ class Pycasso:
     def prep_subject_artist_prompt(artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                                    connector=ConfigConst.PROMPT_CONNECTOR.value,
                                    postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
-                                   brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
+                                   brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
+                                   parse=ConfigConst.TEXT_PARSE_RANDOM_TEXT):
         artist_text = FileOperations.get_random_line(artists_file)
-        artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
         title_text = FileOperations.get_random_line(subjects_file)
-        title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
-        preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
-        connector = Pycasso.parse_multiple_brackets(connector, brackets)
-        postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+
+        if parse:
+            artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
+            title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
+            preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
+            connector = Pycasso.parse_multiple_brackets(connector, brackets)
+            postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+
         prompt = (preamble + title_text + connector + artist_text + postscript)
         return prompt, artist_text, title_text
 
     @staticmethod
     def prep_normal_prompt(prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                            postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
-                           brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
+                           brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
+                           parse=ConfigConst.TEXT_PARSE_RANDOM_TEXT):
         title_text = FileOperations.get_random_line(prompts_file)
-        title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
-        preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
-        postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+
+        if parse:
+            title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
+            preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
+            postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+
         prompt = preamble + title_text + postscript
         return prompt, title_text
 
@@ -534,7 +544,7 @@ class Pycasso:
                 # External image load
                 mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
                                                      self.config.preamble_regex, self.config.artist_regex,
-                                                     self.config.remove_text, self.config.parse_text,
+                                                     self.config.remove_text, self.config.parse_file_text,
                                                      self.config.image_format, self.config.resize_external)
                 image_base, title_text, artist_text = mode_list
 
@@ -552,8 +562,8 @@ class Pycasso:
                 if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
                     # Test run
                     logging.info(
-                        "Running test mode as no other provider selected. Configure providers in '.config' to enable"
-                        "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever"
+                        "Running test mode as no other provider selected. Configure providers in '.config' to enable "
+                        "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever "
                         "running again."
                     )
                     image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,

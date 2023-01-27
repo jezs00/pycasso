@@ -97,17 +97,8 @@ postscript=", (10:digital art|fantasy art), trending on artstation"
 # Flag indicating whether to add text to the display or not [boolean]
 add_text = True
 
-# Flag indicating whether to parse text from files with custom randomisation [boolean]
-# Custom randomisation looks like: "A (Good|Bad) Dog".
-# The above may return "A Good Dog." or "A Bad Dog"
-parse_text = True
-
-# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
-# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
-# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
-parse_brackets = "()"
-                "[]"
-                "{}"
+# Flag indicating whether to parse text from file names for use in pycasso [boolean]
+parse_file_text = True
 
 # Filename parsing: regex to find split point between preamble and main text in external image names [string]
 preamble_regex = " .* -"
@@ -121,6 +112,18 @@ remove_text = ", digital art"
             "an oil painting of"
             "a surrealist oil painting of"
             "graffiti of"
+
+# Flag indicating whether to parse text from files with custom randomisation [boolean]
+# Custom randomisation looks like: "A (Good|Bad) Dog".
+# The above may return "A Good Dog." or "A Bad Dog"
+parse_random_text = True
+
+# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
+# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
+# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
+parse_brackets = "()"
+                "[]"
+                "{}"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True
@@ -159,6 +162,7 @@ icon_opacity = 150
 ####################
 # Logging Settings #
 ####################
+# Please note logging settings are currently not implemented in run.py
 
 # File path of pycasso log file [string]
 log_file = pycasso.log
@@ -173,7 +177,7 @@ log_level = 10
 ###################
 # Comparative chances whether any particular provider is used [integer]
 # EG "external_amount = 0", "historic_amount = 1" and "stability_amount = 2" would result in:
-# External images never appearing, and approximately 1 historic image appearing for every 2 stable diffusion images
+# External images never appearing, and approximately 1 Historic image appearing for every 2 Stable Diffusion images
 external_amount = 0
 historic_amount = 0
 stability_amount = 0
@@ -211,7 +215,7 @@ use_pijuice = False
 # Flag indicating whether to shutdown after pycasso if running on PiJuice battery (not charging) [boolean]
 shutdown_on_battery = True
 
-# Flag indicating whether to shutdown after pycasso if program. Used to stop battery running down if program errors out
+# Flag indicating whether to shut down if program encounters an exception. Used to stop battery running down on error.
 # (WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after
 # failures you may not be able to SSH in even after a wait time) [boolean]
 shutdown_on_exception = False
