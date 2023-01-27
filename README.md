@@ -88,6 +88,7 @@ By default the three types of brackets used are:
 1. ()
 2. []
 3. {}
+
 These can be added to, removed, or customised in `.config`.
 
 Different options are separated by a pipe, for example `(Option 1|Option 2|\[Option {3|4|5|6}|Option 7\])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
