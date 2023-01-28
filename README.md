@@ -73,11 +73,7 @@ more information. My preferred configuration is to set a wakeup timer to start a
 * Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
 * Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
   * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
-  * You can use hierarchical brackets to randomise elements in the prompt
-    * EG `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. Option picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`
-  * You can add weights to entire lines or brackets to increase their likelihood. Integers only.
-    * EG You could expect `A (4:Good|Bad|0:Happy) Dog` should return `A Good Dog` around 4 times for every `A Bad Dog`. `A Happy Dog` would never appear.
-  * Have a play around with the prompts and see what works for you
+  * Have a play around with the prompts and see what works for you. See [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) for more information.
 
 ### Administration
 * Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
@@ -94,7 +90,7 @@ By default the three types of brackets used are:
 
 These can be added to, removed, or customised in `.config`.
 
-Different options are separated by a pipe, for example `(Option 1|Option 2|\[Option {3|4|5|6}|Option 7\])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
+Different options are separated by a pipe, for example `(Option 1|Option 2|[Option {3|4|5|6}|Option 7])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
 
 At the start of any segment, you can also provide a weighting for a particular option. For example `(20:Option A|Option B|0:Option C)` should provide `Option A` about 20 times more often than `Option B`. `Option C` would never appear. These weightings can also be used at the start of every line in one of the prompt-building text files to specify the likelihood of that line being chosen.
 
