@@ -246,7 +246,7 @@ I have found this might cause issues with PiJuice. This is possibly due to runni
 * Updating the kernel with `sudo rpi-update`
 * Rebooting
 * Running `sudo raspi-config`
- * Selecting Interface Options -> I2C -> Yes
+ * Selecting `Interface Options -> I2C -> Yes`
 
 ### Log an issue
 If you're experiencing a bug or issue, or have a feature request, please visit the [Issues](https://github.com/jezs00/pycasso/issues) page to let us know. Recommend including the relevant information provided in `pycasso.log` and your current `.config`
