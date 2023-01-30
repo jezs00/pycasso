@@ -11,9 +11,9 @@ from io import BytesIO
 import keyring
 import openai
 import requests
-import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-from PIL import Image, ImageDraw
+import stability_sdk
 from stability_sdk import client
+from PIL import Image, ImageDraw
 
 from piblo.constants import ProvidersConst, StabilityConst, DalleConst
 from piblo.file_operations import FileOperations
@@ -30,7 +30,7 @@ class Provider(object):
     Methods
     -------
     get_image_from_string(text)
-        Retrieves image from API. Returns PIL Image object.
+        Retrieves image from API. Returns PIL Image object. Returns 'None' object on failure
 
     resize_image(img, width, height)
         Resizes image object img to fill width, height. Returns PIL Image object.
@@ -155,37 +155,43 @@ class StabilityProvider(Provider):
             key=stability_key,
             host=host,
             verbose=False,
+            wait_for_ready=False
         )
 
         return
 
     def get_image_from_string(self, text, height=0, width=0):
-        fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
-        fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
-        if height == 0 or width == 0:
-            answers = self.stability_api.generate(
-                prompt=text,
-            )
-        else:
-            answers = self.stability_api.generate(
-                prompt=text,
-                height=fetch_height,
-                width=fetch_width
-            )
+        try:
+            fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
+            fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
+            if height == 0 or width == 0:
+                answers = self.stability_api.generate(
+                    prompt=text,
+                )
+            else:
+                answers = self.stability_api.generate(
+                    prompt=text,
+                    height=fetch_height,
+                    width=fetch_width
+                )
 
-        # iterating over the generator produces the api response
-        for resp in answers:
-            for artifact in resp.artifacts:
-                if artifact.finish_reason == generation.FILTER:
-                    warnings.warn(
-                        "Your request activated the APIs safety filters and could not be processed."
-                        "Please modify the prompt and try again.")
-                    return None
-                if artifact.type == generation.ARTIFACT_IMAGE:
-                    img = Image.open(io.BytesIO(artifact.binary))
-        img = self.fit_image(img, width, height)
+            # iterating over the generator produces the api response
+            for resp in answers:
+                for artifact in resp.artifacts:
+                    if artifact.finish_reason == stability_sdk.interfaces.gooseai.generation.generation_pb2.FILTER:
+                        logging.error(
+                            "Your request activated the APIs safety filters and could not be processed."
+                            "Please modify the prompt and try again.")
+                        return None
+                    if artifact.type == stability_sdk.interfaces.gooseai.generation.generation_pb2.ARTIFACT_IMAGE:
+                        img = Image.open(io.BytesIO(artifact.binary))
+            img = self.fit_image(img, width, height)
+
+        except BaseException as e:
+            logging.error(e)
+            return None
+
         return img
-
 
     @staticmethod
     def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
@@ -218,20 +224,65 @@ class DalleProvider(Provider):
         return
 
     def get_image_from_string(self, text, height=0, width=0):
+        try:
+            # Select appropriate size from options in
+            res = list(DalleConst.SIZES.value.keys())[0]
 
-        # Select appropriate size from options in
-        res = list(DalleConst.SIZES.value.keys())[0]
+            if height != 0 and width != 0:
+                for key in DalleConst.SIZES.value:
+                    if key > height or key > width:
+                        res = DalleConst.SIZES.value[key]
+                        break
 
-        if height != 0 and width != 0:
-            for key in DalleConst.SIZES.value:
-                if key > height or key > width:
-                    res = DalleConst.SIZES.value[key]
-                    break
+            response = openai.Image.create(prompt=text, n=1, size=res)
 
-        response = openai.Image.create(prompt=text, n=1, size=res)
+            url = response['data'][0]['url']
+            img = Image.open(BytesIO(requests.get(url).content))
 
-        url = response['data'][0]['url']
-        img = Image.open(BytesIO(requests.get(url).content))
+        except openai.error.APIConnectionError as e:
+            logging.error(e)
+            logging.error("Unable to contact OpenAI. Internet or provider may be down.")
+            return None
+        except openai.error.APIError as e:
+            logging.error(e)
+            return None
+        except openai.error.AuthenticationError as e:
+            logging.error(e)
+            logging.error("Error authenticating with OpenAI. Please check your credentials in '.creds'.")
+            return None
+        except openai.error.InvalidAPIType as e:
+            logging.error(e)
+            return None
+        except openai.error.InvalidRequestError as e:
+            logging.error(e)
+            return None
+        except openai.error.OpenAIError as e:
+            logging.error(e)
+            return None
+        except openai.error.PermissionError as e:
+            logging.error(e)
+            return None
+        except openai.error.RateLimitError as e:
+            logging.error(e)
+            logging.error("OpenAI reporting Rate Limiting. Please check your account at openai.com.")
+            return None
+        except openai.error.ServiceUnavailableError as e:
+            logging.error(e)
+            return None
+        except openai.error.SignatureVerificationError as e:
+            logging.error(e)
+            return None
+        except openai.error.Timeout as e:
+            logging.error(e)
+            logging.error("Timeout contacting OpenAI. Internet or provider may be down.")
+            return None
+        except openai.error.TryAgain as e:
+            logging.error(e)
+            return None
+        except BaseException as e:
+            logging.error(e)
+            return None
+
         return img
 
     @staticmethod
