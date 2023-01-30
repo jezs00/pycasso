@@ -27,7 +27,7 @@ RESET="\e[0m"
 
 function install_linux_packages(){
   sudo apt-get update
-  sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2 jq
+  sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2 jq libopenjp2-7
 }
 
 function install_pijuice_package(){
