@@ -20,7 +20,7 @@ Uses [openai-python](https://github.com/openai/openai-python) to interact with D
 ### Get Raspberri Pi Ready
 * Install Raspberry Pi OS from https://www.raspberrypi.com/software/operating-systems/ . When flashing SD card, ensure you set up your wireless details for easy access, otherwise you will have to follow configuration steps with the screen plugged in. Put the SD card into your Raspberry Pi unit
 
-### OPTIONAL: Plug in pijuice HAT
+### (Optional) Plug in pijuice HAT
 * If using, attach PiJuice HAT onto Raspberry Pi. See [pijuice documentation](https://github.com/PiSupply/PiJuice/blob/master/Software/README.md) for
 more information. You can always do this later if you don't want to use PiJuice yet.
 
@@ -30,6 +30,7 @@ more information. You can always do this later if you don't want to use PiJuice 
 
 ### Install pycasso
 * SSH into the raspberry pi unit, or plug monitor and keyboard in.
+* (Optional) Run `sudo apt-get update` and `sudo apt-get upgrade` to update system
 * Run the following code to install pycasso in your home directory:
 ```
 bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
@@ -37,10 +38,10 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * Take note of the proposed install directory
 * Select `Option 1` - Install/Upgrade pycasso
 * Select "Yes" to enable service on boot if that is what you want to do _(it is probably what you want to do)_
-* OPTIONAL: If you want to use pijuice, select "Yes" to install PiJuice
-* OPTIONAL: Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
+* (Optional) If you want to use pijuice, select "Yes" to install PiJuice
+* (Optional) Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
 * Select `Option 5 - API Key`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys) and [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. **Please note that these providers are a paid service, and after any free credits expire, you will need to pay for more credits to maintain functionality.** _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default this will be stored in a plaintext file in the application folder. This is not ideal but it is the best I have figured out until I can get GRPCIO playing nicely.)_
-* OPTIONAL: Select `Option 6 - Disable pijuice LEDs`. IF you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
+* (Optional) Select `Option 6 - Disable pijuice LEDs`. IF you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
 
 ### Configure pycasso
 * Make sure you are in your pycasso install directory.
