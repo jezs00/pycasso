@@ -584,8 +584,17 @@ class Pycasso:
                     warnings.warn(f"Invalid provider option chosen: {provider_type}")
                     exit()
 
+                # Handle if image failed to load
+                if image_base is None:
+                    logging.error("Image failed to load. Please check providers. Exiting pycasso.")
+                    exit()
+
                 if self.config.save_image:
                     self.save_image(prompt, image_base, metadata, self.config.generated_image_location)
+
+            if image_base is None:
+                logging.error("Image failed to load. Please check providers or folders. Exiting pycasso.")
+                exit()
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
