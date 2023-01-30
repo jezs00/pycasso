@@ -3,3 +3,5 @@ git+https://github.com/Stability-AI/stability-sdk.git
 git+https://github.com/openai/openai-python.git
 pillow
 keyring
+requests
+numpy
