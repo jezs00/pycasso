@@ -241,5 +241,12 @@ sudo pip3 install grpcio-tools==1.44.0 --no-binary=grpcio-tools
 ```
 If you can't store your credentials in keyring, you'll have to set the `use_keyring` option in `.config` to False, and provide your credentials using `setup.sh` option 5 or `set_keys.py`
 
+### Module I2C Missing
+I have found this might cause issues with PiJuice. This is possibly due to running a lite version of the operating system. I found success by:
+* Updating the kernel with `sudo rpi-update`
+* Rebooting
+* Running `sudo raspi-config`
+ * Selecting Interface Options -> I2C -> Yes
+
 ### Log an issue
 If you're experiencing a bug or issue, or have a feature request, please visit the [Issues](https://github.com/jezs00/pycasso/issues) page to let us know. Recommend including the relevant information provided in `pycasso.log` and your current `.config`
