@@ -90,11 +90,13 @@ class ProvidersConst(Enum):
     STABLE = 2
     DALLE = 3
     MIDJOURNEY = 4
+    AUTOMATIC = 5
 
     EXTERNAL_AMOUNT = 0
     HISTORIC_AMOUNT = 0
     STABLE_AMOUNT = 0
     DALLE_AMOUNT = 0
+    AUTOMATIC_AMOUNT = 0
 
     USE_KEYCHAIN = False
     CREDENTIAL_PATH = ".creds"
@@ -115,7 +117,11 @@ class StabilityConst(Enum):
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "grpc.stability.ai:443"
     MULTIPLE = 64
-
+    
+class AutomaticConst(Enum):
+    HOST = "AUTOMATIC_HOST"
+    DEFAULT_HOST = "http://127.0.0.1:7860"
+    MULTIPLE = 64
 
 class DalleConst(Enum):
     SIZES = {
