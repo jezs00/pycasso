@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Provider class to wrap APIs for web operations
-import base64
 import configparser
 import io
 import logging
