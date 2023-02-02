@@ -6,8 +6,8 @@ import configparser
 import io
 import logging
 import os
-import requests
 import warnings
+import webuiapi
 from io import BytesIO
 
 import keyring
@@ -363,30 +363,31 @@ class AutomaticProvider(Provider):
             self.host = AutomaticConst.DEFAULT_HOST.value
             logging.info(f"Using {self.host} as Automatic host")
 
+        self.automatic_api = webuiapi.WebUIApi(
+            host=self.host,
+            port=7860
+        )
+
         return
 
     def get_image_from_string(self, text, height=0, width=0):
         fetch_height = ImageFunctions.ceiling_multiple(height, AutomaticConst.MULTIPLE.value)
         fetch_width = ImageFunctions.ceiling_multiple(width, AutomaticConst.MULTIPLE.value)
         if height == 0 or width == 0:
-            answers = {
-                "prompt": text,
-                "steps": 60
-            }
+
+            answers = self.automatic_api.txt2img(
+                prompt=text,
+                steps=60
+            )
+
         else:
-            answers = {
-                "prompt": text,
-                "height": fetch_height,
-                "width": fetch_width,
-                "steps": 60
-            }
+            answers = self.automatic_api.txt2img(
+                prompt=text,
+                steps=60,
+                height=height,
+                width=width
+            )
 
-        response = requests.post(url=f'{self.host}/sdapi/v1/txt2img', json=answers)
-
-        images = response.json()
-
-        # iterating over the generator produces the api response
-        for i in images['images']:
-            img = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
+        img = answers.image
         img = self.fit_image(img, width, height)
         return img
