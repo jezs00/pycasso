@@ -120,7 +120,7 @@ class StabilityConst(Enum):
     
 class AutomaticConst(Enum):
     HOST = "AUTOMATIC_HOST"
-    DEFAULT_HOST = "http://127.0.0.1:7860"
+    DEFAULT_HOST = "127.0.0.1"
     MULTIPLE = 64
 
 class DalleConst(Enum):
