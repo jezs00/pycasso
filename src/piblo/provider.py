@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Provider class to wrap APIs for web operations
+import base64
 import configparser
 import io
 import logging
 import os
+import requests
 import warnings
 from io import BytesIO
 
@@ -15,7 +17,7 @@ import stability_sdk
 from stability_sdk import client
 from PIL import Image, ImageDraw
 
-from piblo.constants import ProvidersConst, StabilityConst, DalleConst
+from piblo.constants import ProvidersConst, StabilityConst, DalleConst, AutomaticConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 
@@ -348,3 +350,43 @@ class DalleProvider(Provider):
     def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
         return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode,
                                            path)
+
+class AutomaticProvider(Provider):
+    automatic_api = object
+
+    # inherits from Provider
+    def __init__(self, host=None):
+        # Get the inputs if necessary
+        super().__init__()
+
+        if host is None:
+            self.host = AutomaticConst.DEFAULT_HOST.value
+            logging.info(f"Using {self.host} as Automatic host")
+
+        return
+
+    def get_image_from_string(self, text, height=0, width=0):
+        fetch_height = ImageFunctions.ceiling_multiple(height, AutomaticConst.MULTIPLE.value)
+        fetch_width = ImageFunctions.ceiling_multiple(width, AutomaticConst.MULTIPLE.value)
+        if height == 0 or width == 0:
+            answers = {
+                "prompt": text,
+                "steps": 60
+            }
+        else:
+            answers = {
+                "prompt": text,
+                "height": fetch_height,
+                "width": fetch_width,
+                "steps": 60
+            }
+
+        response = requests.post(url=f'{self.host}/sdapi/v1/txt2img', json=answers)
+
+        images = response.json()
+
+        # iterating over the generator produces the api response
+        for i in images['images']:
+            img = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
+        img = self.fit_image(img, width, height)
+        return img
