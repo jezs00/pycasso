@@ -16,7 +16,7 @@ from piblo.config_wrapper import Configs
 from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
-from piblo.provider import StabilityProvider, DalleProvider
+from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 
 
 # noinspection PyTypeChecker
@@ -57,6 +57,10 @@ class Pycasso:
     load_stability_image(prompt, width, height, stability_key=None):
         Uses Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'
         API key should be provided in 'stability_key'
+        returns PIL image object
+
+    load_automatic_image(prompt, width, height):
+        Uses local Automatic111 Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'
         returns PIL image object
 
     load_dalle_image(prompt, width, height, infill=False, dalle_key=None):
@@ -346,6 +350,17 @@ class Pycasso:
 
         return image_base
 
+    
+    @staticmethod
+    def load_automatic_image(prompt, width, height):
+        logging.info("Loading Automatic API")
+        automatic_provider = AutomaticProvider()
+
+        logging.info("Getting Image")
+        image = automatic_provider.get_image_from_string(prompt, height, width)
+        return image
+    
+    
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
         metadata = PngImagePlugin.PngInfo()
@@ -440,14 +455,16 @@ class Pycasso:
             ProvidersConst.EXTERNAL.value,
             ProvidersConst.HISTORIC.value,
             ProvidersConst.STABLE.value,
-            ProvidersConst.DALLE.value
+            ProvidersConst.DALLE.value,
+            ProvidersConst.AUTOMATIC.value
         ]
 
         provider_weights = (
             self.config.external_amount,
             self.config.historic_amount,
             self.config.stability_amount,
-            self.config.dalle_amount
+            self.config.dalle_amount,
+            self.config.automatic_amount
         )
 
         # If no weights provided, return test provider
@@ -578,6 +595,11 @@ class Pycasso:
                     # Dalle
                     image_base = self.load_dalle_image(prompt, epd.width, epd.height,
                                                        infill=self.config.infill, dalle_key=self.dalle_key)
+                    
+                elif provider_type == ProvidersConst.AUTOMATIC.value:
+                    # Automatic
+                    image_base = self.load_automatic_image(prompt, epd.width, epd.height)
+
 
                 else:
                     # Invalid provider
