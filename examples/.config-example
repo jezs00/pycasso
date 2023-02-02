@@ -182,6 +182,7 @@ external_amount = 0
 historic_amount = 0
 stability_amount = 0
 dalle_amount = 0
+automatic_amount = 0
 
 # Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
 # [boolean]
