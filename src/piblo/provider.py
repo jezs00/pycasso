@@ -389,8 +389,8 @@ class AutomaticProvider(Provider):
                 answers = self.automatic_api.txt2img(
                     prompt=text,
                     steps=60,
-                    height=height,
-                    width=width
+                    height=fetch_height,
+                    width=fetch_width
                 )
 
             img = answers.image
