@@ -17,7 +17,7 @@ Uses [openai-python](https://github.com/openai/openai-python) to interact with D
 
 ## Setup
 
-### Get Raspberri Pi Ready
+### Get Raspberry Pi Ready
 * Install Raspberry Pi OS from https://www.raspberrypi.com/software/operating-systems/ . When flashing SD card, ensure you set up your wireless details for easy access, otherwise you will have to follow configuration steps with the screen plugged in. Put the SD card into your Raspberry Pi unit
 
 ### (Optional) Plug in pijuice HAT
@@ -35,18 +35,18 @@ more information. You can always do this later if you don't want to use PiJuice 
 ```
 bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 ```
-* Take note of the proposed install directory
+* Take note of the proposed installation directory
 * Select `Option 1` - Install/Upgrade pycasso
 * Select "Yes" to enable service on boot if that is what you want to do _(it is probably what you want to do)_
 * (Optional) If you want to use pijuice, select "Yes" to install PiJuice
-* (Optional) Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
-* Select `Option 5 - API Key`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys) and [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. **Please note that these providers are a paid service, and after any free credits expire, you will need to pay for more credits to maintain functionality.** _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default this will be stored in a plaintext file in the application folder. This is not ideal but it is the best I have figured out until I can get GRPCIO playing nicely.)_
+* (Optional) Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi, and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
+* Select `Option 5 - API Key`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys) and [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. **Please note that these providers are a paid service, and after any free credits expire, you will need to pay for more credits to maintain functionality.** _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default, this will be stored in a plaintext file in the application folder. This is not ideal, but it is the best I have figured out until I can get GRPCIO playing nicely.)_
 * (Optional) Select `Option 6 - Disable pijuice LEDs`. IF you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
 
 ### Configure pycasso
 * Make sure you are in your pycasso install directory.
 * Run `nano .config` for all configuration options. There's a lot to play with here, and apart from file paths you should be able to play around and see what happens.
-* The most important item of configuration is `[EPD]` - `type` . You should set this to the supported EPD you have plugged in, anything from [omni-epd's readme](https://github.com/robweber/omni-epd) should work, copy paste the appropriate EPD string and paste it here instead of omni_epd.mock. Leaving type as omni_epd.mock will generate a png file in this folder instead of updating the display.
+* The most important item of configuration is `[EPD]` - `type` . You should set this to the supported EPD you have plugged in, anything from [omni-epd's readme](https://github.com/robweber/omni-epd) should work, copy and paste the appropriate EPD string and paste it here instead of omni_epd.mock. Leaving type as omni_epd.mock will generate a png file in this folder instead of updating the display.
 * run `python3 examples/review_screen.py` and see if it works on your screen. _(If your screen is not displaying an image there's most likely a problem with your EPD, you can also check pycasso.log to troubleshoot)_
 
 ### Configure PiJuice
@@ -69,22 +69,22 @@ more information. My preferred configuration is to set a wakeup timer to start a
 * Run `sudo systemctl restart pycasso` and see if it worked!
 
 ### Customise pycasso
-* If you have run through the install and pycasso is working, it will run on startup. Normal behaviour is to run once and close, if you have an always-on system, you may wish to disable the service and just run pycasso or start the service through cron.
-* With a PiJuice, you can configure `shutdown_on_battery` to automatically shut down and remove power to the board when pycasso is done, to complete a headless fully battery driven process. Be a little careful with this as to save battery, it prefers to shutdown above all else, even on exception. If you experience a program error you will only have `wait_to_run` (default 30) seconds to connect to the pi and disable the service to fix.
+* If you have run through the installation and pycasso is working, it will run on startup. Normal behaviour is to run once and close, if you have an always-on system, you may wish to disable the service and just run pycasso or start the service through cron.
+* With a PiJuice, you can configure `shutdown_on_battery` to automatically shut down and remove power to the board when pycasso is done, to complete a headless fully battery driven process. Be a little careful with this as to save battery, it prefers to shut down above all else, even on exception. If you experience a program error you will only have `wait_to_run` (default 30) seconds to connect to the pi and disable the service to fix.
 * Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
 * Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
   * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
   * Have a play around with the prompts and see what works for you. See [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) for more information.
 
 ### Administration
-* Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up a SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
+* Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up an SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
 * If you have set `shutdown_on_battery` to true, you should be able to plug your PiJuice into power to ensure it stays on when you start it.
-* If a disaster occurs and you have `shutdown_on_battery` and `shutdown_on_exception` both set to True and you cannot keep the device on long enough to log in, you might need to unplug the SD card and try to fix the config. If this option is not available to you, it's possible you might need to flash it and start from scratch. A possible solution to these issues while maintaining a priority on extending battery life is being tracked [here](https://github.com/jezs00/pycasso/issues/20).
+* If a disaster occurs, and you have `shutdown_on_battery` and `shutdown_on_exception` both set to True and you cannot keep the device on long enough to log in, you might need to unplug the SD card and try to fix the config. If this option is not available to you, it's possible you might need to flash it and start from scratch. A possible solution to these issues while maintaining a priority on extending battery life is being tracked [here](https://github.com/jezs00/pycasso/issues/20).
 
 ### Hierarchical Bracket Wildcards
 To enhance dynamic prompt generation within pycasso, many text files and strings in pycasso are parsed to replace wildcard text. This allows more flexibility when defining prompts.
 
-By default the three types of brackets used are:
+By default, the three types of brackets used are:
 1. ()
 2. []
 3. {}
@@ -109,7 +109,7 @@ Here are a few more examples of how one may use these to make simple prompts mor
 * **15/32** of the time `A Friendly Dog`, **3/16** of the time `An Uncommon Dog`, **3/32** of the time `A Rare Dog`, **5/32** of the time `A Friendly Cat`, **1/16** of the time `An Uncommon Cat` or **1/32** of the time `A Rare Cat`
 
 ## Configuration
-You can run `nano .config` in the pycasso install folder to configure the way pycasso runs. There are a lot of options to configure your experience and it is highly recommended to play around with these options to find the settings that work best for your setup. If at any time you wish to roll back to the default configuration you can find it is `/examples/.config-example`, or you can delete .config and running pycasso will restore the defaults automatically. If you are running pycasso frequently to see what changes your updates make, it is recommended to either use the test mode by setting all providers to 0, or using external/generated modes so that you are not being charged by your provider for each time you run the program. Below you will find a full explanation of all configuration sections and items.
+You can run `nano .config` in the pycasso install folder to configure the way pycasso runs. There are a lot of options to configure your experience, and it is highly recommended to play around with these options to find the settings that work best for your setup. If at any time you wish to roll back to the default configuration you can find it is `/examples/.config-example`, or you can delete .config and running pycasso will restore the defaults automatically. If you are running pycasso frequently to see what changes your updates make, it is recommended to either use the test mode by setting all providers to 0, or using external/generated modes so that you are not being charged by your provider for each time you run the program. Below you will find a full explanation of all configuration sections and items.
 
 ### File
 Settings related to file operations within pycasso.
@@ -199,9 +199,12 @@ Settings related to image providers.
   * `historic_amount`: The comparative chance of pycasso running Historic mode (loading an image from the `generated_image_location` folder). `(Integer)`
   * `stability_amount`: The comparative chance of pycasso running Stable Diffusion mode (loading an image online from Stable Diffusion). `(Integer)`
   * `dalle_amount`: The comparative chance of pycasso running DALLE mode (loading an image online from DALLE). `(Integer)`
+  * `automatic_amount`: The comparative chance of pycasso running Automatic1111 Stable Diffusion WebUI mode (loading an image from a valid Automatic1111 API). `(Integer)`
 * `use_keychain`: A boolean flag that instructs pycasso whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it. Please note that keychain is not currently recommended due to [grpcio issues](https://github.com/jezs00/pycasso/issues/1) on raspberry pi. `(Boolean)`
 * `credential_path`: A file path relative to the pycasso working directory to find API credentials. `(String)`
 * `test_enabled`: A boolean flag that instructs pycasso to run a test mode when all other providers are set to 0. `(Boolean)`
+* `automatic_host`: If using `automatic` mode, this is the IP address or host of the Automatic1111 WebUI API. `(String)`
+* `automatic_port`: If using `automatic` mode, this is the port to use for the Automatic1111 WebUI API. `(Integer)`
 
 ### Generation
 Settings related to generation of images with AI image providers
@@ -226,7 +229,7 @@ The following settings are only relevant for development. Only use them if you k
 ## Troubleshooting
 
 ### There is a symbol on the top left of the screen
-By default, pycasso puts a faint symbol on the top left of the EPD to inform of system events. By default these are:
+By default, pycasso puts a faint symbol on the top left of the EPD to inform of system events. By default, these are:
 * Square for low battery _(low battery warning level configurable in `.config`, default 15%)_
 * Cross for exception _(likely PiJuice failing to load if you are using it, try a longer `wait_to_run`)_ . If you have anything odd in your `pycasso.log` file you can post it [here](https://github.com/jezs00/pycasso/issues).
 
