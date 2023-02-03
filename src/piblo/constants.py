@@ -18,7 +18,7 @@ class ConfigConst(Enum):
     FILE_EXTERNAL_IMAGE_LOCATION = "images/external"
     FILE_GENERATED_IMAGE_LOCATION = "images/generated"
     FILE_IMAGE_FORMAT = "png"
-    FILE_FONT_FILE = "resources/fonts/Font.ttc"
+    FILE_FONT_FILE = "fonts/Font.ttc"
     FILE_SUBJECTS_FILE = "prompts/subjects.txt"
     FILE_ARTISTS_FILE = "prompts/artists.txt"
     FILE_PROMPTS_FILE = "prompts/prompts.txt"
