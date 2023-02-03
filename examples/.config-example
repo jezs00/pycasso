@@ -14,7 +14,7 @@ generated_image_location=images/generated
 image_format=png
 
 # File path to font file [string]
-font_file=fonts/Font.ttc
+font_file=resources/fonts/Font.ttc
 
 # File paths to prompt subjects, artists and raw prompts text files [string]
 subjects_file=prompts/subjects.txt
