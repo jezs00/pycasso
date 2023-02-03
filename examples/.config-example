@@ -194,6 +194,10 @@ credential_path = .creds
 # If all other modes fail or are not selected, show a test image [boolean]
 test_enabled = True
 
+# IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
+automatic_host = 127.0.0.1
+automatic_port = 7860
+
 [Generation]
 ##################################
 # Image Generation Configuration #
