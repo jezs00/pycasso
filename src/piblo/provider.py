@@ -350,6 +350,7 @@ class DalleProvider(Provider):
         return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode,
                                            path)
 
+
 class AutomaticProvider(Provider):
     automatic_api = object
 
@@ -370,23 +371,29 @@ class AutomaticProvider(Provider):
         return
 
     def get_image_from_string(self, text, height=0, width=0):
-        fetch_height = ImageFunctions.ceiling_multiple(height, AutomaticConst.MULTIPLE.value)
-        fetch_width = ImageFunctions.ceiling_multiple(width, AutomaticConst.MULTIPLE.value)
-        if height == 0 or width == 0:
+        try:
+            fetch_height = ImageFunctions.ceiling_multiple(height, AutomaticConst.MULTIPLE.value)
+            fetch_width = ImageFunctions.ceiling_multiple(width, AutomaticConst.MULTIPLE.value)
+            if height == 0 or width == 0:
 
-            answers = self.automatic_api.txt2img(
-                prompt=text,
-                steps=60
-            )
+                answers = self.automatic_api.txt2img(
+                    prompt=text,
+                    steps=60
+                )
 
-        else:
-            answers = self.automatic_api.txt2img(
-                prompt=text,
-                steps=60,
-                height=height,
-                width=width
-            )
+            else:
+                answers = self.automatic_api.txt2img(
+                    prompt=text,
+                    steps=60,
+                    height=height,
+                    width=width
+                )
 
-        img = answers.image
-        img = self.fit_image(img, width, height)
+            img = answers.image
+            img = self.fit_image(img, width, height)
+
+        except BaseException as e:
+            logging.error(e)
+            return None
+
         return img
