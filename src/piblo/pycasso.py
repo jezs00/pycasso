@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
-from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst
+from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
@@ -206,6 +206,8 @@ class Pycasso:
 
             self.config_dict = config.read_config()
 
+            log_file = ConfigConst.LOGGING_FILE.value
+
             # Set up logging
             if config.log_file is not None and config.log_file != "":
                 log_file = os.path.join(self.file_path, config.log_file)
@@ -350,17 +352,16 @@ class Pycasso:
 
         return image_base
 
-    
     @staticmethod
-    def load_automatic_image(prompt, width, height):
+    def load_automatic_image(prompt, width, height, host=AutomaticConst.DEFAULT_HOST.value,
+                             port=AutomaticConst.DEFAULT_PORT.value):
         logging.info("Loading Automatic API")
-        automatic_provider = AutomaticProvider()
+        automatic_provider = AutomaticProvider(host=host, port=port)
 
         logging.info("Getting Image")
         image = automatic_provider.get_image_from_string(prompt, height, width)
         return image
-    
-    
+
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
         metadata = PngImagePlugin.PngInfo()
@@ -598,8 +599,9 @@ class Pycasso:
                     
                 elif provider_type == ProvidersConst.AUTOMATIC.value:
                     # Automatic
-                    image_base = self.load_automatic_image(prompt, epd.width, epd.height)
-
+                    image_base = self.load_automatic_image(prompt, epd.width, epd.height,
+                                                           host=self.config.automatic_host,
+                                                           port=self.config.automatic_port)
 
                 else:
                     # Invalid provider

@@ -355,17 +355,21 @@ class AutomaticProvider(Provider):
     automatic_api = object
 
     # inherits from Provider
-    def __init__(self, host=None):
+    def __init__(self, host=None, port=None):
         # Get the inputs if necessary
         super().__init__()
 
         if host is None:
-            self.host = AutomaticConst.DEFAULT_HOST.value
-            logging.info(f"Using {self.host} as Automatic host")
+            host = AutomaticConst.DEFAULT_HOST.value
+            logging.info(f"Using {host} as Automatic host")
+
+        if port is None:
+            port = AutomaticConst.DEFAULT_PORT.value
+            logging.info(f"Using {port} as Automatic port")
 
         self.automatic_api = webuiapi.WebUIApi(
-            host=self.host,
-            port=7860
+            host=host,
+            port=port
         )
 
         return
