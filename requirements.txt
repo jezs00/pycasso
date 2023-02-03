@@ -5,3 +5,4 @@ pillow
 keyring
 requests
 numpy
+webuiapi

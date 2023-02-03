@@ -91,6 +91,7 @@ class Configs:
         self.historic_amount = ProvidersConst.HISTORIC_AMOUNT.value
         self.stability_amount = ProvidersConst.STABLE_AMOUNT.value
         self.dalle_amount = ProvidersConst.DALLE_AMOUNT.value
+        self.automatic_amount = ProvidersConst.AUTOMATIC_AMOUNT.value
         self.use_keychain = ProvidersConst.USE_KEYCHAIN.value
         self.credential_path = self.file.get_full_path(ProvidersConst.CREDENTIAL_PATH.value)
         self.test_enabled = ProvidersConst.TEST_ENABLED.value
@@ -193,6 +194,8 @@ class Configs:
                                                   fallback=ProvidersConst.STABLE_AMOUNT.value)
             self.dalle_amount = config.getint("Providers", "dalle_amount",
                                               fallback=ProvidersConst.DALLE_AMOUNT.value)
+            self.automatic_amount = config.getint("Providers", "automatic_amount",
+                                                  fallback=ProvidersConst.AUTOMATIC_AMOUNT.value)
             self.use_keychain = config.getboolean("Providers", "use_keychain",
                                                   fallback=ProvidersConst.USE_KEYCHAIN.value)
             self.credential_path = config.get("Providers", "credential_path",
