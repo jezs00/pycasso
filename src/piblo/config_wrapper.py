@@ -4,7 +4,7 @@
 import configparser
 import os
 
-from piblo.constants import ConfigConst, ProvidersConst
+from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst
 from piblo.file_operations import FileOperations
 
 
@@ -95,6 +95,9 @@ class Configs:
         self.use_keychain = ProvidersConst.USE_KEYCHAIN.value
         self.credential_path = self.file.get_full_path(ProvidersConst.CREDENTIAL_PATH.value)
         self.test_enabled = ProvidersConst.TEST_ENABLED.value
+
+        self.automatic_host = AutomaticConst.DEFAULT_HOST.value
+        self.automatic_port = AutomaticConst.DEFAULT_PORT.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -202,6 +205,11 @@ class Configs:
                                               fallback=ProvidersConst.CREDENTIAL_PATH.value)
             self.test_enabled = config.getboolean("Providers", "test_enabled",
                                                   fallback=ProvidersConst.TEST_ENABLED.value)
+
+            self.automatic_host = config.get("Providers", "automatic_host",
+                                             fallback=AutomaticConst.DEFAULT_HOST.value)
+            self.automatic_host = config.getint("Providers", "automatic_port",
+                                                fallback=AutomaticConst.DEFAULT_PORT.value)
 
             # Logging Settings
             self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)

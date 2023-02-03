@@ -117,11 +117,14 @@ class StabilityConst(Enum):
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "grpc.stability.ai:443"
     MULTIPLE = 64
-    
+
+
 class AutomaticConst(Enum):
     HOST = "AUTOMATIC_HOST"
     DEFAULT_HOST = "127.0.0.1"
+    DEFAULT_PORT = 7860
     MULTIPLE = 64
+
 
 class DalleConst(Enum):
     SIZES = {
