@@ -208,7 +208,7 @@ class Configs:
 
             self.automatic_host = config.get("Providers", "automatic_host",
                                              fallback=AutomaticConst.DEFAULT_HOST.value)
-            self.automatic_host = config.getint("Providers", "automatic_port",
+            self.automatic_port = config.getint("Providers", "automatic_port",
                                                 fallback=AutomaticConst.DEFAULT_PORT.value)
 
             # Logging Settings
