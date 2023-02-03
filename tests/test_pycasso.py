@@ -315,9 +315,12 @@ def test_major_complete_config():
     assert instance.config.historic_amount == 74
     assert instance.config.stability_amount == 23
     assert instance.config.dalle_amount == 56
+    assert instance.config.automatic_amount == 39
     assert instance.config.use_keychain is True
     assert instance.config.credential_path == file.get_full_path(".test_creds")
     assert instance.config.test_enabled is False
+    assert instance.config.automatic_host == "1.1.1.1"
+    assert instance.config.automatic_port == 1337
 
     # Logging Settings
     assert instance.config.log_file == "pycasso_test.log"

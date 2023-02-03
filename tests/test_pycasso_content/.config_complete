@@ -180,6 +180,7 @@ external_amount = 12
 historic_amount = 74
 stability_amount = 23
 dalle_amount = 56
+automatic_amount = 39
 
 # Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
 # [boolean]
@@ -190,6 +191,10 @@ credential_path = .test_creds
 
 # If all other modes fail or are not selected, show a test image [boolean]
 test_enabled = False
+
+# IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
+automatic_host = 1.1.1.1
+automatic_port = 1337
 
 [Generation]
 ##################################
