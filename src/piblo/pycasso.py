@@ -123,6 +123,11 @@ class Pycasso:
         # Image
         self.image_base = None
 
+        # Prompt
+        self.prompt = ""
+        self.artist_text = ""
+        self.title_text = ""
+
         # Icon
         self.charge_level = charge_level
         self.icon_shape = None
@@ -684,11 +689,11 @@ class Pycasso:
 
             # Draw icons
             self.image_base = ImageFunctions.draw_icons(self.image_base, self.icons, icon_path=self.config.icon_path,
-                                                   icon_color=self.config.icon_color,
-                                                   icon_location=self.config.icon_corner,
-                                                   icon_padding=self.config.icon_padding,
-                                                   icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,
-                                                   icon_opacity=self.config.icon_opacity)
+                                                        icon_color=self.config.icon_color,
+                                                        icon_location=self.config.icon_corner,
+                                                        icon_padding=self.config.icon_padding,
+                                                        icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,
+                                                        icon_opacity=self.config.icon_opacity)
 
             draw = ImageDraw.Draw(self.image_base, ImageConst.DRAW_MODE.value)
 
