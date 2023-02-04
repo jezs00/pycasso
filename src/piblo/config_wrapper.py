@@ -73,9 +73,14 @@ class Configs:
 
         # Icon Settings
         self.icon_padding = ConfigConst.ICON_PADDING.value
+        self.icon_corner = ConfigConst.ICON_CORNER.value
         self.icon_size = ConfigConst.ICON_SIZE.value
         self.icon_width = ConfigConst.ICON_WIDTH.value
         self.icon_opacity = ConfigConst.ICON_OPACITY.value
+        self.icon_path = ConfigConst.ICON_PATH.value
+        self.show_battery_icon = ConfigConst.SHOW_BATTERY_ICON.value
+        self.show_provider_icon = ConfigConst.SHOW_PROVIDER_ICON.value
+        self.show_status_icon = ConfigConst.SHOW_STATUS_ICON.value
 
         # Prompt Settings
         self.prompt_mode = ConfigConst.PROMPT_MODE.value
@@ -181,9 +186,17 @@ class Configs:
 
             # Icon
             self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
+            self.icon_corner = config.get("Icon", "icon_corner", fallback=ConfigConst.ICON_CORNER.value)
             self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)
             self.icon_width = config.getint("Icon", "icon_width", fallback=ConfigConst.ICON_WIDTH.value)
             self.icon_opacity = config.getint("Icon", "icon_opacity", fallback=ConfigConst.ICON_OPACITY.value)
+            self.icon_path = config.get("Icon", "icon_path", fallback=ConfigConst.ICON_PATH.value)
+            self.show_battery_icon = config.getboolean("Icon", "show_battery_icon",
+                                                       fallback=ConfigConst.SHOW_BATTERY_ICON.value)
+            self.show_provider_icon = config.getboolean("Icon", "show_provider_icon",
+                                                        fallback=ConfigConst.SHOW_PROVIDER_ICON.value)
+            self.show_status_icon = config.getboolean("Icon", "show_status_icon",
+                                                      fallback=ConfigConst.SHOW_STATUS_ICON.value)
 
             # Display (rest of EPD config is just passed straight into displayfactory
             self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)

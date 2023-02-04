@@ -48,9 +48,14 @@ class ConfigConst(Enum):
 
     # Icon Settings
     ICON_PADDING = 10
+    ICON_CORNER = "nw"
     ICON_SIZE = 20
     ICON_WIDTH = 3
     ICON_OPACITY = 150
+    ICON_PATH = "resources/icons/"
+    SHOW_BATTERY_ICON = True
+    SHOW_PROVIDER_ICON = True
+    SHOW_STATUS_ICON = True
 
     # Automatic Prompt Construction Settings
     PROMPT_MODES_COUNT = 2
@@ -193,3 +198,10 @@ class EPDConst(Enum):
     PALETTE = "palette"
     FOUR_COLOR = "4color"
     FOUR_GRAY = "gray4"
+
+
+class IconConst(Enum):
+    LOC_TOP_LEFT = "nw"
+    LOC_TOP_RIGHT = "ne"
+    LOC_BOTTOM_LEFT = "sw"
+    LOC_BOTTOM_RIGHT = "se"

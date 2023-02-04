@@ -47,7 +47,7 @@ mode=color
 #########################
 
 # Rotation of image on display in degrees (integer)
-rotate = 0
+rotate=0
 
 # Flag indicating whether to flip image on display horizontally and vertically [boolean]
 flip_horizontal=False
@@ -95,19 +95,19 @@ postscript=", (10:digital art|fantasy art), trending on artstation"
 ################
 
 # Flag indicating whether to add text to the display or not [boolean]
-add_text = True
+add_text=True
 
 # Flag indicating whether to parse text from file names for use in pycasso [boolean]
-parse_file_text = True
+parse_file_text=True
 
 # Filename parsing: regex to find split point between preamble and main text in external image names [string]
-preamble_regex = " .* -"
+preamble_regex=" .* -"
 
 # Filename parsing: regex to find split point between subject and artist in external document names [string]
-artist_regex =  "in the style of"
+artist_regex= "in the style of"
 
 # Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [strings]
-remove_text = ", digital art"
+remove_text=", digital art"
             "A painting of"
             "an oil painting of"
             "a surrealist oil painting of"
@@ -116,47 +116,62 @@ remove_text = ", digital art"
 # Flag indicating whether to parse text from files with custom randomisation [boolean]
 # Custom randomisation looks like: "A (Good|Bad) Dog".
 # The above may return "A Good Dog." or "A Bad Dog"
-parse_random_text = True
+parse_random_text=True
 
 # List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
 # Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
 # Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
-parse_brackets = "()"
-                "[]"
-                "{}"
+parse_brackets="()"
+               "[]"
+               "{}"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
-box_to_floor = True
-box_to_edge = True
+box_to_floor=True
+box_to_edge=True
 
 # Locations of the artist and title text boxes from the bottom of the cropped image in pixels [integer]
-artist_loc = 10
-artist_size = 14
-title_loc = 28
-title_size = 20
+artist_loc=10
+artist_size=14
+title_loc=28
+title_size=20
 
 # Padding around the text box for artist and title text box in pixels [integer]
-padding = 10
+padding=10
 
 # Opacity of the text box [integer]
-opacity = 150
+opacity=150
 
 [Icon]
 #################
 # Icon Settings #
 #################
 
-# Padding from the top left corner for the status icon in pixels [integer]
-icon_padding = 10
+# Padding from the corner for the status icon in pixels [integer]
+icon_padding=10
+
+# Corner to display icons in. Options are "nw", "ne", "sw", "se" [string]
+icon_corner="nw"
 
 # Size of the status icon in pixels [integer]
-icon_size = 20
+icon_size=20
 
 # Width of the line of the status icon in pixels [integer]
-icon_width = 3
+icon_width=3
 
 # Opacity of the status icon [integer]
-icon_opacity = 150
+icon_opacity=150
+
+# Path to icon folder relative to working directory [string]
+icon_path=resources/icons
+
+# Show an icon displaying the battery level [boolean]
+show_battery_icon=True
+
+# Show an icon displaying the provider used [boolean]
+show_provider_icon=True
+
+# Show an icon displaying error status [boolean]
+show_status_icon=True
 
 [Logging]
 ####################
@@ -165,11 +180,11 @@ icon_opacity = 150
 # Please note logging settings are currently not implemented in run.py
 
 # File path of pycasso log file [string]
-log_file = pycasso.log
+log_file=pycasso.log
 
 # Logging level to save to log file. [integer]
 # Levels: CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0
-log_level = 10
+log_level=10
 
 [Providers]
 ###################
@@ -178,25 +193,25 @@ log_level = 10
 # Comparative chances whether any particular provider is used [integer]
 # EG "external_amount = 0", "historic_amount = 1" and "stability_amount = 2" would result in:
 # External images never appearing, and approximately 1 Historic image appearing for every 2 Stable Diffusion images
-external_amount = 0
-historic_amount = 0
-stability_amount = 0
-dalle_amount = 0
-automatic_amount = 0
+external_amount=0
+historic_amount=0
+stability_amount=0
+dalle_amount=0
+automatic_amount=0
 
 # Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
 # [boolean]
-use_keychain = False
+use_keychain=False
 
 # File path to credentials file [string]
-credential_path = .creds
+credential_path=.creds
 
 # If all other modes fail or are not selected, show a test image [boolean]
-test_enabled = True
+test_enabled=True
 
 # IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
-automatic_host = 127.0.0.1
-automatic_port = 7860
+automatic_host=127.0.0.1
+automatic_port=7860
 
 [Generation]
 ##################################
@@ -204,10 +219,10 @@ automatic_port = 7860
 ##################################
 
 # Flag indicating whether to utilise 'infilling' to resend image back to provider and fill full frame [boolean]
-infill = False
+infill=False
 
 # If infill set to true, pop the image out by infill_percent. Helps to avoid images too zoomed in. [integer]
-infill_percent = 10
+infill_percent=10
 
 [PiJuice]
 #########################
@@ -215,21 +230,21 @@ infill_percent = 10
 #########################
 
 # Flag indicating whether to use PiJuice or not. Set to False if you do not know what that means. [boolean]
-use_pijuice = False
+use_pijuice=False
 
 # Flag indicating whether to shutdown after pycasso if running on PiJuice battery (not charging) [boolean]
-shutdown_on_battery = True
+shutdown_on_battery=True
 
 # Flag indicating whether to shut down if program encounters an exception. Used to stop battery running down on error.
 # (WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after
 # failures you may not be able to SSH in even after a wait time) [boolean]
-shutdown_on_exception = False
+shutdown_on_exception=False
 
 # Time to wait in seconds before running pycasso. Can help in ensuring PiJuice is ready [integer]
-wait_to_run = 30
+wait_to_run=30
 
 # Battery percentage that pycasso should start showing low battery symbol at [integer]
-charge_display = 15
+charge_display=15
 
 [Debug]
 #######################
@@ -238,5 +253,5 @@ charge_display = 15
 # The following settings are only relevant for development. Only use them if you know what you're doing.
 
 # Width and height to use with mock EPD, to test different display sizes while developing without an EPD.
-test_epd_width = 500
-test_epd_height = 300
+test_epd_width=500
+test_epd_height=300
