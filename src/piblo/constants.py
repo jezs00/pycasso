@@ -205,3 +205,18 @@ class IconConst(Enum):
     LOC_TOP_RIGHT = "ne"
     LOC_BOTTOM_LEFT = "sw"
     LOC_BOTTOM_RIGHT = "se"
+
+    ICON_BATTERY_20 = ("battery.svg", 10)
+    ICON_BATTERY_40 = ("battery-1.svg", 10)
+    ICON_BATTERY_60 = ("battery-2.svg", 10)
+    ICON_BATTERY_80 = ("battery-3.svg", 10)
+    ICON_BATTERY_100 = ("battery-4.svg", 10)
+
+    ICON_EXTERNAL = ("device-floppy.svg", 20)
+    ICON_GENERATED = ("history.svg", 20)
+    ICON_STABLE = ("circle-letter-s.svg", 20)
+    ICON_DALLE = ("circle-letter-d.svg", 20)
+    ICON_AUTOMATIC = ("device-desktop.svg", 20)
+
+    ICON_EXCEPTION = ("heart-broken.svg", 30)
+
