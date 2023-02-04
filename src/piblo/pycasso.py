@@ -13,7 +13,8 @@ from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
-from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst
+from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst, \
+    IconConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
@@ -120,6 +121,7 @@ class Pycasso:
 
         # Icon
         self.icon_shape = None
+        self.icons = []
 
         # Keys
         self.stability_key = None
@@ -532,6 +534,31 @@ class Pycasso:
             draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font,
                       anchor="mb", fill=0)
         return draw
+
+    def add_battery_icon(self, battery_percent):
+
+        empty = range(0-20)
+        low = range(21-40)
+        half = range(41-60)
+        good = range(61-80)
+        full = range(81-100)
+
+        if battery_percent in empty:
+            battery_icon = IconConst.ICON_BATTERY_20.value
+        elif battery_percent in low:
+            battery_icon = IconConst.ICON_BATTERY_40.value
+        elif battery_percent in half:
+            battery_icon = IconConst.ICON_BATTERY_60.value
+        elif battery_percent in good:
+            battery_icon = IconConst.ICON_BATTERY_80.value
+        elif battery_percent in full:
+            battery_icon = IconConst.ICON_BATTERY_100.value
+        else:
+            # Somehow there's a battery read error
+            battery_icon = IconConst.ICON_BATTERY_ERROR.value
+
+        self.icons.append(battery_icon)
+        return battery_icon
 
     def run(self):
         logging.info("pycasso has begun")
