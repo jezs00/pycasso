@@ -57,8 +57,6 @@ class PiJuiceHandler:
         sleep_time = instance.config.wait_to_run
         shutdown = instance.config.shutdown_on_battery
         shutdown_ex = instance.config.shutdown_on_exception
-        charge_display = instance.config.charge_display
-        show_battery_icon = instance.config.show_battery_icon
 
         power_status = None
         charge_level = 100
