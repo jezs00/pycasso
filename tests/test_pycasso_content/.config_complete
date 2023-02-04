@@ -157,6 +157,9 @@ icon_size = 30
 # Width of the line of the status icon in pixels [integer]
 icon_width = 6
 
+# Gap between each icon in pixels [integer]
+icon_gap=2
+
 # Opacity of the status icon [integer]
 icon_opacity = 190
 

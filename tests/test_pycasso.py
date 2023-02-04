@@ -288,6 +288,7 @@ def test_major_complete_config():
     assert instance.config.icon_corner == IconConst.LOC_BOTTOM_RIGHT.value
     assert instance.config.icon_size == 30
     assert instance.config.icon_width == 6
+    assert instance.config.icon_gap == 2
     assert instance.config.icon_opacity == 190
     assert instance.config.icon_path == "test_location/test/test"
     assert instance.config.icon_size == 30
