@@ -76,6 +76,7 @@ class Configs:
         self.icon_corner = ConfigConst.ICON_CORNER.value
         self.icon_size = ConfigConst.ICON_SIZE.value
         self.icon_width = ConfigConst.ICON_WIDTH.value
+        self.icon_gap = ConfigConst.ICON_GAP.value
         self.icon_opacity = ConfigConst.ICON_OPACITY.value
         self.icon_path = ConfigConst.ICON_PATH.value
         self.show_battery_icon = ConfigConst.SHOW_BATTERY_ICON.value
@@ -189,6 +190,7 @@ class Configs:
             self.icon_corner = config.get("Icon", "icon_corner", fallback=ConfigConst.ICON_CORNER.value)
             self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)
             self.icon_width = config.getint("Icon", "icon_width", fallback=ConfigConst.ICON_WIDTH.value)
+            self.icon_gap = config.getint("Icon", "icon_gap", fallback=ConfigConst.ICON_GAP.value)
             self.icon_opacity = config.getint("Icon", "icon_opacity", fallback=ConfigConst.ICON_OPACITY.value)
             self.icon_path = config.get("Icon", "icon_path", fallback=ConfigConst.ICON_PATH.value)
             self.show_battery_icon = config.getboolean("Icon", "show_battery_icon",

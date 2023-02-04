@@ -158,7 +158,10 @@ icon_size=20
 # Width of the line of the status icon in pixels [integer]
 icon_width=3
 
-# Opacity of the status icon [integer]
+# Gap between each icon in pixels [integer]
+icon_gap=5
+
+# Opacity of the icons [integer]
 icon_opacity=150
 
 # Path to icon folder relative to working directory [string]

@@ -51,6 +51,7 @@ class ConfigConst(Enum):
     ICON_CORNER = "nw"
     ICON_SIZE = 20
     ICON_WIDTH = 3
+    ICON_GAP = 5
     ICON_OPACITY = 150
     ICON_PATH = "resources/icons/"
     SHOW_BATTERY_ICON = True
