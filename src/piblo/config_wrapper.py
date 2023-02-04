@@ -262,6 +262,7 @@ class Configs:
             self.generated_image_location = self.file.get_full_path(self.generated_image_location)
             self.font_file = self.file.get_full_path(self.font_file)
             self.credential_path = self.file.get_full_path(self.credential_path)
+            self.icon_path = self.file.get_full_path(self.icon_path)
 
         return config
 
