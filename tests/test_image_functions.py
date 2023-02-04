@@ -152,13 +152,13 @@ def test_draw_icons():
     icons.sort(key=lambda item: item[1])
 
     img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
-                          icon_location=IconConst.LOC_TOP_RIGHT.value, icon_color="auto")
+                          icon_location=IconConst.LOC_TOP_RIGHT.value, icon_color="auto", icon_opacity=255)
     img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
                           icon_location=IconConst.LOC_BOTTOM_LEFT.value, icon_color="auto")
     img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
                           icon_location=IconConst.LOC_BOTTOM_RIGHT.value, icon_color="#FF0000")
 
-    #img.show()
+    img.show()
 
     # Check image is not all black
     extrema = img.convert("L").getextrema()
@@ -168,9 +168,9 @@ def test_draw_icons():
     red_pixel = img.getpixel((585, 387))
 
     unexpected_extrema = (0, 0)
-    expected_white_pixel = (255, 255, 255, 255)
+    expected_white_pixel = (150, 150, 150, 193)
     expected_black_pixel = (0, 0, 0, 255)
-    expected_red_pixel = (255, 0, 0, 255)
+    expected_red_pixel = (150, 0, 0, 193)
 
     assert extrema != unexpected_extrema
     assert white_pixel == expected_white_pixel

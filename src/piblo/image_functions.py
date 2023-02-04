@@ -198,6 +198,16 @@ class ImageFunctions:
         return False
 
     @staticmethod
+    def set_image_alpha(img, alpha):
+        a_channel = img.getchannel('A')
+        alpha_quotient = alpha/255
+
+        # Update all opaque pixels
+        a_update = a_channel.point(lambda i: i*alpha_quotient if i > 0 else 0)
+        img.putalpha(a_update)
+        return
+
+    @staticmethod
     def draw_icons(image_base, icons, icon_path=ConfigConst.ICON_PATH.value, icon_color=ConfigConst.ICON_COLOR.value,
                    icon_location=ConfigConst.ICON_CORNER.value, icon_padding=ConfigConst.ICON_PADDING.value,
                    icon_size=ConfigConst.ICON_SIZE.value, icon_gap=ConfigConst.ICON_GAP.value,
@@ -244,6 +254,7 @@ class ImageFunctions:
                 img = Image.open(path)
                 img = img.convert(ImageConst.DRAW_MODE.value)
                 img = ImageFunctions.color_icon(img, color)
+                ImageFunctions.set_image_alpha(img, icon_opacity)
                 tup = (icon_size, icon_size)
                 img.resize(tup, resample=0)
                 image_base.paste(img, (x, y), img)
