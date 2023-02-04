@@ -58,6 +58,7 @@ class PiJuiceHandler:
         shutdown = instance.config.shutdown_on_battery
         shutdown_ex = instance.config.shutdown_on_exception
         charge_display = instance.config.charge_display
+        show_battery_icon = instance.config.show_battery_icon
 
         power_status = None
         charge_level = 100
@@ -68,6 +69,7 @@ class PiJuiceHandler:
             pijuice = PiJuice(1, 0x14)
             power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
             charge_level = pijuice.status.GetChargeLevel()['data']
+            instance.charge_level = charge_level
 
         except Exception as e:
             logging.error(e)
@@ -86,11 +88,6 @@ class PiJuiceHandler:
         logging.info(f"Battery level is \'{charge_level}\'")
 
         try:
-            # Set icon if PiJuice has lower battery
-            if charge_level < charge_display:
-                logging.info("Displaying icon due to low battery")
-                instance.icon_shape = DisplayShapeConst.SQUARE.value
-
             instance.run()
 
             if power_status == PiJuiceConst.NOT_PRESENT.value:

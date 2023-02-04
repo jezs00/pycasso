@@ -113,13 +113,14 @@ class Pycasso:
         Do pycasso
     """
 
-    def __init__(self, config_path=None, file_path=os.getcwd()):
+    def __init__(self, config_path=None, file_path=os.getcwd(), charge_level=-1):
         self.file_path = file_path
 
         # Config Dictionary for omni-epd
         self.config_dict = {}
 
         # Icon
+        self.charge_level = charge_level
         self.icon_shape = None
         self.icons = []
 
@@ -658,6 +659,9 @@ class Pycasso:
             image_base = image_base.crop(image_crop)
             if image_base.mode not in ImageConst.SUPPORTED_MODES.value:
                 image_base = image_base.convert(ImageConst.CONVERT_MODE.value)
+
+            if self.config.show_battery_icon:
+                self.add_battery_icon(self.charge_level)
 
             # Draw icons
             image_base = ImageFunctions.draw_icons(image_base, self.icons, icon_path=self.config.icon_path,
