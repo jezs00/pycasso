@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 import math
+import os
 
 import numpy
+from PIL import Image
 
-from piblo.constants import DisplayShapeConst
+from piblo.constants import DisplayShapeConst, IconFileConst, ConfigConst, IconConst, ImageConst
 
 
 class ImageFunctions:
@@ -165,3 +167,43 @@ class ImageFunctions:
                            fill=(0, 0, 0, icon_opacity),
                            outline=(255, 255, 255, icon_opacity))
         return draw
+
+    @staticmethod
+    def draw_icons(image_base, icons, icon_path=ConfigConst.ICON_PATH.value,
+                   icon_location=ConfigConst.ICON_CORNER.value, icon_padding=ConfigConst.ICON_PADDING.value,
+                   icon_size=ConfigConst.ICON_SIZE.value, icon_gap=ConfigConst.ICON_GAP.value,
+                   icon_opacity=ConfigConst.ICON_OPACITY.value):
+        # Default to top left
+        x = icon_padding
+        y = icon_padding
+        left_to_right = True
+
+        if icon_location == IconConst.LOC_TOP_RIGHT.value:
+            x = image_base.width - icon_padding - icon_size
+            left_to_right = False
+        elif icon_location == IconConst.LOC_BOTTOM_LEFT.value:
+            y = image_base.height - icon_padding - icon_size
+        elif icon_location == IconConst.LOC_BOTTOM_RIGHT.value:
+            x = image_base.width - icon_padding - icon_size
+            y = image_base.height - icon_padding - icon_size
+            left_to_right = False
+
+        # Set icons in order of weight
+        icons.sort(key=lambda item: item[1])
+
+        for icon in icons:
+            path = os.path.join(icon_path, icon[0])
+            img = Image.open(path)
+            img = img.convert(ImageConst.DRAW_MODE.value)
+            tup = (icon_size, icon_size)
+            img.resize(tup, resample=0)
+            image_base.paste(img, (x, y), img)
+
+            hop = icon_gap + img.width
+            if left_to_right:
+                x += hop
+            else:
+                x -= hop
+
+        return image_base
+
