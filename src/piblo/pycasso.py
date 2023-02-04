@@ -661,6 +661,7 @@ class Pycasso:
 
             # Draw icons
             image_base = ImageFunctions.draw_icons(image_base, self.icons, icon_path=self.config.icon_path,
+                                                   icon_color=self.config.icon_color,
                                                    icon_location=self.config.icon_corner,
                                                    icon_padding=self.config.icon_padding,
                                                    icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,

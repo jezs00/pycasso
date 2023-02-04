@@ -5,7 +5,7 @@ import math
 import os
 
 import numpy
-from PIL import Image
+from PIL import Image, ImageColor
 
 from piblo.constants import DisplayShapeConst, IconFileConst, ConfigConst, IconConst, ImageConst
 
@@ -170,7 +170,21 @@ class ImageFunctions:
         return draw
 
     @staticmethod
-    def draw_icons(image_base, icons, icon_path=ConfigConst.ICON_PATH.value,
+    def color_icon(img, rgb):
+        # From https://stackoverflow.com/questions/3752476/python-pil-replace-a-single-rgba-color
+
+        data = numpy.array(img)  # "data" is a height x width x 4 numpy array
+        red, green, blue, alpha = data.T  # Temporarily unpack the bands for readability
+
+        # Replace white with red... (leaves alpha values alone...)
+        black_areas = (red == 0) & (blue == 0) & (green == 0)
+        data[..., :-1][black_areas.T] = rgb  # Transpose back needed
+
+        img = Image.fromarray(data)
+        return img
+
+    @staticmethod
+    def draw_icons(image_base, icons, icon_path=ConfigConst.ICON_PATH.value, icon_color=ConfigConst.ICON_COLOR.value,
                    icon_location=ConfigConst.ICON_CORNER.value, icon_padding=ConfigConst.ICON_PADDING.value,
                    icon_size=ConfigConst.ICON_SIZE.value, icon_gap=ConfigConst.ICON_GAP.value,
                    icon_opacity=ConfigConst.ICON_OPACITY.value):
@@ -196,11 +210,20 @@ class ImageFunctions:
         # Set icons in order of weight
         icons.sort(key=lambda item: item[1])
 
+        color = (0, 0, 0)
+        # Get color
+        if icon_color != "auto":
+            color = ImageColor.getcolor(icon_color, ImageConst.CONVERT_MODE.value)
+
         for icon in icons:
             path = os.path.join(icon_path, icon[0])
             if os.path.exists(path):
                 img = Image.open(path)
                 img = img.convert(ImageConst.DRAW_MODE.value)
+                if icon_color == "auto":
+                    img = ImageFunctions.color_icon(img, (255, 255, 255))
+                else:
+                    img = ImageFunctions.color_icon(img, color)
                 tup = (icon_size, icon_size)
                 img.resize(tup, resample=0)
                 image_base.paste(img, (x, y), img)
