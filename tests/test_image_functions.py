@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Unit tests for image_functions.py
+import os.path
+from pathlib import Path
 
 from PIL import Image, ImageDraw
+
+from piblo.constants import IconFileConst, ConfigConst, IconConst, ImageConst
 from piblo.image_functions import ImageFunctions
 
 
@@ -107,3 +111,68 @@ def test_add_status_icon():
 
     assert extrema != unexpected_extrema
     assert pixel == expected_pixel
+
+
+def test_color_icon():
+    img = Image.new(mode="RGBA", size=(600, 400), color="black")
+    img = ImageFunctions.color_icon(img, (255, 0, 0))
+    red_pixel = img.getpixel((300, 300))
+    expected_red_pixel = (255, 0, 0, 255)
+    assert red_pixel == expected_red_pixel
+
+
+def test_is_range_dark():
+    img = Image.new(mode="RGBA", size=(600, 400), color="black")
+    draw = ImageDraw.Draw(img, ImageConst.DRAW_MODE.value)
+    draw.rectangle((0, 0, 600, 200), fill=(255, 255, 255))
+    top = ImageFunctions.is_range_dark(img, (0, 0, 600, 100))
+    bottom = ImageFunctions.is_range_dark(img, (0, 300, 600, 400))
+    upper = ImageFunctions.is_range_dark(img, (0, 50, 600, 300))
+    lower = ImageFunctions.is_range_dark(img, (0, 150, 600, 400))
+
+    assert top is False
+    assert bottom is True
+    assert upper is False
+    assert lower is True
+
+
+def test_draw_icons():
+    here = os.path.dirname(__file__)
+    path = Path(here)
+    parent = path.parent.absolute()
+    func = ImageFunctions()
+    img = Image.new(mode="RGBA", size=(600, 400), color="black")
+    draw = ImageDraw.Draw(img, ImageConst.DRAW_MODE.value)
+
+    draw.rectangle((0, 0, 600, 200), fill=(255, 255, 255))
+    icons = []
+    for icon in IconFileConst:
+        icons.append(icon.value)
+
+    icons.sort(key=lambda item: item[1])
+
+    img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
+                          icon_location=IconConst.LOC_TOP_RIGHT.value, icon_color="auto")
+    img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
+                          icon_location=IconConst.LOC_BOTTOM_LEFT.value, icon_color="auto")
+    img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
+                          icon_location=IconConst.LOC_BOTTOM_RIGHT.value, icon_color="#FF0000")
+
+    #img.show()
+
+    # Check image is not all black
+    extrema = img.convert("L").getextrema()
+    # Check appropriate pixel is white
+    white_pixel = img.getpixel((20, 386))
+    black_pixel = img.getpixel((580, 16))
+    red_pixel = img.getpixel((585, 387))
+
+    unexpected_extrema = (0, 0)
+    expected_white_pixel = (255, 255, 255, 255)
+    expected_black_pixel = (0, 0, 0, 255)
+    expected_red_pixel = (255, 0, 0, 255)
+
+    assert extrema != unexpected_extrema
+    assert white_pixel == expected_white_pixel
+    assert black_pixel == expected_black_pixel
+    assert red_pixel == expected_red_pixel
