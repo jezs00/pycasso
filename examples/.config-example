@@ -146,6 +146,9 @@ opacity=150
 # Icon Settings #
 #################
 
+# Can be set to a hex like "#FF0000", or "auto" to automatically set white or black depending on background [string]
+icon_color=auto
+
 # Padding from the corner for the status icon in pixels [integer]
 icon_padding=10
 

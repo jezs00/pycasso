@@ -72,6 +72,7 @@ class Configs:
         self.opacity = ConfigConst.TEXT_OPACITY.value
 
         # Icon Settings
+        self.icon_color = ConfigConst.ICON_COLOR.value
         self.icon_padding = ConfigConst.ICON_PADDING.value
         self.icon_corner = ConfigConst.ICON_CORNER.value
         self.icon_size = ConfigConst.ICON_SIZE.value
@@ -186,6 +187,7 @@ class Configs:
                                                 fallback=ConfigConst.PROMPT_POSTSCRIPT.value)[1:-1]
 
             # Icon
+            self.icon_color = config.get("Icon", "icon_color", fallback=ConfigConst.ICON_COLOR.value)
             self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
             self.icon_corner = config.get("Icon", "icon_corner", fallback=ConfigConst.ICON_CORNER.value)
             self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)

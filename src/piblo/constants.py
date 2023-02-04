@@ -47,6 +47,7 @@ class ConfigConst(Enum):
     TEXT_OPACITY = 150
 
     # Icon Settings
+    ICON_COLOR = "auto"
     ICON_PADDING = 10
     ICON_CORNER = "nw"
     ICON_SIZE = 20
