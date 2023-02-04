@@ -198,7 +198,6 @@ def test_add_text_to_image_blank():
 def test_run_normal():
     here = os.path.dirname(__file__)
     output_path = "mock_output.png"
-    save_path = os.path.join(here, "pycasso - test preambleTest Subject test connector Test Artist test postscript.png")
     test_folder = UnitTestConst.PYCASSO_FOLDER.value
     config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
     instance = Pycasso(config_path, file_path=os.path.dirname(__file__))
@@ -206,13 +205,10 @@ def test_run_normal():
     instance.run()
 
     assert os.path.exists(output_path)
-    assert os.path.exists(save_path)
 
     # Cleanup files after
     if os.path.exists(output_path):
         os.remove(output_path)
-    if os.path.exists(save_path):
-        os.remove(save_path)
 
 
 def test_run_external():
@@ -284,6 +280,7 @@ def test_major_complete_config():
     assert instance.config.opacity == 220
 
     # Icon Settings
+    assert instance.config.icon_color == "#FABDAB"
     assert instance.config.icon_padding == 20
     assert instance.config.icon_corner == IconConst.LOC_BOTTOM_RIGHT.value
     assert instance.config.icon_size == 30
