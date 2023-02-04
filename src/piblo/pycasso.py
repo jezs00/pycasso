@@ -61,7 +61,8 @@ class Pycasso:
         returns PIL image object
 
     load_automatic_image(prompt, width, height):
-        Uses local Automatic111 Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions 'width' and 'height'
+        Uses local Automatic111 Stable Diffusion API to request an image based on 'prompt' text, of pixel dimensions
+        'width' and 'height'
         returns PIL image object
 
     load_dalle_image(prompt, width, height, infill=False, dalle_key=None):
@@ -119,6 +120,9 @@ class Pycasso:
         # Config Dictionary for omni-epd
         self.config_dict = {}
 
+        # Image
+        self.image_base = None
+
         # Icon
         self.charge_level = charge_level
         self.icon_shape = None
@@ -148,6 +152,7 @@ class Pycasso:
 
     @staticmethod
     def parse_args():
+        args = None
         try:
             parser = argparse.ArgumentParser(
                 description="A program to request an image from preset APIs and apply them to an"
@@ -193,10 +198,15 @@ class Pycasso:
             logging.error(e)
             exit()
 
+        except BaseException as e:
+            logging.error(e)
+            exit()
+
         return args
 
     def load_config(self, config_path=None):
         # Loads config from file provided to it or sets defaults
+        config = None
 
         try:
             if config_path is None:
@@ -567,6 +577,7 @@ class Pycasso:
 
     def run(self):
         logging.info("pycasso has begun")
+        epd = None
 
         try:
             epd = displayfactory.load_display_driver(self.config.display_type, self.config_dict)
@@ -583,6 +594,10 @@ class Pycasso:
             logging.info("ctrl + c:")
             exit()
 
+        except BaseException as e:
+            logging.error(e)
+            exit()
+
         if self.args.norun:
             logging.info("--norun option used, closing pycasso without running")
             exit()
@@ -596,12 +611,12 @@ class Pycasso:
                                                      self.config.preamble_regex, self.config.artist_regex,
                                                      self.config.remove_text, self.config.parse_file_text,
                                                      self.config.image_format, self.config.resize_external)
-                image_base, title_text, artist_text = mode_list
+                self.image_base, title_text, artist_text = mode_list
 
             elif provider_type == ProvidersConst.HISTORIC.value:
                 # Historic image previously saved
                 mode_list = self.load_historic_image(self.config.generated_image_location, self.config.image_format)
-                image_base, title_text, artist_text = mode_list
+                self.image_base, title_text, artist_text = mode_list
 
             else:
                 # Build prompt, get metadata
@@ -616,23 +631,23 @@ class Pycasso:
                         "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever "
                         "running again."
                     )
-                    image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,
+                    self.image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,
                                                                                artist_text)
                     self.config.save_image = False
 
                 elif provider_type == ProvidersConst.STABLE.value:
                     # Stable Diffusion
-                    image_base = self.load_stability_image(prompt, epd.width, epd.height,
+                    self.image_base = self.load_stability_image(prompt, epd.width, epd.height,
                                                            stability_key=self.stability_key)
 
                 elif provider_type == ProvidersConst.DALLE.value:
                     # Dalle
-                    image_base = self.load_dalle_image(prompt, epd.width, epd.height,
+                    self.image_base = self.load_dalle_image(prompt, epd.width, epd.height,
                                                        infill=self.config.infill, dalle_key=self.dalle_key)
                     
                 elif provider_type == ProvidersConst.AUTOMATIC.value:
                     # Automatic
-                    image_base = self.load_automatic_image(prompt, epd.width, epd.height,
+                    self.image_base = self.load_automatic_image(prompt, epd.width, epd.height,
                                                            host=self.config.automatic_host,
                                                            port=self.config.automatic_port)
 
@@ -642,40 +657,40 @@ class Pycasso:
                     exit()
 
                 # Handle if image failed to load
-                if image_base is None:
+                if self.image_base is None:
                     logging.error("Image failed to load. Please check providers. Exiting pycasso.")
                     exit()
 
                 if self.config.save_image:
-                    self.save_image(prompt, image_base, metadata, self.config.generated_image_location)
+                    self.save_image(prompt, self.image_base, metadata, self.config.generated_image_location)
 
-            if image_base is None:
+            if self.image_base is None:
                 logging.error("Image failed to load. Please check providers or folders. Exiting pycasso.")
                 exit()
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
-            image_crop = ImageFunctions.get_crop_size(image_base.width, image_base.height, epd.width, epd.height)
+            image_crop = ImageFunctions.get_crop_size(self.image_base.width, self.image_base.height, epd.width, epd.height)
             crop_left = image_crop[0]
             crop_right = image_crop[2]
 
             # Crop and prepare image
-            image_base = image_base.crop(image_crop)
-            if image_base.mode not in ImageConst.SUPPORTED_MODES.value:
-                image_base = image_base.convert(ImageConst.CONVERT_MODE.value)
+            self.image_base = self.image_base.crop(image_crop)
+            if self.image_base.mode not in ImageConst.SUPPORTED_MODES.value:
+                self.image_base = self.image_base.convert(ImageConst.CONVERT_MODE.value)
 
             if self.config.show_battery_icon:
                 self.add_battery_icon(self.charge_level)
 
             # Draw icons
-            image_base = ImageFunctions.draw_icons(image_base, self.icons, icon_path=self.config.icon_path,
+            self.image_base = ImageFunctions.draw_icons(self.image_base, self.icons, icon_path=self.config.icon_path,
                                                    icon_color=self.config.icon_color,
                                                    icon_location=self.config.icon_corner,
                                                    icon_padding=self.config.icon_padding,
                                                    icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,
                                                    icon_opacity=self.config.icon_opacity)
 
-            draw = ImageDraw.Draw(image_base, ImageConst.DRAW_MODE.value)
+            draw = ImageDraw.Draw(self.image_base, ImageConst.DRAW_MODE.value)
 
             # Draw status shape if provided
             if self.icon_shape is not None:
@@ -685,12 +700,12 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                self.add_text_to_image(draw, self.config.font_file, image_base.height, epd.width, title_text,
+                self.add_text_to_image(draw, self.config.font_file, self.image_base.height, epd.width, title_text,
                                        artist_text, self.config.title_loc, self.config.artist_loc, self.config.padding,
                                        self.config.opacity, self.config.title_size, self.config.artist_size,
                                        self.config.box_to_floor, self.config.box_to_edge, crop_left, crop_right)
 
-            self.display_image_on_epd(image_base, epd)
+            self.display_image_on_epd(self.image_base, epd)
             logging.shutdown()
 
         except EPDNotFoundError:
@@ -703,4 +718,8 @@ class Pycasso:
         except KeyboardInterrupt:
             logging.info("ctrl + c:")
             epd.close()
+            exit()
+
+        except BaseException as e:
+            logging.error(e)
             exit()
