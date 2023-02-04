@@ -209,18 +209,18 @@ class IconConst(Enum):
 
 
 class IconFileConst(Enum):
-    ICON_BATTERY_20 = ("battery.svg", 10)
-    ICON_BATTERY_40 = ("battery-1.svg", 20)
-    ICON_BATTERY_60 = ("battery-2.svg", 30)
-    ICON_BATTERY_80 = ("battery-3.svg", 40)
-    ICON_BATTERY_100 = ("battery-4.svg", 50)
-    ICON_BATTERY_ERROR = ("battery-off.svg", 80)
+    ICON_BATTERY_20 = ("battery.png", 10)
+    ICON_BATTERY_40 = ("battery-1.png", 20)
+    ICON_BATTERY_60 = ("battery-2.png", 30)
+    ICON_BATTERY_80 = ("battery-3.png", 40)
+    ICON_BATTERY_100 = ("battery-4.png", 50)
+    ICON_BATTERY_ERROR = ("battery-off.png", 80)
 
-    ICON_EXTERNAL = ("device-floppy.svg", 100)
-    ICON_GENERATED = ("history.svg", 110)
-    ICON_STABLE = ("circle-letter-s.svg", 120)
-    ICON_DALLE = ("circle-letter-d.svg", 130)
-    ICON_AUTOMATIC = ("device-desktop.svg", 140)
+    ICON_EXTERNAL = ("device-floppy.png", 100)
+    ICON_GENERATED = ("history.png", 110)
+    ICON_STABLE = ("circle-letter-s.png", 120)
+    ICON_DALLE = ("circle-letter-d.png", 130)
+    ICON_AUTOMATIC = ("device-desktop.png", 140)
 
-    ICON_EXCEPTION = ("heart-broken.svg", 200)
+    ICON_EXCEPTION = ("heart-broken.png", 200)
 
