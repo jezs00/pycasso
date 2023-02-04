@@ -148,6 +148,9 @@ opacity = 220
 # Padding from the top left corner for the status icon in pixels [integer]
 icon_padding = 20
 
+# Corner to display icons in. Options are "nw", "ne", "sw", "se" [string]
+icon_corner=se
+
 # Size of the status icon in pixels [integer]
 icon_size = 30
 
@@ -156,6 +159,18 @@ icon_width = 6
 
 # Opacity of the status icon [integer]
 icon_opacity = 190
+
+# Path to icon folder relative to working directory [string]
+icon_path=test_location/test/test
+
+# Show an icon displaying the battery level [boolean]
+show_battery_icon=False
+
+# Show an icon displaying the provider used [boolean]
+show_provider_icon=False
+
+# Show an icon displaying error status [boolean]
+show_status_icon=False
 
 [Logging]
 ####################

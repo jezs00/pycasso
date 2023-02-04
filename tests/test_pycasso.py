@@ -5,7 +5,7 @@
 import os.path
 
 from omni_epd import displayfactory
-from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst
+from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst, IconConst
 from piblo.file_operations import FileOperations
 from piblo.pycasso import Pycasso
 from PIL import Image, PngImagePlugin, ImageDraw
@@ -285,9 +285,17 @@ def test_major_complete_config():
 
     # Icon Settings
     assert instance.config.icon_padding == 20
+    assert instance.config.icon_corner == IconConst.LOC_BOTTOM_RIGHT.value
     assert instance.config.icon_size == 30
     assert instance.config.icon_width == 6
     assert instance.config.icon_opacity == 190
+    assert instance.config.icon_path == "test_location/test/test"
+    assert instance.config.icon_size == 30
+    assert instance.config.icon_width == 6
+    assert instance.config.icon_opacity == 190
+    assert instance.config.show_battery_icon is False
+    assert instance.config.show_provider_icon is False
+    assert instance.config.show_status_icon is False
 
     # Prompt Settings
     assert instance.config.prompt_mode == 2

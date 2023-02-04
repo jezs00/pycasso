@@ -150,7 +150,7 @@ opacity=150
 icon_padding=10
 
 # Corner to display icons in. Options are "nw", "ne", "sw", "se" [string]
-icon_corner="nw"
+icon_corner=nw
 
 # Size of the status icon in pixels [integer]
 icon_size=20
