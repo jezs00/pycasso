@@ -208,6 +208,8 @@ class IconConst(Enum):
     LOC_BOTTOM_LEFT = "sw"
     LOC_BOTTOM_RIGHT = "se"
 
+    BACKGROUND_DARK_LIMIT = 127
+
 
 class IconFileConst(Enum):
     ICON_BATTERY_20 = ("battery.png", 10)

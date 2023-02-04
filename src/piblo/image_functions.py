@@ -5,7 +5,7 @@ import math
 import os
 
 import numpy
-from PIL import Image, ImageColor
+from PIL import Image, ImageColor, ImageStat
 
 from piblo.constants import DisplayShapeConst, IconFileConst, ConfigConst, IconConst, ImageConst
 
@@ -172,16 +172,31 @@ class ImageFunctions:
     @staticmethod
     def color_icon(img, rgb):
         # From https://stackoverflow.com/questions/3752476/python-pil-replace-a-single-rgba-color
+        if rgb == (0, 0, 0):
+            # Don't do anything if we're requesting black
+            return img
 
         data = numpy.array(img)  # "data" is a height x width x 4 numpy array
         red, green, blue, alpha = data.T  # Temporarily unpack the bands for readability
 
-        # Replace white with red... (leaves alpha values alone...)
+        # Replace black with color
         black_areas = (red == 0) & (blue == 0) & (green == 0)
         data[..., :-1][black_areas.T] = rgb  # Transpose back needed
 
         img = Image.fromarray(data)
         return img
+
+    @staticmethod
+    def is_range_dark(img, area):
+        # Uses process 3 from https://stackoverflow.com/questions/3490727/what-are-some-methods-to-analyze-image
+        # -brightness-using-python
+        img = img.crop(area)
+        stat = ImageStat.Stat(img)
+        r, g, b, a = stat.mean
+        brightness = math.sqrt(0.241 * (r ** 2) + 0.691 * (g ** 2) + 0.068 * (b ** 2))
+        if brightness < IconConst.BACKGROUND_DARK_LIMIT.value:
+            return True
+        return False
 
     @staticmethod
     def draw_icons(image_base, icons, icon_path=ConfigConst.ICON_PATH.value, icon_color=ConfigConst.ICON_COLOR.value,
@@ -192,27 +207,36 @@ class ImageFunctions:
             # Don't bother doing all the rest if the list is empty
             return image_base
 
+        icon_point = icon_padding + icon_size
+
         # Default to top left
         x = icon_padding
         y = icon_padding
         left_to_right = True
+        bright_zone = (0, 0, image_base.width, icon_point)
 
         if icon_location == IconConst.LOC_TOP_RIGHT.value:
-            x = image_base.width - icon_padding - icon_size
+            x = image_base.width - icon_point
             left_to_right = False
         elif icon_location == IconConst.LOC_BOTTOM_LEFT.value:
-            y = image_base.height - icon_padding - icon_size
+            y = image_base.height - icon_point
+            bright_zone = (0, y, image_base.width, image_base.height)
         elif icon_location == IconConst.LOC_BOTTOM_RIGHT.value:
-            x = image_base.width - icon_padding - icon_size
-            y = image_base.height - icon_padding - icon_size
+            x = image_base.width - icon_point
+            y = image_base.height - icon_point
             left_to_right = False
+            bright_zone = (0, y, image_base.width, image_base.height)
 
         # Set icons in order of weight
         icons.sort(key=lambda item: item[1])
 
         color = (0, 0, 0)
         # Get color
-        if icon_color != "auto":
+        if icon_color == "auto":
+            # Set color differently based on brightness of area
+            if ImageFunctions.is_range_dark(image_base, bright_zone):
+                color = (255, 255, 255)
+        else:
             color = ImageColor.getcolor(icon_color, ImageConst.CONVERT_MODE.value)
 
         for icon in icons:
@@ -220,10 +244,7 @@ class ImageFunctions:
             if os.path.exists(path):
                 img = Image.open(path)
                 img = img.convert(ImageConst.DRAW_MODE.value)
-                if icon_color == "auto":
-                    img = ImageFunctions.color_icon(img, (255, 255, 255))
-                else:
-                    img = ImageFunctions.color_icon(img, color)
+                img = ImageFunctions.color_icon(img, color)
                 tup = (icon_size, icon_size)
                 img.resize(tup, resample=0)
                 image_base.paste(img, (x, y), img)
