@@ -657,6 +657,14 @@ class Pycasso:
             image_base = image_base.crop(image_crop)
             if image_base.mode not in ImageConst.SUPPORTED_MODES.value:
                 image_base = image_base.convert(ImageConst.CONVERT_MODE.value)
+
+            # Draw icons
+            image_base = ImageFunctions.draw_icons(image_base, self.icons, icon_path=self.config.icon_path,
+                                                   icon_location=self.config.icon_corner,
+                                                   icon_padding=self.config.icon_padding,
+                                                   icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,
+                                                   icon_opacity=self.config.icon_opacity)
+
             draw = ImageDraw.Draw(image_base, ImageConst.DRAW_MODE.value)
 
             # Draw status shape if provided
