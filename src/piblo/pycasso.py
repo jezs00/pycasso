@@ -135,14 +135,14 @@ class Pycasso:
         if self.args.displayshape is not None:
             self.icon_shape = self.args.displayshape
 
-        if self.args.savekeys:
-            if self.stability_key is not None:
-                StabilityProvider.add_secret(self.stability_key, self.use_keychain, self.credential_path)
-            if self.dalle_key is not None:
-                DalleProvider.add_secret(self.dalle_key, self.use_keychain, self.credential_path)
-
         # Load config or set defaults
         self.config = self.load_config(config_path)
+
+        if self.args.savekeys:
+            if self.stability_key is not None:
+                StabilityProvider.add_secret(self.stability_key, self.config.use_keychain, self.config.credential_path)
+            if self.dalle_key is not None:
+                DalleProvider.add_secret(self.dalle_key, self.config.use_keychain, self.config.credential_path)
 
         return
 
