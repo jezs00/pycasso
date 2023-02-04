@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
+import logging
 import math
 import os
 
@@ -173,6 +174,10 @@ class ImageFunctions:
                    icon_location=ConfigConst.ICON_CORNER.value, icon_padding=ConfigConst.ICON_PADDING.value,
                    icon_size=ConfigConst.ICON_SIZE.value, icon_gap=ConfigConst.ICON_GAP.value,
                    icon_opacity=ConfigConst.ICON_OPACITY.value):
+        if len(icons) == 0:
+            # Don't bother doing all the rest if the list is empty
+            return image_base
+
         # Default to top left
         x = icon_padding
         y = icon_padding
@@ -193,17 +198,20 @@ class ImageFunctions:
 
         for icon in icons:
             path = os.path.join(icon_path, icon[0])
-            img = Image.open(path)
-            img = img.convert(ImageConst.DRAW_MODE.value)
-            tup = (icon_size, icon_size)
-            img.resize(tup, resample=0)
-            image_base.paste(img, (x, y), img)
+            if os.path.exists(path):
+                img = Image.open(path)
+                img = img.convert(ImageConst.DRAW_MODE.value)
+                tup = (icon_size, icon_size)
+                img.resize(tup, resample=0)
+                image_base.paste(img, (x, y), img)
 
-            hop = icon_gap + img.width
-            if left_to_right:
-                x += hop
+                hop = icon_gap + img.width
+                if left_to_right:
+                    x += hop
+                else:
+                    x -= hop
             else:
-                x -= hop
+                logging.warning(f"Path to icon '{path}' does not appear to exist.")
 
         return image_base
 
