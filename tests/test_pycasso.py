@@ -236,7 +236,7 @@ def test_run_generated():
     output_path = "mock_output.png"
     test_folder = UnitTestConst.PYCASSO_FOLDER.value
     config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
-    instance = Pycasso(config_path, file_path=os.path.dirname(__file__))
+    instance = Pycasso(config_path, file_path=here)
     instance.config.historic_amount = 1
     instance.run()
 
