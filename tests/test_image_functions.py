@@ -158,8 +158,6 @@ def test_draw_icons():
     img = func.draw_icons(img, icons, icon_path=os.path.join(parent, ConfigConst.ICON_PATH.value),
                           icon_location=IconConst.LOC_BOTTOM_RIGHT.value, icon_color="#FF0000")
 
-    img.show()
-
     # Check image is not all black
     extrema = img.convert("L").getextrema()
     # Check appropriate pixel is white
