@@ -561,6 +561,10 @@ class Pycasso:
         self.icons.append(battery_icon)
         return battery_icon
 
+    def add_exception_icon(self):
+        self.icons.append(IconFileConst.ICON_EXCEPTION.value)
+        return
+
     def run(self):
         logging.info("pycasso has begun")
 

@@ -50,6 +50,7 @@ class PiJuiceHandler:
         try:
             instance = Pycasso()
         except Exception as e:
+            logging.error(e)
             logging.error("Cannot create Pycasso object. Exiting process.")
             sys.exit()
 
@@ -73,7 +74,7 @@ class PiJuiceHandler:
             logging.error(e)
             logging.error("Cannot create pijuice object. Running pycasso once with error display and exiting process.")
             # run pycasso with error symbol, then exit
-            instance.icon_shape = DisplayShapeConst.CROSS.value
+            instance.add_exception_icon()
             instance.run()
 
             if shutdown_ex:
