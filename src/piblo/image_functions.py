@@ -192,8 +192,7 @@ class ImageFunctions:
         # -brightness-using-python
         img = img.crop(area)
         stat = ImageStat.Stat(img)
-        r, g, b, a = stat.mean
-        brightness = math.sqrt(0.241 * (r ** 2) + 0.691 * (g ** 2) + 0.068 * (b ** 2))
+        brightness = math.sqrt(0.241 * (stat.mean[0] ** 2) + 0.691 * (stat.mean[1] ** 2) + 0.068 * (stat.mean[2] ** 2))
         if brightness < IconConst.BACKGROUND_DARK_LIMIT.value:
             return True
         return False
