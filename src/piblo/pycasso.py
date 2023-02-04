@@ -120,6 +120,9 @@ class Pycasso:
         # Config Dictionary for omni-epd
         self.config_dict = {}
 
+        # EPD
+        self.epd = None
+
         # Image
         self.image_base = None
 
@@ -127,6 +130,7 @@ class Pycasso:
         self.prompt = ""
         self.artist_text = ""
         self.title_text = ""
+        self.metadata = None
 
         # Icon
         self.charge_level = charge_level
@@ -382,7 +386,7 @@ class Pycasso:
 
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
-        metadata = PngImagePlugin.PngInfo()
+        self.metadata = PngImagePlugin.PngInfo()
         artist_text = None
 
         if prompt_mode == PromptModeConst.RANDOM.value:
@@ -396,26 +400,26 @@ class Pycasso:
                                                          self.config.prompt_preamble, self.config.prompt_connector,
                                                          self.config.prompt_postscript, self.config.parse_brackets,
                                                          self.config.parse_random_text)
-            prompt, artist_text, title_text = prompt_gen
-            metadata.add_text(PropertiesConst.ARTIST.value, artist_text)
-            metadata.add_text(PropertiesConst.TITLE.value, title_text)
+            self.prompt, self.artist_text, self.title_text = prompt_gen
+            self.metadata.add_text(PropertiesConst.ARTIST.value, self.artist_text)
+            self.metadata.add_text(PropertiesConst.TITLE.value, self.title_text)
 
         elif prompt_mode == PromptModeConst.PROMPT.value:
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                  self.config.prompt_postscript, self.config.parse_brackets,
                                                  self.config.parse_random_text)
-            prompt, title_text = prompt_gen
+            self.prompt, self.title_text = prompt_gen
             artist_text = ""
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                  self.config.prompt_postscript)
-            prompt, title_text = prompt_gen
+            self.prompt, self.title_text = prompt_gen
 
-        metadata.add_text(PropertiesConst.PROMPT.value, prompt)
-        return prompt, metadata, artist_text, title_text
+        self.metadata.add_text(PropertiesConst.PROMPT.value, self.prompt)
+        return self.prompt, self.metadata, self.artist_text, self.title_text
 
     @staticmethod
     def parse_multiple_brackets(text, bracket_pairs=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
@@ -551,6 +555,72 @@ class Pycasso:
                       anchor="mb", fill=0)
         return draw
 
+    def get_image(self):
+        provider_type = self.get_random_provider_mode()
+
+        if provider_type == ProvidersConst.EXTERNAL.value:
+            # External image load
+            mode_list = self.load_external_image(self.config.external_image_location, self.epd.width, self.epd.height,
+                                                 self.config.preamble_regex, self.config.artist_regex,
+                                                 self.config.remove_text, self.config.parse_file_text,
+                                                 self.config.image_format, self.config.resize_external)
+            self.image_base, self.title_text, self.artist_text = mode_list
+
+        elif provider_type == ProvidersConst.HISTORIC.value:
+            # Historic image previously saved
+            mode_list = self.load_historic_image(self.config.generated_image_location, self.config.image_format)
+            self.image_base, self.title_text, self.artist_text = mode_list
+
+        else:
+            # Build prompt, get metadata
+            self.prompt, self.metadata, self.artist_text, self.title_text = self.prep_prompt_text(self.config.prompt_mode)
+            logging.info(f"Requesting \'{self.prompt}\'")
+
+            # Pick between providers
+            if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
+                # Test run
+                logging.info(
+                    "Running test mode as no other provider selected. Configure providers in '.config' to enable "
+                    "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever "
+                    "running again."
+                )
+                self.image_base, self.title_text, self.artist_text = self.load_test_image(self.epd.width,
+                                                                                          self.epd.height,
+                                                                                          self.title_text,
+                                                                                          self.artist_text)
+                self.config.save_image = False
+
+            elif provider_type == ProvidersConst.STABLE.value:
+                # Stable Diffusion
+                self.image_base = self.load_stability_image(self.prompt, self.epd.width, self.epd.height,
+                                                            stability_key=self.stability_key)
+
+            elif provider_type == ProvidersConst.DALLE.value:
+                # Dalle
+                self.image_base = self.load_dalle_image(self.prompt, self.epd.width, self.epd.height,
+                                                        infill=self.config.infill, dalle_key=self.dalle_key)
+
+            elif provider_type == ProvidersConst.AUTOMATIC.value:
+                # Automatic
+                self.image_base = self.load_automatic_image(self.prompt, self.epd.width, self.epd.height,
+                                                            host=self.config.automatic_host,
+                                                            port=self.config.automatic_port)
+
+            else:
+                # Invalid provider
+                warnings.warn(f"Invalid provider option chosen: {provider_type}")
+                exit()
+
+            # Handle if image failed to load
+            if self.image_base is None:
+                logging.error("Image failed to load. Please check providers. Exiting pycasso.")
+                exit()
+
+            if self.config.save_image:
+                self.save_image(self.prompt, self.image_base, self.metadata, self.config.generated_image_location)
+
+        return self.image_base
+
     def add_battery_icon(self, battery_percent):
 
         empty = range(0-20)
@@ -582,14 +652,13 @@ class Pycasso:
 
     def run(self):
         logging.info("pycasso has begun")
-        epd = None
 
         try:
-            epd = displayfactory.load_display_driver(self.config.display_type, self.config_dict)
+            self.epd = displayfactory.load_display_driver(self.config.display_type, self.config_dict)
             # If display is mock, apply height and width to it
             if self.config.display_type == ConfigConst.DISPLAY_TYPE.value:
-                epd.width = self.config.test_epd_width
-                epd.height = self.config.test_epd_height
+                self.epd.width = self.config.test_epd_width
+                self.epd.height = self.config.test_epd_height
 
         except EPDNotFoundError:
             logging.error(f"Couldn't find {self.config.display_type}")
@@ -608,66 +677,7 @@ class Pycasso:
             exit()
 
         try:
-            provider_type = self.get_random_provider_mode()
-
-            if provider_type == ProvidersConst.EXTERNAL.value:
-                # External image load
-                mode_list = self.load_external_image(self.config.external_image_location, epd.width, epd.height,
-                                                     self.config.preamble_regex, self.config.artist_regex,
-                                                     self.config.remove_text, self.config.parse_file_text,
-                                                     self.config.image_format, self.config.resize_external)
-                self.image_base, title_text, artist_text = mode_list
-
-            elif provider_type == ProvidersConst.HISTORIC.value:
-                # Historic image previously saved
-                mode_list = self.load_historic_image(self.config.generated_image_location, self.config.image_format)
-                self.image_base, title_text, artist_text = mode_list
-
-            else:
-                # Build prompt, get metadata
-                prompt, metadata, artist_text, title_text = self.prep_prompt_text(self.config.prompt_mode)
-                logging.info(f"Requesting \'{prompt}\'")
-
-                # Pick between providers
-                if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
-                    # Test run
-                    logging.info(
-                        "Running test mode as no other provider selected. Configure providers in '.config' to enable "
-                        "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever "
-                        "running again."
-                    )
-                    self.image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,
-                                                                               artist_text)
-                    self.config.save_image = False
-
-                elif provider_type == ProvidersConst.STABLE.value:
-                    # Stable Diffusion
-                    self.image_base = self.load_stability_image(prompt, epd.width, epd.height,
-                                                           stability_key=self.stability_key)
-
-                elif provider_type == ProvidersConst.DALLE.value:
-                    # Dalle
-                    self.image_base = self.load_dalle_image(prompt, epd.width, epd.height,
-                                                       infill=self.config.infill, dalle_key=self.dalle_key)
-                    
-                elif provider_type == ProvidersConst.AUTOMATIC.value:
-                    # Automatic
-                    self.image_base = self.load_automatic_image(prompt, epd.width, epd.height,
-                                                           host=self.config.automatic_host,
-                                                           port=self.config.automatic_port)
-
-                else:
-                    # Invalid provider
-                    warnings.warn(f"Invalid provider option chosen: {provider_type}")
-                    exit()
-
-                # Handle if image failed to load
-                if self.image_base is None:
-                    logging.error("Image failed to load. Please check providers. Exiting pycasso.")
-                    exit()
-
-                if self.config.save_image:
-                    self.save_image(prompt, self.image_base, metadata, self.config.generated_image_location)
+            self.get_image()
 
             if self.image_base is None:
                 logging.error("Image failed to load. Please check providers or folders. Exiting pycasso.")
@@ -675,7 +685,8 @@ class Pycasso:
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
-            image_crop = ImageFunctions.get_crop_size(self.image_base.width, self.image_base.height, epd.width, epd.height)
+            image_crop = ImageFunctions.get_crop_size(self.image_base.width, self.image_base.height, self.epd.width,
+                                                      self.epd.height)
             crop_left = image_crop[0]
             crop_right = image_crop[2]
 
@@ -705,12 +716,13 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                self.add_text_to_image(draw, self.config.font_file, self.image_base.height, epd.width, title_text,
-                                       artist_text, self.config.title_loc, self.config.artist_loc, self.config.padding,
-                                       self.config.opacity, self.config.title_size, self.config.artist_size,
-                                       self.config.box_to_floor, self.config.box_to_edge, crop_left, crop_right)
+                self.add_text_to_image(draw, self.config.font_file, self.image_base.height, self.epd.width,
+                                       self.title_text, self.artist_text, self.config.title_loc, self.config.artist_loc,
+                                       self.config.padding, self.config.opacity, self.config.title_size,
+                                       self.config.artist_size, self.config.box_to_floor, self.config.box_to_edge,
+                                       crop_left, crop_right)
 
-            self.display_image_on_epd(self.image_base, epd)
+            self.display_image_on_epd(self.image_base, self.epd)
             logging.shutdown()
 
         except EPDNotFoundError:
@@ -722,7 +734,7 @@ class Pycasso:
 
         except KeyboardInterrupt:
             logging.info("ctrl + c:")
-            epd.close()
+            self.epd.close()
             exit()
 
         except BaseException as e:
