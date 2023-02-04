@@ -613,6 +613,7 @@ class Pycasso:
                     )
                     image_base, title_text, artist_text = self.load_test_image(epd.width, epd.height, title_text,
                                                                                artist_text)
+                    self.config.save_image = False
 
                 elif provider_type == ProvidersConst.STABLE.value:
                     # Stable Diffusion
