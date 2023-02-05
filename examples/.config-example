@@ -173,7 +173,7 @@ icon_path=resources/icons
 # Show an icon displaying the battery level [boolean]
 show_battery_icon=True
 
-# Show an icon displaying the provider used [boolean]
+# Show an icon displaying the provider used or failure [boolean]
 show_provider_icon=True
 
 # Show an icon displaying error status [boolean]
