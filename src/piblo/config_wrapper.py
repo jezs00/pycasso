@@ -102,9 +102,9 @@ class Configs:
         self.use_keychain = ProvidersConst.USE_KEYCHAIN.value
         self.credential_path = self.file.get_full_path(ProvidersConst.CREDENTIAL_PATH.value)
         self.test_enabled = ProvidersConst.TEST_ENABLED.value
-
         self.automatic_host = AutomaticConst.DEFAULT_HOST.value
         self.automatic_port = AutomaticConst.DEFAULT_PORT.value
+        self.provider_fallback = ProvidersConst.PROVIDER_FALLBACK.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -227,6 +227,8 @@ class Configs:
                                              fallback=AutomaticConst.DEFAULT_HOST.value)
             self.automatic_port = config.getint("Providers", "automatic_port",
                                                 fallback=AutomaticConst.DEFAULT_PORT.value)
+            self.provider_fallback = config.getboolean("Providers", "provider_fallback",
+                                                       fallback=ProvidersConst.PROVIDER_FALLBACK.value)
 
             # Logging Settings
             self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)

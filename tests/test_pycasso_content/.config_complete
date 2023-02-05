@@ -217,6 +217,9 @@ test_enabled = False
 automatic_host = 1.1.1.1
 automatic_port = 1337
 
+# Whether to try another provider on failure
+provider_fallback=False
+
 [Generation]
 ##################################
 # Image Generation Configuration #

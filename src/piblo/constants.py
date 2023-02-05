@@ -105,6 +105,8 @@ class ProvidersConst(Enum):
     DALLE_AMOUNT = 0
     AUTOMATIC_AMOUNT = 0
 
+    PROVIDER_FALLBACK = True
+
     USE_KEYCHAIN = False
     CREDENTIAL_PATH = ".creds"
     CREDENTIAL_PATH_EG = "examples/.creds-example"
