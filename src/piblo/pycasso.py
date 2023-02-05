@@ -502,6 +502,21 @@ class Pycasso:
         provider_type = random.choices(provider_types, k=1, weights=provider_weights)[0]
         return provider_type
 
+    def remove_provider_mode(self, mode):
+        if mode == ProvidersConst.EXTERNAL.value:
+            self.config.external_amount = 0
+        elif mode == ProvidersConst.HISTORIC.value:
+            self.config.historic_amount = 0
+        elif mode == ProvidersConst.STABLE.value:
+            self.config.stability_amount = 0
+        elif mode == ProvidersConst.DALLE.value:
+            self.config.dalle_amount = 0
+        elif mode == ProvidersConst.AUTOMATIC.value:
+            self.config.automatic_amount = 0
+        else:
+            logging.warning(f"Tried to remove invalid mode {mode}.")
+        return
+
     @staticmethod
     def add_text_to_image(draw, font_file, image_height, epd_width, title_text="", artist_text="",
                           title_location=ConfigConst.TEXT_TITLE_LOC.value,
@@ -613,12 +628,27 @@ class Pycasso:
 
             # Handle if image failed to load
             if self.image_base is None:
-                logging.error("Image failed to load. Please check providers. Exiting pycasso.")
-                exit()
+                logging.warning("Image failed to load. Please check providers.")
+                return None, provider_type
 
             if self.config.save_image:
                 self.save_image(self.prompt, self.image_base, self.metadata, self.config.generated_image_location)
 
+        return self.image_base, provider_type
+
+    def get_image_fallback_modes(self):
+        error = True
+        while error:
+            error = False
+            self.image_base, provider = self.get_image()
+            if self.image_base is None:
+                # If there's a failure to get the image
+                error = True
+                # Remove provider from possibilities
+                logging.warning(f"Image failed to load on provider '{provider}'. Removing from circulation on this "
+                                f"run.")
+                self.remove_provider_mode(provider)
+                self.add_exception_icon()
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
@@ -677,7 +707,7 @@ class Pycasso:
             exit()
 
         try:
-            self.get_image()
+            self.get_image_fallback_modes()
 
             if self.image_base is None:
                 logging.error("Image failed to load. Please check providers or folders. Exiting pycasso.")
@@ -695,6 +725,7 @@ class Pycasso:
             if self.image_base.mode not in ImageConst.SUPPORTED_MODES.value:
                 self.image_base = self.image_base.convert(ImageConst.CONVERT_MODE.value)
 
+            # Show battery icon if relevant
             if self.config.show_battery_icon:
                 self.add_battery_icon(self.charge_level)
 
@@ -735,8 +766,4 @@ class Pycasso:
         except KeyboardInterrupt:
             logging.info("ctrl + c:")
             self.epd.close()
-            exit()
-
-        except BaseException as e:
-            logging.error(e)
             exit()
