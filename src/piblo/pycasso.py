@@ -286,62 +286,83 @@ class Pycasso:
                             parse_text=ConfigConst.TEXT_PARSE_FILE_TEXT.value,
                             extension=ConfigConst.FILE_IMAGE_FORMAT.value,
                             resize_external=ConfigConst.FILE_RESIZE_EXTERNAL.value):
-        image_directory = location
-        if not os.path.exists(image_directory):
-            warnings.warn("External image directory path does not exist: '" + image_directory + "'")
-            exit()
-
-        # Get random image from folder
-        file = FileOperations(image_directory)
-        image_path = file.get_random_file_of_type(extension)
-        image_base = Image.open(image_path)
-
-        # Add text to via parsing if necessary
-        image_name = os.path.basename(image_path)
-        title_text = image_name
+        title_text = None
         artist_text = None
+        try:
+            image_directory = location
+            if not os.path.exists(image_directory):
+                warnings.warn("External image directory path does not exist: '" + image_directory + "'")
+                exit()
 
-        if parse_text:
-            title_text, artist_text = FileOperations.get_title_and_artist(image_name,
-                                                                          preamble_regex,
-                                                                          artist_regex,
-                                                                          extension)
-            title_text = FileOperations.remove_text(title_text, remove_text)
-            artist_text = FileOperations.remove_text(artist_text, remove_text)
-            title_text = title_text.title()
-            artist_text = artist_text.title()
+            # Get random image from folder
+            file = FileOperations(image_directory)
+            image_path = file.get_random_file_of_type(extension)
+            image_base = Image.open(image_path)
 
-        # Resize to thumbnail size based on epd resolution depending on if option selected
-        epd_res = (width, height)
-        if not resize_external:
-            epd_res = ImageFunctions.max_tup(epd_res)
-        image_base.thumbnail(epd_res)
+            # Add text to via parsing if necessary
+            image_name = os.path.basename(image_path)
+            title_text = image_name
+
+            if parse_text:
+                title_text, artist_text = FileOperations.get_title_and_artist(image_name,
+                                                                              preamble_regex,
+                                                                              artist_regex,
+                                                                              extension)
+                title_text = FileOperations.remove_text(title_text, remove_text)
+                artist_text = FileOperations.remove_text(artist_text, remove_text)
+                title_text = title_text.title()
+                artist_text = artist_text.title()
+
+            # Resize to thumbnail size based on epd resolution depending on if option selected
+            epd_res = (width, height)
+            if not resize_external:
+                epd_res = ImageFunctions.max_tup(epd_res)
+            image_base.thumbnail(epd_res)
+        except AttributeError as e:
+            logging.warning(e)
+            logging.warning("Unable to open external image. Check if you have any files in the folder.")
+            return None, title_text, artist_text
+        except BaseException as e:
+            logging.warning(e)
+            logging.warning("Unable to open external image.")
+            return None, title_text, artist_text
 
         return image_base, title_text, artist_text
 
     @staticmethod
     def load_historic_image(location, extension=ConfigConst.FILE_IMAGE_FORMAT.value):
-        image_directory = location
-        if not os.path.exists(image_directory):
-            warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
-            exit()
-
-        # Get random image from folder
-        file = FileOperations(image_directory)
-        image_path = file.get_random_file_of_type(extension)
-        image_base = Image.open(image_path)
-        image_name = os.path.basename(image_path)
-        title_text = image_name
+        title_text = None
         artist_text = None
+        try:
+            image_directory = location
+            if not os.path.exists(image_directory):
+                warnings.warn(f"Historic image directory path does not exist: '{image_directory}'")
+                exit()
 
-        # Get and apply metadata if it exists
-        metadata = image_base.text
-        if PropertiesConst.TITLE.value in metadata.keys():
-            title_text = metadata[PropertiesConst.TITLE.value]
-        elif PropertiesConst.PROMPT.value in metadata.keys():
-            title_text = metadata[PropertiesConst.PROMPT.value]
-        if PropertiesConst.ARTIST.value in metadata.keys():
-            artist_text = metadata[PropertiesConst.ARTIST.value]
+            # Get random image from folder
+            file = FileOperations(image_directory)
+            image_path = file.get_random_file_of_type(extension)
+            image_base = Image.open(image_path)
+            image_name = os.path.basename(image_path)
+            title_text = image_name
+
+            # Get and apply metadata if it exists
+            metadata = image_base.text
+            if PropertiesConst.TITLE.value in metadata.keys():
+                title_text = metadata[PropertiesConst.TITLE.value]
+            elif PropertiesConst.PROMPT.value in metadata.keys():
+                title_text = metadata[PropertiesConst.PROMPT.value]
+            if PropertiesConst.ARTIST.value in metadata.keys():
+                artist_text = metadata[PropertiesConst.ARTIST.value]
+        except AttributeError as e:
+            logging.warning(e)
+            logging.warning("Unable to open historical image. Check if you have any files in the folder.")
+            return None, title_text, artist_text
+        except BaseException as e:
+            logging.warning(e)
+            logging.warning("Unable to open historical image.")
+            return None, title_text, artist_text
+
         return image_base, title_text, artist_text
 
     @staticmethod
@@ -595,8 +616,8 @@ class Pycasso:
             if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
                 # Test run
                 logging.info(
-                    "Running test mode as no other provider selected due to config or failures. Configure providers in"
-                    "'.config' to enable your preferred functionality. Set 'test_enabled = False' to prevent test mode"
+                    "Running test mode as no other provider selected due to config or failures. Configure providers in "
+                    "'.config' to enable your preferred functionality. Set 'test_enabled = False' to prevent test mode "
                     "from ever running again."
                 )
                 self.image_base, self.title_text, self.artist_text = self.load_test_image(self.epd.width,
