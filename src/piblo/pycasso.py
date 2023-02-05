@@ -670,7 +670,7 @@ class Pycasso:
                                 f"run.")
                 self.remove_provider_mode(provider)
                 self.add_provider_fail_icon(provider)
-            self.add_provider_icon(provider)
+        self.add_provider_icon(provider)
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
