@@ -221,14 +221,14 @@ class IconFileConst(Enum):
 
     ICON_TEST = ("stethoscope.png", 97)
     ICON_EXTERNAL = ("circle-letter-e.png", 100)
-    ICON_GENERATED = ("circle-letter-h.png", 110)
+    ICON_HISTORIC = ("circle-letter-h.png", 110)
     ICON_STABLE = ("circle-letter-s.png", 120)
     ICON_DALLE = ("circle-letter-d.png", 130)
     ICON_AUTOMATIC = ("circle-letter-a.png", 140)
 
     ICON_TEST_FAIL = ("stethoscope-off.png", 67)
     ICON_EXTERNAL_FAIL = ("hexagon-letter-e.png", 70)
-    ICON_GENERATED_FAIL = ("hexagon-letter-h.png", 75)
+    ICON_HISTORIC_FAIL = ("hexagon-letter-h.png", 75)
     ICON_STABLE_FAIL = ("hexagon-letter-s.png", 80)
     ICON_DALLE_FAIL = ("hexagon-letter-d.png", 85)
     ICON_AUTOMATIC_FAIL = ("hexagon-letter-a.png", 90)
