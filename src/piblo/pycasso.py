@@ -673,7 +673,6 @@ class Pycasso:
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
-
         empty = range(0-20)
         low = range(21-40)
         half = range(41-60)
@@ -696,6 +695,46 @@ class Pycasso:
 
         self.icons.append(battery_icon)
         return battery_icon
+
+    def add_provider_icon(self, provider):
+        if provider == ProvidersConst.TEST:
+            icon = IconFileConst.ICON_TEST
+        elif provider == ProvidersConst.EXTERNAL.value:
+            icon = IconFileConst.ICON_EXTERNAL
+        elif provider == ProvidersConst.HISTORIC.value:
+            icon = IconFileConst.ICON_HISTORIC
+        elif provider == ProvidersConst.STABLE.value:
+            icon = IconFileConst.ICON_STABLE
+        elif provider == ProvidersConst.DALLE.value:
+            icon = IconFileConst.ICON_DALLE
+        elif provider == ProvidersConst.AUTOMATIC.value:
+            icon = IconFileConst.ICON_AUTOMATIC
+        else:
+            logging.warning(f"Tried to set icon for invalid mode {provider}.")
+            return
+
+        self.icons.append(icon)
+        return icon
+
+    def add_provider_icon_fail(self, provider):
+        if provider == ProvidersConst.TEST:
+            icon = IconFileConst.ICON_TEST_FAIL
+        elif provider == ProvidersConst.EXTERNAL.value:
+            icon = IconFileConst.ICON_EXTERNAL_FAIL
+        elif provider == ProvidersConst.HISTORIC.value:
+            icon = IconFileConst.ICON_HISTORIC_FAIL
+        elif provider == ProvidersConst.STABLE.value:
+            icon = IconFileConst.ICON_STABLE_FAIL
+        elif provider == ProvidersConst.DALLE.value:
+            icon = IconFileConst.ICON_DALLE_FAIL
+        elif provider == ProvidersConst.AUTOMATIC.value:
+            icon = IconFileConst.ICON_AUTOMATIC_FAIL
+        else:
+            logging.warning(f"Tried to set icon for invalid mode {provider}.")
+            return
+
+        self.icons.append(icon)
+        return icon
 
     def add_exception_icon(self):
         self.icons.append(IconFileConst.ICON_EXCEPTION.value)
