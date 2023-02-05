@@ -172,7 +172,7 @@ icon_path=test_location/test/test
 # Show an icon displaying the battery level [boolean]
 show_battery_icon=False
 
-# Show an icon displaying the provider used [boolean]
+# Show an icon displaying the provider used and failures [boolean]
 show_provider_icon=False
 
 # Show an icon displaying error status [boolean]
