@@ -201,7 +201,6 @@ def test_run_normal():
     test_folder = UnitTestConst.PYCASSO_FOLDER.value
     config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
     instance = Pycasso(config_path, file_path=os.path.dirname(__file__))
-    instance.config.generated_image_location = "tests"
     instance.run()
 
     assert os.path.exists(output_path)
@@ -234,6 +233,27 @@ def test_run_generated():
     config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
     instance = Pycasso(config_path, file_path=here)
     instance.config.historic_amount = 1
+    instance.run()
+
+    assert os.path.exists(output_path)
+
+    # Cleanup files after
+    if os.path.exists(output_path):
+        os.remove(output_path)
+
+
+def test_run_fallback():
+    here = os.path.dirname(__file__)
+    output_path = "mock_output.png"
+    test_folder = UnitTestConst.PYCASSO_FOLDER.value
+    config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
+    instance = Pycasso(config_path, file_path=here)
+    instance.config.external_image_location = "bad folder"
+    instance.config.generated_image_location = "bad folder"
+    instance.config.historic_amount = 1
+    instance.config.external_amount = 1
+    instance.config.provider_fallback = True
+    instance.config.test_enabled = True
     instance.run()
 
     assert os.path.exists(output_path)
