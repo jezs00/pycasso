@@ -217,13 +217,21 @@ class IconFileConst(Enum):
     ICON_BATTERY_60 = ("battery-2.png", 30)
     ICON_BATTERY_80 = ("battery-3.png", 40)
     ICON_BATTERY_100 = ("battery-4.png", 50)
-    ICON_BATTERY_ERROR = ("battery-off.png", 80)
+    ICON_BATTERY_ERROR = ("battery-off.png", 60)
 
-    ICON_EXTERNAL = ("device-floppy.png", 100)
-    ICON_GENERATED = ("history.png", 110)
+    ICON_TEST = ("stethoscope.png", 97)
+    ICON_EXTERNAL = ("circle-letter-e.png", 100)
+    ICON_GENERATED = ("circle-letter-h.png", 110)
     ICON_STABLE = ("circle-letter-s.png", 120)
     ICON_DALLE = ("circle-letter-d.png", 130)
-    ICON_AUTOMATIC = ("device-desktop.png", 140)
+    ICON_AUTOMATIC = ("circle-letter-a.png", 140)
+
+    ICON_TEST = ("stethoscope-off.png", 67)
+    ICON_EXTERNAL_FAIL = ("hexagon-letter-e.png", 70)
+    ICON_GENERATED_FAIL = ("hexagon-letter-h.png", 75)
+    ICON_STABLE_FAIL = ("hexagon-letter-s.png", 80)
+    ICON_DALLE_FAIL = ("hexagon-letter-d.png", 85)
+    ICON_AUTOMATIC_FAIL = ("hexagon-letter-a.png", 90)
 
     ICON_EXCEPTION = ("heart-broken.png", 200)
 
