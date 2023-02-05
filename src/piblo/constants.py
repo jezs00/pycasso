@@ -226,7 +226,7 @@ class IconFileConst(Enum):
     ICON_DALLE = ("circle-letter-d.png", 130)
     ICON_AUTOMATIC = ("circle-letter-a.png", 140)
 
-    ICON_TEST = ("stethoscope-off.png", 67)
+    ICON_TEST_FAIL = ("stethoscope-off.png", 67)
     ICON_EXTERNAL_FAIL = ("hexagon-letter-e.png", 70)
     ICON_GENERATED_FAIL = ("hexagon-letter-h.png", 75)
     ICON_STABLE_FAIL = ("hexagon-letter-s.png", 80)
