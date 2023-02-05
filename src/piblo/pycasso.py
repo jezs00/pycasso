@@ -669,7 +669,8 @@ class Pycasso:
                 logging.warning(f"Image failed to load on provider '{provider}'. Removing from circulation on this "
                                 f"run.")
                 self.remove_provider_mode(provider)
-                self.add_exception_icon()
+                self.add_provider_fail_icon(provider)
+            self.add_provider_icon(provider)
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
@@ -697,18 +698,18 @@ class Pycasso:
         return battery_icon
 
     def add_provider_icon(self, provider):
-        if provider == ProvidersConst.TEST:
-            icon = IconFileConst.ICON_TEST
+        if provider == ProvidersConst.TEST.value:
+            icon = IconFileConst.ICON_TEST.value
         elif provider == ProvidersConst.EXTERNAL.value:
-            icon = IconFileConst.ICON_EXTERNAL
+            icon = IconFileConst.ICON_EXTERNAL.value
         elif provider == ProvidersConst.HISTORIC.value:
-            icon = IconFileConst.ICON_HISTORIC
+            icon = IconFileConst.ICON_HISTORIC.value
         elif provider == ProvidersConst.STABLE.value:
-            icon = IconFileConst.ICON_STABLE
+            icon = IconFileConst.ICON_STABLE.value
         elif provider == ProvidersConst.DALLE.value:
-            icon = IconFileConst.ICON_DALLE
+            icon = IconFileConst.ICON_DALLE.value
         elif provider == ProvidersConst.AUTOMATIC.value:
-            icon = IconFileConst.ICON_AUTOMATIC
+            icon = IconFileConst.ICON_AUTOMATIC.value
         else:
             logging.warning(f"Tried to set icon for invalid mode {provider}.")
             return
@@ -716,19 +717,19 @@ class Pycasso:
         self.icons.append(icon)
         return icon
 
-    def add_provider_icon_fail(self, provider):
-        if provider == ProvidersConst.TEST:
-            icon = IconFileConst.ICON_TEST_FAIL
+    def add_provider_fail_icon(self, provider):
+        if provider == ProvidersConst.TEST.value:
+            icon = IconFileConst.ICON_TEST_FAIL.value
         elif provider == ProvidersConst.EXTERNAL.value:
-            icon = IconFileConst.ICON_EXTERNAL_FAIL
+            icon = IconFileConst.ICON_EXTERNAL_FAIL.value
         elif provider == ProvidersConst.HISTORIC.value:
-            icon = IconFileConst.ICON_HISTORIC_FAIL
+            icon = IconFileConst.ICON_HISTORIC_FAIL.value
         elif provider == ProvidersConst.STABLE.value:
-            icon = IconFileConst.ICON_STABLE_FAIL
+            icon = IconFileConst.ICON_STABLE_FAIL.value
         elif provider == ProvidersConst.DALLE.value:
-            icon = IconFileConst.ICON_DALLE_FAIL
+            icon = IconFileConst.ICON_DALLE_FAIL.value
         elif provider == ProvidersConst.AUTOMATIC.value:
-            icon = IconFileConst.ICON_AUTOMATIC_FAIL
+            icon = IconFileConst.ICON_AUTOMATIC_FAIL.value
         else:
             logging.warning(f"Tried to set icon for invalid mode {provider}.")
             return
