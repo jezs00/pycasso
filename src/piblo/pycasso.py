@@ -673,12 +673,12 @@ class Pycasso:
 
             else:
                 # Invalid provider
-                warnings.warn(f"Invalid provider option chosen: {provider_type}")
+                warnings.warn(f"Invalid provider option chosen: '{provider_type}'")
                 exit()
 
             # Handle if image failed to load
             if self.image_base is None:
-                logging.warning("Image failed to load. Please check providers.")
+                logging.warning(f"Image failed to load for provider '{provider_type}'. Please check providers.")
                 return None, provider_type
 
             if self.config.save_image:
@@ -801,10 +801,14 @@ class Pycasso:
             exit()
 
         try:
-            self.get_image_fallback_modes()
+            if self.config.provider_fallback:
+                self.get_image_fallback_modes()
+            else:
+                self.get_image()
 
             if self.image_base is None:
-                logging.error("Image failed to load. Please check providers or folders. Exiting pycasso.")
+                logging.error("Image failed to load and there is no fallback. Please check providers or folders. "
+                              "Exiting pycasso.")
                 exit()
 
             # Make sure image is correct size and centered after thumbnail set
