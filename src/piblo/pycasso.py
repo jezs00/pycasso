@@ -595,9 +595,9 @@ class Pycasso:
             if provider_type == ProvidersConst.TEST.value and self.config.test_enabled is True:
                 # Test run
                 logging.info(
-                    "Running test mode as no other provider selected. Configure providers in '.config' to enable "
-                    "your preferred functionality. Set 'test_enabled = False' to prevent test mode from ever "
-                    "running again."
+                    "Running test mode as no other provider selected due to config or failures. Configure providers in"
+                    "'.config' to enable your preferred functionality. Set 'test_enabled = False' to prevent test mode"
+                    "from ever running again."
                 )
                 self.image_base, self.title_text, self.artist_text = self.load_test_image(self.epd.width,
                                                                                           self.epd.height,
