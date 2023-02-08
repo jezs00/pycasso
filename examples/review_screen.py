@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 display_type = DEFAULT_DISPLAY_TYPE
 
 # Path to config
-config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".config"))
+config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # Path to image
 fileLocation = os.path.abspath(os.path.join(os.path.dirname(__file__), "images", "test.png"))
