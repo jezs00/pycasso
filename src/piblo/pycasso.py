@@ -703,11 +703,11 @@ class Pycasso:
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
-        empty = range(0-20)
-        low = range(21-40)
-        half = range(41-60)
-        good = range(61-80)
-        full = range(81-100)
+        empty = range(0, 20)
+        low = range(21, 40)
+        half = range(41, 60)
+        good = range(61, 80)
+        full = range(81, 100)
 
         if battery_percent in empty:
             battery_icon = IconFileConst.ICON_BATTERY_20.value

@@ -60,7 +60,7 @@ class PiJuiceHandler:
         shutdown_ex = instance.config.shutdown_on_exception
 
         power_status = None
-        charge_level = 100
+        charge_level = -1
 
         # sleep for a bit as I can't figure out a better solution to stop pijuice from failing to start
         time.sleep(sleep_time)
