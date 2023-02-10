@@ -213,6 +213,16 @@ class IconConst(Enum):
     BACKGROUND_DARK_LIMIT = 127
 
 
+class BatteryConst(Enum):
+    ERROR = -1
+    EMPTY = range(0, 20)
+    LOW = range(21, 40)
+    HALF = range(41, 60)
+    GOOD = range(61, 80)
+    FULL = range(81, 100)
+    CHARGING = 101
+
+
 class IconFileConst(Enum):
     ICON_BATTERY_20 = ("battery.png", 10)
     ICON_BATTERY_40 = ("battery-1.png", 20)
