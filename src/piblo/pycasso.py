@@ -708,6 +708,7 @@ class Pycasso:
         half = range(41, 60)
         good = range(61, 80)
         full = range(81, 100)
+        charging = 101
 
         if battery_percent in empty:
             battery_icon = IconFileConst.ICON_BATTERY_20.value
@@ -719,6 +720,8 @@ class Pycasso:
             battery_icon = IconFileConst.ICON_BATTERY_80.value
         elif battery_percent in full:
             battery_icon = IconFileConst.ICON_BATTERY_100.value
+        elif battery_percent == charging:
+            battery_icon = IconFileConst.ICON_BATTERY_CHARGE.value
         else:
             # Somehow there's a battery read error
             battery_icon = IconFileConst.ICON_BATTERY_ERROR.value
