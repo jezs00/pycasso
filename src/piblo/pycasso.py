@@ -703,7 +703,6 @@ class Pycasso:
         return self.image_base
 
     def add_battery_icon(self, battery_percent):
-
         if battery_percent in BatteryConst.EMPTY.value:
             battery_icon = IconFileConst.ICON_BATTERY_20.value
         elif battery_percent in BatteryConst.LOW.value:
