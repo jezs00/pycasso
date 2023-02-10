@@ -14,7 +14,30 @@ from piblo.constants import PiJuiceConst, BatteryConst
 
 
 class PiJuiceHandler:
+    """
+    A class used to provide image operations for pycasso.
 
+    Attributes
+    ----------
+
+    Methods
+    -------
+    safe_pijuice_shutdown(pijuice)
+        Uses PiJuice to attempt to shut down safely and completely using pijuice object 'pijuice'.
+
+    system_shutdown()
+        Uses linux system command to shut down.
+
+    pijuice_led_disable(pijuice)
+        Uses PiJuice to disable LEDs on board with pijuice object 'pijuice'.
+
+    get_charge_status(power_status, charge_level)
+        Returns valid charge level or constant to be passed to pycasso for battery display. Uses valid pijuice
+        power_status and charge_level
+
+    def run(self):
+        Attempts to run pycasso based on configuration and pijuice settings.
+    """
     def __init__(self):
 
         return
@@ -46,6 +69,21 @@ class PiJuiceHandler:
         pijuice.config.SetLedConfiguration('D2', led_config)
         return
 
+    @staticmethod
+    def get_charge_status(power_status, charge_level):
+        if power_status == PiJuiceConst.NOT_PRESENT.value:
+            charge_level = charge_level
+        elif power_status == PiJuiceConst.PRESENT.value:
+            charge_level = BatteryConst.CHARGING.value
+        elif power_status == PiJuiceConst.WEAK.value:
+            charge_level = BatteryConst.WEAK.value
+        elif power_status == PiJuiceConst.BAD.value:
+            charge_level = BatteryConst.BAD.value
+        else:
+            charge_level = BatteryConst.ERROR.value
+
+        return charge_level
+
     def run(self):
         try:
             instance = Pycasso()
@@ -68,17 +106,7 @@ class PiJuiceHandler:
             pijuice = PiJuice(1, 0x14)
             power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
             charge_level = pijuice.status.GetChargeLevel()['data']
-
-            if power_status == PiJuiceConst.NOT_PRESENT.value:
-                instance.charge_level = charge_level
-            elif power_status == PiJuiceConst.PRESENT.value:
-                instance.charge_level = BatteryConst.CHARGING.value
-            elif power_status == PiJuiceConst.WEAK.value:
-                instance.charge_level = BatteryConst.WEAK.value
-            elif power_status == PiJuiceConst.BAD.value:
-                instance.charge_level = BatteryConst.BAD.value
-            else:
-                instance.charge_level = BatteryConst.ERROR.value
+            instance.charge_level = PiJuiceHandler.get_charge_status(power_status, charge_level)
 
         except Exception as e:
             logging.error(e)
