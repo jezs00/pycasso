@@ -437,7 +437,6 @@ class Pycasso:
     def prep_prompt_text(self, prompt_mode=PromptModeConst.PROMPT.value):
         # Build prompt, add metadata as we go
         self.metadata = PngImagePlugin.PngInfo()
-        artist_text = None
 
         if prompt_mode == PromptModeConst.RANDOM.value:
             # Pick random type of building
@@ -460,7 +459,7 @@ class Pycasso:
                                                  self.config.prompt_postscript, self.config.parse_brackets,
                                                  self.config.parse_random_text)
             self.prompt, self.title_text = prompt_gen
-            artist_text = ""
+            self.artist_text = ""
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
@@ -638,7 +637,8 @@ class Pycasso:
 
         else:
             # Build prompt, get metadata
-            self.prompt, self.metadata, self.artist_text, self.title_text = self.prep_prompt_text(self.config.prompt_mode)
+            self.prompt, self.metadata, self.artist_text, self.title_text =\
+                self.prep_prompt_text(self.config.prompt_mode)
             logging.info(f"Requesting \'{self.prompt}\'")
 
             # Pick between providers
