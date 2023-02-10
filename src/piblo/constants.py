@@ -224,6 +224,8 @@ class BatteryConst(Enum):
     GOOD = range(61, 80)
     FULL = range(81, 100)
     CHARGING = 101
+    WEAK = 102
+    BAD = -2
 
 
 class IconFileConst(Enum):

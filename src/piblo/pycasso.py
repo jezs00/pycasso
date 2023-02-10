@@ -716,6 +716,8 @@ class Pycasso:
             battery_icon = IconFileConst.ICON_BATTERY_100.value
         elif battery_percent == BatteryConst.CHARGING.value:
             battery_icon = IconFileConst.ICON_BATTERY_CHARGE.value
+        elif battery_percent == BatteryConst.WEAK.value:
+            battery_icon = IconFileConst.ICON_BATTERY_WEAK.value
         else:
             # There's a battery read error
             battery_icon = IconFileConst.ICON_BATTERY_ERROR.value

@@ -68,7 +68,17 @@ class PiJuiceHandler:
             pijuice = PiJuice(1, 0x14)
             power_status = pijuice.status.GetStatus()[PiJuiceConst.STATUS_ROOT.value][PiJuiceConst.STATUS_POWER.value]
             charge_level = pijuice.status.GetChargeLevel()['data']
-            instance.charge_level = charge_level
+
+            if power_status == PiJuiceConst.NOT_PRESENT.value:
+                instance.charge_level = charge_level
+            elif power_status == PiJuiceConst.PRESENT.value:
+                instance.charge_level = BatteryConst.CHARGING.value
+            elif power_status == PiJuiceConst.WEAK.value:
+                instance.charge_level = BatteryConst.WEAK.value
+            elif power_status == PiJuiceConst.BAD.value:
+                instance.charge_level = BatteryConst.BAD.value
+            else:
+                instance.charge_level = BatteryConst.ERROR.value
 
         except Exception as e:
             logging.error(e)
