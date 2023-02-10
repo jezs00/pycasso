@@ -1,6 +1,6 @@
 [Unit]
 Description=A system to send AI generated art to an E-Paper display through a Raspberry PI unit
-After=rc-local.service
+After=network.target
 
 [Service]
 User=root
