@@ -220,6 +220,7 @@ class IconFileConst(Enum):
     ICON_BATTERY_80 = ("battery-3.png", 40)
     ICON_BATTERY_100 = ("battery-4.png", 50)
     ICON_BATTERY_ERROR = ("battery-off.png", 60)
+    ICON_BATTERY_CHARGE = ("battery-charging-2.png", 70)
 
     ICON_TEST = ("stethoscope.png", 97)
     ICON_EXTERNAL = ("circle-letter-e.png", 100)
