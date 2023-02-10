@@ -10,7 +10,7 @@ import time
 from pijuice import PiJuice
 
 from piblo.pycasso import Pycasso
-from piblo.constants import PiJuiceConst, DisplayShapeConst
+from piblo.constants import PiJuiceConst, BatteryConst
 
 
 class PiJuiceHandler:
@@ -60,7 +60,7 @@ class PiJuiceHandler:
         shutdown_ex = instance.config.shutdown_on_exception
 
         power_status = None
-        charge_level = -1
+        charge_level = BatteryConst.ERROR.value
 
         # sleep for a bit as I can't figure out a better solution to stop pijuice from failing to start
         time.sleep(sleep_time)
