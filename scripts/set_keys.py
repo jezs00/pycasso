@@ -2,8 +2,6 @@
 # -*- coding:utf-8 -*-
 
 # Small script to set keys
-import logging
-
 from piblo.provider import StabilityProvider, DalleProvider, ProvidersConst
 from piblo.pycasso import Pycasso
 
