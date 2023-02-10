@@ -320,7 +320,7 @@ def test_major_complete_config():
     assert instance.config.prompt_preamble == "test preamble"
     assert instance.config.prompt_connector == "test connector"
     assert instance.config.prompt_postscript == "{test postscript|0:don't display this}"
-    
+
     # Display Settings
     assert instance.config.display_type == "test_display"
     assert config_dict.get("EPD", "mode") == "bw"
@@ -335,7 +335,7 @@ def test_major_complete_config():
     assert config_dict.getint("Image Enhancements", "contrast") == 2
     assert config_dict.getint("Image Enhancements", "brightness") == 2
     assert config_dict.getint("Image Enhancements", "sharpness") == 2
-    
+
     # Provider Settings
     assert instance.config.external_amount == 12
     assert instance.config.historic_amount == 74
@@ -356,14 +356,14 @@ def test_major_complete_config():
     # Generation Settings
     assert instance.config.infill is True
     assert instance.config.infill_percent == 40
-    
+
     # PiJuice Settings
     assert instance.config.use_pijuice is True
     assert instance.config.shutdown_on_battery is False
     assert instance.config.shutdown_on_exception is True
     assert instance.config.wait_to_run == 50
     assert instance.config.charge_display == 30
-    
+
     # Debug Settings
     assert instance.config.test_epd_width == 900
     assert instance.config.test_epd_height == 500

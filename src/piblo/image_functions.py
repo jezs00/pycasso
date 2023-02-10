@@ -7,7 +7,7 @@ import os
 import numpy
 from PIL import Image, ImageColor, ImageStat
 
-from piblo.constants import DisplayShapeConst, IconFileConst, ConfigConst, IconConst, ImageConst
+from piblo.constants import DisplayShapeConst, ConfigConst, IconConst, ImageConst
 
 
 class ImageFunctions:
@@ -268,4 +268,3 @@ class ImageFunctions:
                 logging.warning(f"Path to icon '{path}' does not appear to exist.")
 
         return image_base
-

@@ -253,4 +253,3 @@ class IconFileConst(Enum):
     ICON_AUTOMATIC_FAIL = ("hexagon-letter-a.png", 90)
 
     ICON_EXCEPTION = ("heart-broken.png", 200)
-
