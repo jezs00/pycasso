@@ -121,6 +121,13 @@ class Configs:
         self.wait_to_run = ConfigConst.WAIT_TO_RUN.value
         self.charge_display = ConfigConst.CHARGE_DISPLAY.value
 
+        # Poster Settings
+        self.post_to_mastodon = ConfigConst.POST_TO_MASTODON.value
+        self.mastodon_app_name = ConfigConst.MASTODON_APP_NAME.value
+        self.mastodon_base_url = ConfigConst.MASTODON_BASE_URL.value
+        self.mastodon_client_cred_path = ConfigConst.MASTODON_CLIENT_CRED_PATH.value
+        self.mastodon_user_cred_path = ConfigConst.MASTODON_USER_CRED_PATH.value
+
         # Debug Settings
         self.test_epd_width = ConfigConst.TEST_EPD_WIDTH.value
         self.test_epd_height = ConfigConst.TEST_EPD_HEIGHT.value
@@ -248,6 +255,18 @@ class Configs:
             self.wait_to_run = config.getint("PiJuice", "wait_to_run", fallback=ConfigConst.WAIT_TO_RUN.value)
             self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
 
+            # Poster Settings
+            self.post_to_mastodon = config.getboolean("Post", "post_to_mastodon",
+                                                      fallback=ConfigConst.POST_TO_MASTODON.value)
+            self.mastodon_app_name = config.get("Post", "mastodon_app_name",
+                                                fallback=ConfigConst.MASTODON_APP_NAME.value)
+            self.mastodon_base_url = config.get("Post", "mastodon_base_url",
+                                                fallback=ConfigConst.MASTODON_BASE_URL.value)
+            self.mastodon_client_cred_path = config.get("Post", "mastodon_client_cred_path",
+                                                        fallback=ConfigConst.MASTODON_CLIENT_CRED_PATH.value)
+            self.mastodon_user_cred_path = config.get("Post", "mastodon_user_cred_path",
+                                                      fallback=ConfigConst.MASTODON_USER_CRED_PATH.value)
+
             # Debug Settings
             self.test_epd_width = config.getint("Debug", "test_epd_width", fallback=ConfigConst.TEST_EPD_WIDTH.value)
             self.test_epd_height = config.getint("Debug", "test_epd_height", fallback=ConfigConst.TEST_EPD_HEIGHT.value)
@@ -267,6 +286,8 @@ class Configs:
             self.font_file = self.file.get_full_path(self.font_file)
             self.credential_path = self.file.get_full_path(self.credential_path)
             self.icon_path = self.file.get_full_path(self.icon_path)
+            self.mastodon_user_cred_path = self.file.get_full_path(self.mastodon_user_cred_path)
+            self.mastodon_client_cred_path = self.file.get_full_path(self.mastodon_client_cred_path)
 
         return config
 

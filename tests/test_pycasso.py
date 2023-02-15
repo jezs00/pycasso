@@ -364,6 +364,13 @@ def test_major_complete_config():
     assert instance.config.wait_to_run == 50
     assert instance.config.charge_display == 30
 
+    # Post Settings
+    assert instance.config.post_to_mastodon is True
+    assert instance.config.mastodon_app_name == "test_app"
+    assert instance.config.mastodon_base_url == "https://aus.social"
+    assert instance.config.mastodon_client_cred_path == file.get_full_path("test1.secret")
+    assert instance.config.mastodon_user_cred_path == file.get_full_path("test2.secret")
+
     # Debug Settings
     assert instance.config.test_epd_width == 900
     assert instance.config.test_epd_height == 500

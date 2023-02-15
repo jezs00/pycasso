@@ -255,6 +255,26 @@ wait_to_run=30
 # Battery percentage that pycasso should start showing low battery symbol at [integer]
 charge_display=15
 
+[Post]
+######################
+# Post Configuration #
+######################
+
+# Flag indicating whether to post to Mastodon
+post_to_mastodon=False
+
+# Name of app to register
+mastodon_app_name=new_app
+
+# URL to mastodon server to use
+mastodon_base_url=https://mastodon.social
+
+# Path to mastodon client secret
+mastodon_client_cred_path=m_client.secret
+
+# Path to mastodon user secret
+mastodon_user_cred_path=m_user.secret
+
 [Debug]
 #######################
 # Debug Configuration #

@@ -77,6 +77,13 @@ class ConfigConst(Enum):
     GENERATION_INFILL = False
     GENERATION_INFILL_PERCENT = 10
 
+    # Post Settings
+    POST_TO_MASTODON = False
+    MASTODON_APP_NAME = "new_app"
+    MASTODON_BASE_URL = 'https://mastodon.social'
+    MASTODON_CLIENT_CRED_PATH = "m_client.secret"
+    MASTODON_USER_CRED_PATH = "m_user.secret"
+
     # PiJuice Settings
     USE_PIJUICE = False
     SHUTDOWN_ON_BATTERY = True
@@ -253,3 +260,9 @@ class IconFileConst(Enum):
     ICON_AUTOMATIC_FAIL = ("hexagon-letter-a.png", 90)
 
     ICON_EXCEPTION = ("heart-broken.png", 200)
+
+
+class PosterConst(Enum):
+    MASTODON = 0
+    MASTODON_USER_KEYNAME = "MASTODON_USER"
+    MASTODON_PASSWORD_KEYNAME = "MASTODON_PASSWORD"
