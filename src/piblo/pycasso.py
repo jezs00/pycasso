@@ -14,10 +14,11 @@ from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
 from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst, \
-    IconFileConst, BatteryConst
+    IconFileConst, BatteryConst, PosterConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
+from piblo.post_wrapper import MastodonPoster
 
 
 # noinspection PyTypeChecker
@@ -154,6 +155,7 @@ class Pycasso:
 
         # Image
         self.image_base = None
+        self.image_display = None
 
         # Prompt
         self.prompt = ""
@@ -185,6 +187,12 @@ class Pycasso:
                 StabilityProvider.add_secret(self.stability_key, self.config.use_keychain, self.config.credential_path)
             if self.dalle_key is not None:
                 DalleProvider.add_secret(self.dalle_key, self.config.use_keychain, self.config.credential_path)
+
+        self.posters = []
+        # Set up poster list
+        if self.config.post_to_mastodon:
+            self.posters.append(PosterConst.MASTODON.value)
+
 
         return
 
@@ -772,6 +780,15 @@ class Pycasso:
         self.icons.append(IconFileConst.ICON_EXCEPTION.value)
         return
 
+    def post_image(self):
+        if PosterConst.MASTODON.value in self.posters:
+            logging.info("Attempting to post to Mastodon")
+            mastodon = MastodonPoster(mode=self.config.use_keychain, creds_path=self.config.credential_path,
+                                      client_cred_file=self.config.mastodon_client_cred_path,
+                                      user_cred_file=self.config.mastodon_user_cred_path)
+            mastodon.post_image(self.image_base, self.title_text)
+        return
+
     def run(self):
         logging.info("pycasso has begun")
 
@@ -821,19 +838,23 @@ class Pycasso:
             if self.image_base.mode not in ImageConst.SUPPORTED_MODES.value:
                 self.image_base = self.image_base.convert(ImageConst.CONVERT_MODE.value)
 
+            self.image_display = self.image_base.copy()
+
             # Show battery icon if relevant
             if self.config.show_battery_icon:
                 self.add_battery_icon(self.charge_level)
 
             # Draw icons
-            self.image_base = ImageFunctions.draw_icons(self.image_base, self.icons, icon_path=self.config.icon_path,
-                                                        icon_color=self.config.icon_color,
-                                                        icon_location=self.config.icon_corner,
-                                                        icon_padding=self.config.icon_padding,
-                                                        icon_size=self.config.icon_size, icon_gap=self.config.icon_gap,
-                                                        icon_opacity=self.config.icon_opacity)
+            self.image_display = ImageFunctions.draw_icons(self.image_display, self.icons,
+                                                           icon_path=self.config.icon_path,
+                                                           icon_color=self.config.icon_color,
+                                                           icon_location=self.config.icon_corner,
+                                                           icon_padding=self.config.icon_padding,
+                                                           icon_size=self.config.icon_size,
+                                                           icon_gap=self.config.icon_gap,
+                                                           icon_opacity=self.config.icon_opacity)
 
-            draw = ImageDraw.Draw(self.image_base, ImageConst.DRAW_MODE.value)
+            draw = ImageDraw.Draw(self.image_display, ImageConst.DRAW_MODE.value)
 
             # Draw status shape if provided
             if self.icon_shape is not None:
@@ -843,13 +864,17 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                self.add_text_to_image(draw, self.config.font_file, self.image_base.height, self.epd.width,
+                self.add_text_to_image(draw, self.config.font_file, self.image_display.height, self.epd.width,
                                        self.title_text, self.artist_text, self.config.title_loc, self.config.artist_loc,
                                        self.config.padding, self.config.opacity, self.config.title_size,
                                        self.config.artist_size, self.config.box_to_floor, self.config.box_to_edge,
                                        crop_left, crop_right)
 
-            self.display_image_on_epd(self.image_base, self.epd)
+            self.display_image_on_epd(self.image_display, self.epd)
+
+            # Post image if necessary
+            self.post_image()
+
             logging.shutdown()
 
         except EPDNotFoundError:
