@@ -263,6 +263,7 @@ class IconFileConst(Enum):
 
 
 class PosterConst(Enum):
-    MASTODON = 0
+    MASTODON = 1
+
     MASTODON_USER_KEYNAME = "MASTODON_USER"
     MASTODON_PASSWORD_KEYNAME = "MASTODON_PASSWORD"
