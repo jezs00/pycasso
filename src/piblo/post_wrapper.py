@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Post class to wrap posting to third party websites
+import io
 import logging
 
 from mastodon import Mastodon
+from piblo.constants import ProvidersConst, PosterConst, ConfigConst
+from piblo.provider import Provider
 
 
 class PostWrapper(object):
@@ -39,32 +42,51 @@ class PostWrapper(object):
             return
         return
 
-    def authenticate(self):
-        return
-
     def post_image(self, img, text):
         return
 
 
-class MastodonPost(PostWrapper):
+class MastodonPoster(PostWrapper):
 
     # inherits from Post
-    def __init__(self, client_cred_file=None, user_cred_file=None):
+    def __init__(self, mode=ProvidersConst.USE_KEYCHAIN.value, creds_path=ProvidersConst.CREDENTIAL_PATH.value,
+                 client_cred_file=ConfigConst.MASTODON_CLIENT_CRED_PATH.value,
+                 user_cred_file=ConfigConst.MASTODON_USER_CRED_PATH.value):
+        self.mode = mode
+        self.creds_path = creds_path
         self.client_cred_file = client_cred_file
         self.user_cred_file = user_cred_file
-        self.mastodon = Mastodon(access_token=self.user_cred_file)
+        self.mastodon = Mastodon(client_id=self.client_cred_file, access_token=self.user_cred_file)
         return
 
-    def authenticate(self):
-        self.mastodon.log_in(
-            self.user,
-            self.password,
-            to_file=self.cred_file
-        )
+    def get_creds(self):
+        self.user = Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, PosterConst.MASTODON_USER_KEYNAME.value,
+                                                mode=self.mode, path=self.creds_path)
+        self.password = Provider.process_get_secret(ProvidersConst.KEYCHAIN.value,
+                                                    PosterConst.MASTODON_PASSWORD_KEYNAME.value, mode=self.mode,
+                                                    path=self.creds_path)
         return
 
     def post_image(self, img, text):
+        buffer = io.BytesIO()
+        img.save(buffer, format=PosterConst.MASTODON_IMG_FORMAT.value)
+        media_dict = self.mastodon.media_post(buffer.getvalue(), mime_type=PosterConst.MASTODON_MIME_FORMAT.value,
+                                              description=text)
+        self.mastodon.status_post(text, media_ids=media_dict)
         return
 
-    def register(self, img, text):
-        return
+    def authenticate(self, user, password):
+        self.mastodon.log_in(
+            user,
+            password,
+            to_file=self.user_cred_file
+        )
+        return self.user_cred_file
+
+    @staticmethod
+    def create_app(app_name, base_url, client_cred_path):
+        Mastodon.create_app(
+            app_name,
+            api_base_url=base_url,
+            to_file=client_cred_path
+        )
