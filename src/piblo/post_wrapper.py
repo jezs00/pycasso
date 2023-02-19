@@ -59,14 +59,6 @@ class MastodonPoster(PostWrapper):
         self.mastodon = Mastodon(client_id=self.client_cred_file, access_token=self.user_cred_file)
         return
 
-    def get_creds(self):
-        self.user = Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, PosterConst.MASTODON_USER_KEYNAME.value,
-                                                mode=self.mode, path=self.creds_path)
-        self.password = Provider.process_get_secret(ProvidersConst.KEYCHAIN.value,
-                                                    PosterConst.MASTODON_PASSWORD_KEYNAME.value, mode=self.mode,
-                                                    path=self.creds_path)
-        return
-
     def post_image(self, img, text):
         buffer = io.BytesIO()
         img.save(buffer, format=PosterConst.MASTODON_IMG_FORMAT.value)
