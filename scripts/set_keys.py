@@ -47,7 +47,6 @@ def set_poster():
     if mode == PosterConst.MASTODON.value:
         user = input("\nUsername:")
         password = input("\nPassword:")
-        MastodonPoster.add_creds(user, password, instance.config.use_keychain)
         register = input(f"\nRegister app '{instance.config.mastodon_app_name}' (y/n):")
         try:
             if distutils.util.strtobool(register):
