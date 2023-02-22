@@ -403,12 +403,10 @@ class Pycasso:
         return image_base, title_text, artist_text
 
     @staticmethod
-    def load_stability_image(prompt, width, height, stability_key=None):
+    def load_stability_image(prompt, width, height, stability_key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
+                             creds_path=ProvidersConst.CREDENTIAL_PATH.value):
         logging.info("Loading Stability API")
-        if stability_key is None:
-            stability_provider = StabilityProvider()
-        else:
-            stability_provider = StabilityProvider(key=stability_key)
+        stability_provider = StabilityProvider(key=stability_key, creds_mode=creds_mode, creds_path=creds_path)
 
         logging.info("Getting Image")
         image = stability_provider.get_image_from_string(prompt, height, width)
@@ -419,7 +417,6 @@ class Pycasso:
                          infill_percent=ConfigConst.GENERATION_INFILL_PERCENT.value, dalle_key=None,
                          creds_mode=ProvidersConst.USE_KEYCHAIN, creds_path=ProvidersConst.CREDENTIAL_PATH.value):
         logging.info("Loading Dalle API")
-
         dalle_provider = DalleProvider(key=dalle_key, creds_mode=creds_mode, creds_path=creds_path)
 
         logging.info("Getting Image")
@@ -665,7 +662,9 @@ class Pycasso:
             elif provider_type == ProvidersConst.STABLE.value:
                 # Stable Diffusion
                 self.image_base = self.load_stability_image(self.prompt, self.epd.width, self.epd.height,
-                                                            stability_key=self.stability_key)
+                                                            stability_key=self.stability_key,
+                                                            creds_mode=self.config.use_keychain,
+                                                            creds_path=self.config.credential_path)
 
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle

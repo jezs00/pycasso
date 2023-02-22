@@ -155,24 +155,18 @@ class StabilityProvider(Provider):
     stability_api = object
 
     # inherits from Provider
-    def __init__(self, key=None, host=None, creds_path=ProvidersConst.CREDENTIAL_PATH.value,
-                 mode=ProvidersConst.USE_KEYCHAIN):
-        # Get the inputs if necessary
-        super().__init__()
-        if key is None:
-            stability_key = self.get_secret()
-            if stability_key is None:
-                warnings.warn("Stability API key not in keychain, environment or provided")
-                exit()
-        else:
-            stability_key = key
+    def __init__(self, key=None, host=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
+                 creds_path=ProvidersConst.CREDENTIAL_PATH.value):
+        super().__init__(key=key, keyname=ProvidersConst.STABLE_KEYNAME.value, creds_mode=creds_mode,
+                         creds_path=creds_path)
+        self.get_secret()
 
         if host is None:
             host = StabilityConst.DEFAULT_HOST.value
-            logging.info(f"Using {host} as stability host")
+        logging.info(f"Using {host} as stability host")
 
         self.stability_api = client.StabilityInference(
-            key=stability_key,
+            key=self.key,
             host=host,
             verbose=False,
             wait_for_ready=False
@@ -219,11 +213,6 @@ class StabilityProvider(Provider):
                                     path)
         return
 
-    @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
-        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, mode,
-                                           path)
-
 
 class DalleProvider(Provider):
     dalle_api = object
@@ -231,7 +220,6 @@ class DalleProvider(Provider):
     # inherits from Provider
     def __init__(self, key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
                  creds_path=ProvidersConst.CREDENTIAL_PATH.value):
-        # Get the inputs if necessary
         super().__init__(key=key, keyname=ProvidersConst.DALLE_KEYNAME.value, creds_mode=creds_mode,
                          creds_path=creds_path)
 
