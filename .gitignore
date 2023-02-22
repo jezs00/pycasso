@@ -135,8 +135,8 @@ dmypy.json
 images/
 prompts/
 
-# Ignore config
-.config
+# Ignore config and backups
+.config*
 
 # Ignore credential file
 .creds
