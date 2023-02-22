@@ -67,10 +67,6 @@ class Provider(object):
 
         return
 
-    @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
-        pass
-
     def get_secret(self):
         if self.keychain is None:
             warnings.warn("Keychain is empty")
@@ -129,6 +125,10 @@ class Provider(object):
             with open(path, 'w') as file:
                 config.write(file)
         return
+
+    @staticmethod
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
+        pass
 
     @staticmethod
     def process_add_secret(keychain, keyname, text, mode=ProvidersConst.USE_KEYCHAIN.value,
