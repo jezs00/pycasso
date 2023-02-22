@@ -51,11 +51,37 @@ class Provider(object):
         Retrieves appropriate secret from the keyring for the appropriate provider
     """
 
-    def __init__(self):
+    def __init__(self, key=None, keyname=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
+                 creds_path=ProvidersConst.CREDENTIAL_PATH.value):
+        self.key = key
+        self.creds_mode = creds_mode
+        self.creds_path = creds_path
+        self.keychain = ProvidersConst.KEYCHAIN.value
+        self.keyname = keyname
         return
 
     def get_image_from_string(self, text):
         return
+
+    def load_key(self, key=None, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
+
+        return
+
+    @staticmethod
+    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
+        pass
+
+    def get_secret(self):
+        if self.keychain is None:
+            warnings.warn("Keychain is empty")
+            exit()
+        if self.key is None:
+            self.key = self.process_get_secret(keychain=self.keychain, keyname=self.keyname, mode=self.creds_mode,
+                                               path=self.creds_path)
+            if self.key is None:
+                warnings.warn(f"'{self.keychain}' API key not in keychain, environment or provided")
+                exit()
+        pass
 
     @staticmethod
     def resize_image(img, width, height):
@@ -119,25 +145,18 @@ class Provider(object):
                            path=ProvidersConst.CREDENTIAL_PATH.value):
         if mode:
             keyring.get_keyring()
-            key = keyring.get_password(keychain, keyname)
+            key = keyring.get_password(keychain, keyname, path)
         else:
-            key = Provider.read_creds(keyname)
+            key = Provider.read_creds(keyname, path)
         return key
-
-    @staticmethod
-    def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
-        pass
-
-    @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN, path=ProvidersConst.CREDENTIAL_PATH.value):
-        pass
 
 
 class StabilityProvider(Provider):
     stability_api = object
 
     # inherits from Provider
-    def __init__(self, key=None, host=None):
+    def __init__(self, key=None, host=None, creds_path=ProvidersConst.CREDENTIAL_PATH.value,
+                 mode=ProvidersConst.USE_KEYCHAIN):
         # Get the inputs if necessary
         super().__init__()
         if key is None:
@@ -210,18 +229,15 @@ class DalleProvider(Provider):
     dalle_api = object
 
     # inherits from Provider
-    def __init__(self, key=None, host=None):
+    def __init__(self, key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
+                 creds_path=ProvidersConst.CREDENTIAL_PATH.value):
         # Get the inputs if necessary
-        super().__init__()
-        if key is None:
-            dalle_key = self.get_secret()
-            if dalle_key is None:
-                warnings.warn("Dalle API key not in keychain, environment or provided")
-                exit()
-        else:
-            dalle_key = key
-        openai.api_key = dalle_key
+        super().__init__(key=key, keyname=ProvidersConst.DALLE_KEYNAME.value, creds_mode=creds_mode,
+                         creds_path=creds_path)
 
+        self.get_secret()
+
+        openai.api_key = self.key
         return
 
     def get_image_from_string(self, text, height=0, width=0):
@@ -344,11 +360,6 @@ class DalleProvider(Provider):
     def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
         Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, text, mode, path)
         return
-
-    @staticmethod
-    def get_secret(mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
-        return Provider.process_get_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.DALLE_KEYNAME.value, mode,
-                                           path)
 
 
 class AutomaticProvider(Provider):

@@ -416,12 +416,11 @@ class Pycasso:
 
     @staticmethod
     def load_dalle_image(prompt, width, height, infill=ConfigConst.GENERATION_INFILL.value,
-                         infill_percent=ConfigConst.GENERATION_INFILL_PERCENT.value, dalle_key=None):
+                         infill_percent=ConfigConst.GENERATION_INFILL_PERCENT.value, dalle_key=None,
+                         creds_mode=ProvidersConst.USE_KEYCHAIN, creds_path=ProvidersConst.CREDENTIAL_PATH.value):
         logging.info("Loading Dalle API")
-        if dalle_key is None:
-            dalle_provider = DalleProvider()
-        else:
-            dalle_provider = DalleProvider(key=dalle_key)
+
+        dalle_provider = DalleProvider(key=dalle_key, creds_mode=creds_mode, creds_path=creds_path)
 
         logging.info("Getting Image")
         image_base = dalle_provider.get_image_from_string(prompt, height, width)
@@ -671,7 +670,9 @@ class Pycasso:
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle
                 self.image_base = self.load_dalle_image(self.prompt, self.epd.width, self.epd.height,
-                                                        infill=self.config.infill, dalle_key=self.dalle_key)
+                                                        infill=self.config.infill, dalle_key=self.dalle_key,
+                                                        creds_mode=self.config.use_keychain,
+                                                        creds_path=self.config.credential_path)
 
             elif provider_type == ProvidersConst.AUTOMATIC.value:
                 # Automatic
