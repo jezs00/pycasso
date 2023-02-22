@@ -291,5 +291,8 @@ class Configs:
 
         return config
 
+    def does_config_file_exist(self):
+        return os.path.exists(self.config_path)
+
     def set_config_terminal(self, path):
         return
