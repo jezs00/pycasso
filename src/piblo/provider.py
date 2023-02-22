@@ -75,7 +75,7 @@ class Provider(object):
             self.key = self.process_get_secret(keychain=self.keychain, keyname=self.keyname, mode=self.creds_mode,
                                                path=self.creds_path)
             if self.key is None:
-                warnings.warn(f"'{self.keychain}' API key not in keychain, environment or provided")
+                warnings.warn(f"'{self.keyname}' API key not in keychain, environment or provided")
                 exit()
         pass
 
@@ -137,7 +137,7 @@ class Provider(object):
             keyring.get_keyring()
             keyring.set_password(keychain, keyname, text)
         else:
-            Provider.write_creds(keyname, text)
+            Provider.write_creds(keyname, text, path)
         return
 
     @staticmethod
@@ -145,7 +145,7 @@ class Provider(object):
                            path=ProvidersConst.CREDENTIAL_PATH.value):
         if mode:
             keyring.get_keyring()
-            key = keyring.get_password(keychain, keyname, path)
+            key = keyring.get_password(keychain, keyname)
         else:
             key = Provider.read_creds(keyname, path)
         return key
@@ -209,8 +209,8 @@ class StabilityProvider(Provider):
 
     @staticmethod
     def add_secret(text, mode=ProvidersConst.USE_KEYCHAIN.value, path=ProvidersConst.CREDENTIAL_PATH.value):
-        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text, mode,
-                                    path)
+        Provider.process_add_secret(ProvidersConst.KEYCHAIN.value, ProvidersConst.STABLE_KEYNAME.value, text=text,
+                                    mode=mode, path=path)
         return
 
 

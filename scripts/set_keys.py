@@ -27,11 +27,11 @@ def set_provider():
 
     if mode == ProvidersConst.STABLE.value:
         key = input("\nAPI key:")
-        StabilityProvider.add_secret(key, instance.config.use_keychain, instance.config.credential_path)
+        StabilityProvider.add_secret(key, mode=instance.config.use_keychain, path=instance.config.credential_path)
         print("Added Stable Diffusion key OK")
     elif mode == ProvidersConst.DALLE.value:
         key = input("\nAPI key:")
-        DalleProvider.add_secret(key, instance.config.use_keychain, instance.config.credential_path)
+        DalleProvider.add_secret(key, mode=instance.config.use_keychain, path=instance.config.credential_path)
         print("Added DALLE key OK")
     else:
         print(f"Invalid option '{mode}'")
