@@ -33,6 +33,9 @@ class Configs:
 
     def __init__(self, path=os.getcwd(), config_path=ConfigConst.CONFIG_PATH.value,
                  example_config_path=ConfigConst.CONFIG_PATH_EG.value):
+        # Config Item
+        self.config = None
+
         # Paths
         self.file = FileOperations(path)
 
@@ -143,9 +146,10 @@ class Configs:
 
         # Method to read config file settings
         config = configparser.ConfigParser()
-        config.read(self.config_path)
 
         if os.path.exists(self.config_path):
+            config.read(self.config_path)
+            self.config = config
 
             # File Settings
             self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
@@ -293,6 +297,10 @@ class Configs:
             self.mastodon_client_cred_path = self.file.get_full_path(self.mastodon_client_cred_path)
 
         return config
+
+    def write_config(self, new_path):
+
+        return
 
     def does_config_file_exist(self):
         return os.path.exists(self.config_path)
