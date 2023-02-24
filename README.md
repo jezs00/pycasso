@@ -200,7 +200,7 @@ Settings related to image providers.
   * `stability_amount`: The comparative chance of pycasso running Stable Diffusion mode (loading an image online from Stable Diffusion). `(Integer)`
   * `dalle_amount`: The comparative chance of pycasso running DALLE mode (loading an image online from DALLE). `(Integer)`
   * `automatic_amount`: The comparative chance of pycasso running Automatic1111 Stable Diffusion WebUI mode (loading an image from a valid Automatic1111 API). `(Integer)`
-* `use_keychain`: A boolean flag that instructs pycasso whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it. Please note that keychain is not currently recommended due to [grpcio issues](https://github.com/jezs00/pycasso/issues/1) on raspberry pi. `(Boolean)`
+* `use_keychain`: A boolean flag that instructs pycasso whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it. This may or may not work depending on your board. See [grpcio issues](https://github.com/jezs00/pycasso/issues/1) for more information. `(Boolean)`
 * `credential_path`: A file path relative to the pycasso working directory to find API credentials. `(String)`
 * `test_enabled`: A boolean flag that instructs pycasso to run a test mode when all other providers are set to 0. `(Boolean)`
 * `automatic_host`: If using `automatic` mode, this is the IP address or host of the Automatic1111 WebUI API. `(String)`
