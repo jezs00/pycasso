@@ -134,9 +134,12 @@ class Configs:
 
         return
 
-    def read_config(self):
+    def backup_config(self):
         # Create new config file if necessary
         self.config_path = FileOperations.backup_file(self.config_path, self.example_path)
+
+    def read_config(self):
+        self.backup_config()
 
         # Method to read config file settings
         config = configparser.ConfigParser()
