@@ -52,9 +52,10 @@ function uninstall_python_packages(){
 }
 
 function fix_grpcio(){
-  sudo pip3 install grpcio grpcio-tools --upgrade
-  #sudo pip3 uninstall grpcio grpcio-tools
-  #sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  #sudo pip3 install grpcio grpcio-tools --upgrade
+  echo -e "This might take a while... Be patient..."
+  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
   echo -e "GRPCIO fix applied"
 }
 
@@ -109,7 +110,7 @@ function install_service(){
       copy_service_file
       sudo systemctl enable pycasso
 
-      echo -e "pycasso service installed! Use ${YELLOW}sudo systemctl start pycasso${RESET} to test"
+      echo -e "pycasso service installed! Use ${YELLOW}sudo systemctl restart pycasso${RESET} to test"
     else
       echo -e "${YELLOW}pycasso service is installed, checking if it needs an update${RESET}"
       if ! (cmp -s "pycasso.service" "/etc/systemd/system/pycasso.service"); then
@@ -224,23 +225,24 @@ function install_pycasso(){
     cp "${LOCAL_DIR}/examples/.creds-example" "${LOCAL_DIR}/.creds"
   fi
 
-  if [ -f "${LOCAL_DIR}/prompts" ]; then
+  if [ ! -f "${LOCAL_DIR}/prompts" ]; then
     mkdir "${LOCAL_DIR}/prompts"
   fi
 
-  if [ -f "${LOCAL_DIR}/images" ]; then
+  if [ ! -f "${LOCAL_DIR}/images" ]; then
     mkdir "${LOCAL_DIR}/images"
   fi
 
-  if [ -f "${LOCAL_DIR}/images/generated" ]; then
+  if [ ! -f "${LOCAL_DIR}/images/generated" ]; then
     mkdir "${LOCAL_DIR}/images/generated"
   fi
 
-  if [ -f "${LOCAL_DIR}/images/external" ]; then
+  if [ ! -f "${LOCAL_DIR}/images/external" ]; then
     mkdir "${LOCAL_DIR}/images/external"
   fi
 
   if [ ! -f "${LOCAL_DIR}/prompts/artists.txt" ]; then
+
     cp "${LOCAL_DIR}/examples/prompts/artists-example.txt" "${PROMPTS_DIR}/artists.txt"
   fi
 
