@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import configparser
+import logging
 import os
 
 from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst
@@ -24,8 +25,8 @@ class Configs:
     init_config()
         Creates .config file from .config-example if
 
-    write_config(configs, path) # Not yet implemented
-        Writes config from a provided dict 'configs' to file at 'path'.
+    write_config(new_path) # Not yet implemented
+        Writes current config to file at 'new_path'.
 
     set_config_terminal(path) # Not yet implemented
         Sets config file via terminal prompts
@@ -299,7 +300,11 @@ class Configs:
         return config
 
     def write_config(self, new_path):
-
+        if os.path.exists(new_path):
+            logging.warning(f"{new_path} already exists, overwriting file")
+        with open(new_path, 'w') as file:
+            self.config.write(file)
+        logging.info(f"Config written to {new_path}")
         return
 
     def does_config_file_exist(self):
