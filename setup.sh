@@ -48,19 +48,19 @@ function install_python_minimal(){
 }
 
 function uninstall_python_packages(){
-  sudo pip3 uninstall piblo
+  sudo pip3 uninstall piblo -y
   echo -e "pycasso (piblo) package uninstalled"
 }
 
 function fix_grpcio(){
   echo -e "This might take a while... Be patient..."
-  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 uninstall grpcio grpcio-tools -y
   sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
   echo -e "GRPCIO fix applied"
 }
 
 function update_grpcio(){
-  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 uninstall grpcio grpcio-tools -y
   sudo pip3 install grpcio grpcio-tools --upgrade
   echo -e "GRPCIO update applied"
 }
@@ -236,19 +236,19 @@ function install_pycasso(){
     cp "${LOCAL_DIR}/examples/.creds-example" "${LOCAL_DIR}/.creds"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/prompts" ]; then
+  if [ -f "${LOCAL_DIR}/prompts" ]; then
     mkdir "${LOCAL_DIR}/prompts"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images" ]; then
+  if [ -f "${LOCAL_DIR}/images" ]; then
     mkdir "${LOCAL_DIR}/images"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images/generated" ]; then
+  if [ -f "${LOCAL_DIR}/images/generated" ]; then
     mkdir "${LOCAL_DIR}/images/generated"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images/external" ]; then
+  if [ -f "${LOCAL_DIR}/images/external" ]; then
     mkdir "${LOCAL_DIR}/images/external"
   fi
 
