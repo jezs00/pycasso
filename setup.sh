@@ -24,6 +24,7 @@ SMB_PYCASSO_LOCATION=/etc/samba/pycasso.conf
 # Color code variables
 RED="\e[0;91m"
 YELLOW="\e[0;93m"
+GREEN='\033[0;32m'
 RESET="\e[0m"
 
 function install_linux_packages(){
@@ -53,7 +54,7 @@ function uninstall_python_packages(){
 }
 
 function fix_grpcio(){
-  echo -e "This might take a while... Be patient..."
+  echo -e "${YELLOW}This might take a while... Be patient...${RESET}"
   sudo pip3 uninstall grpcio grpcio-tools -y
   sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
   echo -e "GRPCIO fix applied"
@@ -121,7 +122,7 @@ function install_service(){
       copy_service_file
       sudo systemctl enable pycasso
 
-      echo -e "pycasso service installed! Use ${YELLOW}sudo systemctl restart pycasso${RESET} to test"
+      echo -e "pycasso service installed! Use ${GREEN}sudo systemctl restart pycasso${RESET} to test"
     else
       echo -e "${YELLOW}pycasso service is installed, checking if it needs an update${RESET}"
       if ! (cmp -s "pycasso.service" "/etc/systemd/system/pycasso.service"); then
@@ -182,7 +183,7 @@ function setup_smb(){
 
   if grep -Fq "${SMB_PYCASSO_LOCATION}" ${SMB_DEFAULT_LOCATION}
   then
-        echo "'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}"
+        echo "${YELLOW}'${SMB_PYCASSO_LOCATION}' already exists in ${SMB_DEFAULT_LOCATION}${RESET}"
   else
         echo "Adding '${SMB_PYCASSO_LOCATION}' to ${SMB_DEFAULT_LOCATION}"
         echo "include = ${SMB_PYCASSO_LOCATION}" | sudo tee -a /etc/samba/smb.conf
@@ -190,7 +191,7 @@ function setup_smb(){
 
   sudo systemctl enable smbd
   sudo systemctl restart smbd
-  echo "SMB installed and folders '${PROMPTS_DIR}' and '${IMAGES_DIR}' shared with full permissions"
+  echo "SMB installed and folders '${PROMPTS_DIR}' and '${IMAGES_DIR}' shared with ${YELLOW}full permissions${RESET}"
 }
 
 function install_pycasso(){
@@ -276,7 +277,7 @@ function install_pycasso(){
 
   cd "${LOCAL_DIR}" || exit
 
-  echo -e "pycasso install/update complete. To test, run ${YELLOW}'python3 ${LOCAL_DIR}/examples/review_screen.py'${RESET}"
+  echo -e "pycasso install/update complete. To test, run ${GREEN}'python3 ${LOCAL_DIR}/examples/review_screen.py'${RESET}"
 
   return $FIRST_TIME
 }
