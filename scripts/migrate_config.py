@@ -50,7 +50,7 @@ if old_config.does_config_file_exist():
     new_config = Configs(config_path=ConfigConst.CONFIG_PATH_EG.value)
     print(f"Migrating any new items from {new_config.config_path} to {old_config.config_path}")
 
-    old_config.merge_config(new_config.read_config())
+    old_config.insert_config(new_config.read_config())
     old_config.write_config(old_config.config_path)
     print(f"Save complete")
 
