@@ -6,7 +6,6 @@ import logging
 
 from mastodon import Mastodon
 from piblo.constants import ProvidersConst, PosterConst, ConfigConst
-from piblo.provider import Provider
 
 
 class PostWrapper(object):
