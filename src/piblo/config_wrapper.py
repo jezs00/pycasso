@@ -154,7 +154,6 @@ class Configs:
         if os.path.exists(self.config_path):
             config.read(self.config_path)
             self.config = config
-            self.iniconfig = INIConfig(open(self.config_path))
 
             # File Settings
             self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
