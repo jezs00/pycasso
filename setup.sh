@@ -16,6 +16,7 @@ SERVICE_DIR=/etc/systemd/system
 SERVICE_FILE=pycasso.service
 SERVICE_FILE_TEMPLATE=pycasso.service.template
 KEY_SCRIPT=scripts/set_keys.py
+CONFIG_SCRIPT=scripts/migrate_config.py
 LED_SCRIPT=scripts/pijuice_disable_leds.py
 SMB_DEFAULT_LOCATION=/etc/samba/smb.conf
 SMB_PYCASSO_LOCATION=/etc/samba/pycasso.conf
@@ -52,16 +53,26 @@ function uninstall_python_packages(){
 }
 
 function fix_grpcio(){
-  #sudo pip3 install grpcio grpcio-tools --upgrade
   echo -e "This might take a while... Be patient..."
   sudo pip3 uninstall grpcio grpcio-tools
   sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
   echo -e "GRPCIO fix applied"
 }
 
+function update_grpcio(){
+  sudo pip3 uninstall grpcio grpcio-tools
+  sudo pip3 install grpcio grpcio-tools --upgrade
+  echo -e "GRPCIO update applied"
+}
+
 function set_key(){
   cd "${LOCAL_DIR}" || exit
   sudo dbus-run-session python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
+}
+
+function migrate_config(){
+  cd "${LOCAL_DIR}" || exit
+  sudo python3 "${LOCAL_DIR}/${CONFIG_SCRIPT}"
 }
 
 function disable_leds(){
@@ -293,12 +304,14 @@ do
  2 "Upgrade pycasso minimally (Do not update requirements)" \
  3 "Install pycasso Service" \
  4 "Install pijuice" \
- 5 "Apply GRPCIO Fix" \
- 6 "Set an API key" \
- 7 "Disable pijuice LEDs" \
- 8 "Install SMB and default shares" \
- 9 "Uninstall pycasso" \
- 10 "Uninstall pycasso Service" \
+ 5 "Apply GRPCIO Fix (Rollback to versions 1.44)" \
+ 6 "Apply GRPCIO Update (Update to most recent version)" \
+ 7 "Set an API key" \
+ 8 "Migrate config file" \
+ 9 "Disable pijuice LEDs" \
+ 10 "Install SMB and default shares" \
+ 11 "Uninstall pycasso" \
+ 12 "Uninstall pycasso Service" \
  0 "Exit Setup" \
  3>&1 1>&2 2>&3)
 
@@ -310,27 +323,27 @@ do
    INSTALL_SERVICE=1
    if [ ! -d "${LOCAL_DIR}" ]; then
      if whiptail --yesno "Would you like to install the pycasso service to start on boot?" 0 0; then
-       INSTALL_SERVICE=0
-     else
        INSTALL_SERVICE=1
+     else
+       INSTALL_SERVICE=0
      fi
    fi
 
    if whiptail --yesno "Would you like to install pijuice?" 0 0; then
-     INSTALL_PIJUICE=0
-   else
      INSTALL_PIJUICE=1
+   else
+     INSTALL_PIJUICE=0
    fi
 
    # Install or update
    install_pycasso false
 
    # Install service, if desired
-   if [ $INSTALL_SERVICE -eq 0 ]; then
+   if [ $INSTALL_SERVICE -eq 1 ]; then
      install_service
    fi
 
-   if [ $INSTALL_PIJUICE -eq 0 ]; then
+   if [ $INSTALL_PIJUICE -eq 1 ]; then
      install_pijuice_package
    fi
  elif [ $INSTALL_OPTION -eq 2 ]; then
@@ -343,22 +356,34 @@ do
    # Install pijuice
    install_pijuice_package
  elif [ $INSTALL_OPTION -eq 5 ]; then
-   # Fix GRPCIO with updated version
-   fix_grpcio
+   # Fix GRPCIO with old version
+   if whiptail --yesno "This option uninstalls grpcio and grpcio-tools and instead installs versions 1.44. Takes a while to do, use this option if you want to use keychain to manage API keys. Proceed?" 0 0; then
+     fix_grpcio
+   fi
  elif [ $INSTALL_OPTION -eq 6 ]; then
+   # Fix GRPCIO with updated version
+   if whiptail --yesno "This option uninstalls grpcio and grpcio-tools and instead installs the most recent version. May be unpredictable, but could give better results if pycasso is failing to start due to GLIBC issues. Proceed?" 0 0; then
+     update_grpcio
+   fi
+ elif [ $INSTALL_OPTION -eq 7 ]; then
    # Run python3 script to set key
    set_key
- elif [ $INSTALL_OPTION -eq 7 ]; then
+ elif [ $INSTALL_OPTION -eq 8 ]; then
+   # Run python3 script to migrate old config to updated configuration
+   if whiptail --yesno "This option uninstalls grpcio and grpcio-tools and instead installs the most recent version. May be unpredictable, but could give better results if pycasso is failing to start due to GLIBC issues. Proceed?" 0 0; then
+     migrate_config
+   fi
+ elif [ $INSTALL_OPTION -eq 9 ]; then
    # Run python script to disable leds on pijuice
    disable_leds
- elif [ $INSTALL_OPTION -eq 8 ]; then
+ elif [ $INSTALL_OPTION -eq 10 ]; then
    # Set up SMB
    setup_smb
- elif [ $INSTALL_OPTION -eq 9 ]; then
+ elif [ $INSTALL_OPTION -eq 11 ]; then
    # Uninstall pycasso
    uninstall_python_packages
    uninstall_service
- elif [ $INSTALL_OPTION -eq 10 ]; then
+ elif [ $INSTALL_OPTION -eq 12 ]; then
    # Uninstall the service
    uninstall_service
  fi
