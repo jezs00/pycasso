@@ -122,7 +122,7 @@ function install_service(){
       copy_service_file
       sudo systemctl enable pycasso
 
-      echo -e "pycasso service installed! Use ${GREEN}sudo systemctl restart pycasso${RESET} to test"
+      echo -e "pycasso service installed! Use '${GREEN}sudo systemctl restart pycasso${RESET}' to test"
     else
       echo -e "${YELLOW}pycasso service is installed, checking if it needs an update${RESET}"
       if ! (cmp -s "pycasso.service" "/etc/systemd/system/pycasso.service"); then
@@ -277,7 +277,7 @@ function install_pycasso(){
 
   cd "${LOCAL_DIR}" || exit
 
-  echo -e "pycasso install/update complete. To test, run ${GREEN}'python3 ${LOCAL_DIR}/examples/review_screen.py'${RESET}"
+  echo -e "pycasso install/update complete. To test, run '${GREEN}python3 ${LOCAL_DIR}/examples/review_screen.py${RESET}'"
 
   return $FIRST_TIME
 }
