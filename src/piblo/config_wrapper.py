@@ -25,7 +25,10 @@ class Configs:
     init_config()
         Creates .config file from .config-example if
 
-    write_config(new_path) # Not yet implemented
+    insert_config(new_config)
+        Adds new config items in configparser object 'new_config', without overwriting existing settings.
+
+    write_config(new_path)
         Writes current config to file at 'new_path'.
 
     set_config_terminal(path) # Not yet implemented
@@ -151,6 +154,7 @@ class Configs:
         if os.path.exists(self.config_path):
             config.read(self.config_path)
             self.config = config
+            self.iniconfig = INIConfig(open(self.config_path))
 
             # File Settings
             self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
@@ -298,6 +302,11 @@ class Configs:
             self.mastodon_client_cred_path = self.file.get_full_path(self.mastodon_client_cred_path)
 
         return config
+
+    def insert_config(self, new_config):
+        new_config.read_dict(dict(self.config))
+        self.config = new_config
+        return self.config
 
     def write_config(self, new_path):
         if os.path.exists(new_path):
