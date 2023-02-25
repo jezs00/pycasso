@@ -1,0 +1,283 @@
+[File]
+###################
+# File Operations #
+###################
+
+# Flag indicating whether to save image after generation or not [boolean]
+save_image=True
+
+# File paths to external and generated images folder [string]
+external_image_location=images/external
+generated_image_location=images/generated
+
+# Image format (most of the time it will be png) [string]
+image_format=png
+
+# File path to font file [string]
+font_file=resources/fonts/Font.ttc
+
+# File paths to prompt subjects, artists and raw prompts text files [string]
+subjects_file=prompts/subjects.txt
+artists_file=prompts/artists.txt
+prompts_file=prompts/prompts.txt
+
+# Flag indicating how to deal with larger images, resize_external set to 'False' to fully fill frame [boolean]
+resize_external=True
+
+[EPD]
+######################
+# EPD Information    #
+# (used by omni-epd) #
+######################
+# See https://github.com/robweber/omni-epd for supported displays for more information on omni-epd options
+
+# Type of EPD display. See https://github.com/robweber/omni-epd for supported displays [string]
+type=omni_epd.mock
+
+# Mode of display [string]
+mode=color
+
+# Palette filter for dithering. See https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options for more info
+#palette_filter=[[0, 0, 0], [255, 255, 255], [0, 255, 0], [0, 0, 255], [255, 0, 0], [255, 255, 0], [255, 128, 0]]
+
+[Display]
+#########################
+# Display Modifications #
+# (used by omni-epd)    #
+#########################
+
+# Rotation of image on display in degrees (integer)
+rotate=0
+
+# Flag indicating whether to flip image on display horizontally and vertically [boolean]
+flip_horizontal=False
+flip_vertical=False
+
+# Dither mode. See https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options for more info
+#dither=FloydSteinberg
+#dither_strength=1.0
+#dither_serpentine=False
+
+[Image Enhancements]
+#######################
+# Image Modifications #
+# (used by omni-epd)  #
+#######################
+
+# Levels of contrast, brightness and sharpness for the display [integer]
+contrast=1
+brightness=1
+sharpness=1
+
+[Prompt]
+#################################
+# Automatic Prompt Construction #
+#################################
+
+# Pycasso mode to use in prompt generation [integer]
+# Mode 1 - (preamble - subjects.txt - connector - artists.txt - postscript)
+# Mode 2 - (preamble - prompts.txt - postscript)
+# Mode 0 - Any of the above (randomly chosen)
+mode=1
+
+# Preamble text to insert before main prompt [string]
+preamble=""
+
+# Text to use as a connector between subject and artist [string]
+connector="OLD CONNECTOR"
+
+[Text]
+################
+# Text Parsing #
+################
+
+# Flag indicating whether to add text to the display or not [boolean]
+add_text=True
+
+# Flag indicating whether to parse text from file names for use in pycasso [boolean]
+parse_file_text=True
+
+# Filename parsing: regex to find split point between preamble and main text in external image names [string]
+preamble_regex=" .* -"
+
+# Filename parsing: regex to find split point between subject and artist in external document names [string]
+artist_regex= "in the style of"
+
+# Text to find and remove from any parsing of file names. Supports multiple lines of text to remove [strings]
+remove_text=", digital art"
+            "A painting of"
+            "an oil painting of"
+            "a surrealist oil painting of"
+            "graffiti of"
+
+# Flag indicating whether to parse text from files with custom randomisation [boolean]
+# Custom randomisation looks like: "A (Good|Bad) Dog".
+# The above may return "A Good Dog." or "A Bad Dog"
+parse_random_text=True
+
+# List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
+# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
+# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
+parse_brackets="()"
+               "[]"
+               "{}"
+
+# Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
+box_to_floor=True
+box_to_edge=True
+
+# Locations of the artist and title text boxes from the bottom of the cropped image in pixels [integer]
+artist_loc=10
+artist_size=14
+title_loc=28
+title_size=20
+
+# Padding around the text box for artist and title text box in pixels [integer]
+padding=10
+
+# Opacity of the text box [integer]
+opacity=150
+
+[Icon]
+#################
+# Icon Settings #
+#################
+
+# Can be set to a hex like "#FF0000", or "auto" to automatically set white or black depending on background [string]
+icon_color=auto
+
+# Padding from the corner for the status icon in pixels [integer]
+icon_padding=10
+
+# Corner to display icons in. Options are "nw", "ne", "sw", "se" [string]
+icon_corner=nw
+
+# Size of the status icon in pixels [integer]
+icon_size=20
+
+# Width of the line of the status icon in pixels [integer]
+icon_width=3
+
+# Gap between each icon in pixels [integer]
+icon_gap=5
+
+# Opacity of the icons [integer]
+icon_opacity=150
+
+# Path to icon folder relative to working directory [string]
+icon_path=resources/icons
+
+# Show an icon displaying the battery level [boolean]
+show_battery_icon=True
+
+# Show an icon displaying the provider used or failure [boolean]
+show_provider_icon=True
+
+# Show an icon displaying error status [boolean]
+show_status_icon=True
+
+[Logging]
+####################
+# Logging Settings #
+####################
+# Please note logging settings are currently not implemented in run.py
+
+# File path of pycasso log file [string]
+log_file=pycasso.log
+
+# Logging level to save to log file. [integer]
+# Levels: CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0
+log_level=10
+
+[Providers]
+###################
+# Provider Weight #
+###################
+# Comparative chances whether any particular provider is used [integer]
+# EG "external_amount = 0", "historic_amount = 1" and "stability_amount = 2" would result in:
+# External images never appearing, and approximately 1 Historic image appearing for every 2 Stable Diffusion images
+external_amount=0
+historic_amount=0
+stability_amount=0
+dalle_amount=0
+automatic_amount=0
+
+# Whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it.
+# [boolean]
+use_keychain=False
+
+# File path to credentials file [string]
+credential_path=.creds
+
+# If all other modes fail or are not selected, show a test image [boolean]
+test_enabled=True
+
+# IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
+automatic_host=127.0.0.1
+automatic_port=7860
+
+# Whether to try another provider on failure
+provider_fallback=True
+
+[Generation]
+##################################
+# Image Generation Configuration #
+##################################
+
+# Flag indicating whether to utilise 'infilling' to resend image back to provider and fill full frame [boolean]
+infill=False
+
+# If infill set to true, pop the image out by infill_percent. Helps to avoid images too zoomed in. [integer]
+infill_percent=10
+
+[PiJuice]
+#########################
+# PiJuice Configuration #
+#########################
+
+# Flag indicating whether to use PiJuice or not. Set to False if you do not know what that means. [boolean]
+use_pijuice=False
+
+# Flag indicating whether to shutdown after pycasso if running on PiJuice battery (not charging) [boolean]
+shutdown_on_battery=True
+
+# Flag indicating whether to shut down if program encounters an exception. Used to stop battery running down on error.
+# (WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after
+# failures you may not be able to SSH in even after a wait time) [boolean]
+shutdown_on_exception=False
+
+# Time to wait in seconds before running pycasso. Can help in ensuring PiJuice is ready [integer]
+wait_to_run=30
+
+# Battery percentage that pycasso should start showing low battery symbol at [integer]
+charge_display=15
+
+[Post]
+######################
+# Post Configuration #
+######################
+
+# Flag indicating whether to post to Mastodon
+post_to_mastodon=False
+
+# Name of app to register
+mastodon_app_name=new_app
+
+# URL to mastodon server to use
+mastodon_base_url=https://mastodon.social
+
+# Path to mastodon client secret
+mastodon_client_cred_path=m_client.secret
+
+# Path to mastodon user secret
+mastodon_user_cred_path=m_user.secret
+
+[Debug]
+#######################
+# Debug Configuration #
+#######################
+# The following settings are only relevant for development. Only use them if you know what you're doing.
+
+# Width and height to use with mock EPD, to test different display sizes while developing without an EPD.
+test_epd_width=500
+test_epd_height=300
