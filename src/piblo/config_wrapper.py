@@ -38,7 +38,7 @@ class Configs:
     def __init__(self, path=os.getcwd(), config_path=ConfigConst.CONFIG_PATH.value,
                  example_config_path=ConfigConst.CONFIG_PATH_EG.value):
         # Config Item
-        self.config = None
+        self.config = configparser.ConfigParser()
 
         # Paths
         self.file = FileOperations(path)
@@ -149,8 +149,6 @@ class Configs:
         self.backup_config()
 
         # Method to read config file settings
-        self.config = configparser.ConfigParser()
-
         if os.path.exists(self.config_path):
             self.config.read(self.config_path)
             self.load_config(self.config)

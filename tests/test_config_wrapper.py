@@ -34,7 +34,9 @@ def test_insert_config():
     old_config = Configs(config_path=config_old_path)
     new_config = Configs(config_path=config_new_path)
 
-    old_config.read_config()
+    old_config.config.read(config_old_path)
+    old_config.load_config(old_config.config)
+
     old_config.insert_config(new_config.read_config())
     old_config.load_config(old_config.config)
 
@@ -53,7 +55,8 @@ def test_write_config():
         os.remove(config_new_path)
 
     old_config = Configs(config_path=config_old_path)
-    old_config.read_config()
+    old_config.config.read(config_old_path)
+    old_config.load_config(old_config.config)
     old_config.write_config(config_new_path)
 
     new_config = Configs(config_path=config_new_path)
