@@ -136,7 +136,7 @@ images/
 prompts/
 
 # Ignore config and backups
-.config*
+/.config*
 
 # Ignore credential file
 .creds
