@@ -78,6 +78,7 @@ class ConfigConst(Enum):
     GENERATION_INFILL_PERCENT = 10
 
     # Post Settings
+    POST_CONNECTOR = " in the style of "
     POST_TO_MASTODON = False
     MASTODON_APP_NAME = "new_app"
     MASTODON_BASE_URL = 'https://mastodon.social'

@@ -129,6 +129,7 @@ class Configs:
         self.charge_display = ConfigConst.CHARGE_DISPLAY.value
 
         # Poster Settings
+        self.post_connector = ConfigConst.POST_CONNECTOR.value
         self.post_to_mastodon = ConfigConst.POST_TO_MASTODON.value
         self.mastodon_app_name = ConfigConst.MASTODON_APP_NAME.value
         self.mastodon_base_url = ConfigConst.MASTODON_BASE_URL.value
@@ -274,6 +275,7 @@ class Configs:
         self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
 
         # Poster Settings
+        self.post_connector = config.get("Post", "post_connector", fallback=ConfigConst.POST_CONNECTOR.value)[1:-1]
         self.post_to_mastodon = config.getboolean("Post", "post_to_mastodon",
                                                   fallback=ConfigConst.POST_TO_MASTODON.value)
         self.mastodon_app_name = config.get("Post", "mastodon_app_name",
