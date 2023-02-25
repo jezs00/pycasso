@@ -183,6 +183,7 @@ class DisplayShapeConst(Enum):
 class UnitTestConst(Enum):
     TEST_FOLDER = "tests/"
     FILE_OPERATIONS_FOLDER = "test_file_operations_content"
+    FILE_TEST_TXT = "test_file.txt"
     CONFIG_FILE = ".testconfig"
     CONFIG_FOLDER = "test_config_wrapper_content"
     CONFIG_OLD_FILE = ".config-old"

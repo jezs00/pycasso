@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Unit tests for file_operations.py
-
+import glob
 import os
 import collections
+import shutil
+
 from piblo.file_operations import FileOperations
 from piblo.constants import UnitTestConst
 
@@ -160,3 +162,34 @@ def test_parse_weighted_lines():
     result = FileOperations.parse_weighted_lines(lines)
     expected = ["Five", "Five", "Five", "Five", "Five", "One"]
     assert collections.Counter(result) == collections.Counter(expected)
+
+
+def test_version_file():
+    file_path = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value,
+                             UnitTestConst.FILE_TEST_TXT.value)
+    new_path = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value,
+                            UnitTestConst.FILE_TEST_TXT.value)
+
+    # Cleanup files before
+    for f in glob.glob(f"{new_path}*"):
+        os.remove(f)
+
+    shutil.copy2(file_path, new_path)
+    FileOperations.version_file(new_path)
+    shutil.copy2(file_path, new_path)
+    FileOperations.version_file(new_path)
+    shutil.copy2(file_path, new_path)
+    FileOperations.version_file(new_path)
+    shutil.copy2(file_path, new_path)
+    FileOperations.version_file(new_path)
+    shutil.copy2(file_path, new_path)
+    FileOperations.version_file(new_path)
+
+    assert os.path.exists(new_path + "_1")
+    assert os.path.exists(new_path + "_4")
+    assert os.path.exists(new_path + "_5")
+
+    # Cleanup files after
+    for f in glob.glob(f"{new_path}*"):
+        os.remove(f)
+
