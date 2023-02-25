@@ -371,7 +371,7 @@ do
    set_key
  elif [ $INSTALL_OPTION -eq 8 ]; then
    # Run python3 script to migrate old config to updated configuration
-   if whiptail --yesno "This option uninstalls grpcio and grpcio-tools and instead installs the most recent version. May be unpredictable, but could give better results if pycasso is failing to start due to GLIBC issues. Proceed?" 0 0; then
+   if whiptail --yesno "This option will migrate your old config into a new config file containing any new variables or options. This will remove any comments from the configuration file. Proceed?" 0 0; then
      migrate_config
    fi
  elif [ $INSTALL_OPTION -eq 9 ]; then
