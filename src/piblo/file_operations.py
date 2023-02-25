@@ -194,3 +194,31 @@ class FileOperations:
             for i in range(amount):
                 lines.append(line)
         return lines
+
+    @staticmethod
+    def extract_number(path):
+        try:
+            # assume everything after `_` is a number
+            return int(path.rpartition('_')[-1])
+        except ValueError:
+            # not everything was a number, skip this directory
+            return None
+        return
+
+    @staticmethod
+    def version_file(file_path):
+        # Use glob to backup https://stackoverflow.com/questions/38885370/rename-backup-old-directory-in-python
+        if os.path.exists(file_path):
+            backups = glob.glob(file_path + '_[0-9]*')
+
+            backup_numbers = (FileOperations.extract_number(b) for b in backups)
+            try:
+                next_backup = max(filter(None, backup_numbers)) + 1
+            except ValueError:
+                # no backup files
+                next_backup = 1
+
+        new_path = file_path + '_{:d}'.format(next_backup)
+
+        os.rename(file_path, new_path)
+        return new_path
