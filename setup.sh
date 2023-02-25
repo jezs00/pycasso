@@ -307,7 +307,7 @@ do
  4 "Install pijuice" \
  5 "Apply GRPCIO Fix (Rollback to versions 1.44)" \
  6 "Apply GRPCIO Update (Update to most recent version)" \
- 7 "Set an API key" \
+ 7 "Set an API key or connect website" \
  8 "Migrate config file" \
  9 "Disable pijuice LEDs" \
  10 "Install SMB and default shares" \
