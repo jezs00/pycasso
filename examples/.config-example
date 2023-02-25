@@ -264,7 +264,7 @@ charge_display=15
 post_to_mastodon=False
 
 # Name of app to register
-mastodon_app_name=new_app
+mastodon_app_name=pycasso
 
 # URL to mastodon server to use
 mastodon_base_url=https://mastodon.social
