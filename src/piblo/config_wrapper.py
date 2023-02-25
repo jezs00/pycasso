@@ -152,6 +152,11 @@ class Configs:
         if os.path.exists(self.config_path):
             self.config.read(self.config_path)
             self.load_config(self.config)
+
+            # File Backups
+            self.subjects_file = FileOperations.backup_file(self.subjects_file, self.subjects_example)
+            self.artists_file = FileOperations.backup_file(self.artists_file, self.artists_example)
+            self.prompts_file = FileOperations.backup_file(self.prompts_file, self.prompts_example)
         else:
             logging.warning(f"Config file {self.config_path} does not exist")
         return self.config
@@ -288,10 +293,6 @@ class Configs:
         self.subjects_file = self.file.get_full_path(self.subjects_file)
         self.artists_file = self.file.get_full_path(self.artists_file)
         self.prompts_file = self.file.get_full_path(self.prompts_file)
-
-        self.subjects_file = FileOperations.backup_file(self.subjects_file, self.subjects_example)
-        self.artists_file = FileOperations.backup_file(self.artists_file, self.artists_example)
-        self.prompts_file = FileOperations.backup_file(self.prompts_file, self.prompts_example)
 
         # Set full paths for other paths
         self.external_image_location = self.file.get_full_path(self.external_image_location)
