@@ -3,8 +3,6 @@
 import sys
 
 # Small script to set keys
-import distutils
-
 from piblo.pycasso import Pycasso
 from piblo.provider import StabilityProvider, DalleProvider
 from piblo.constants import ProvidersConst, PosterConst
@@ -45,14 +43,20 @@ def set_poster():
                      f"Choose Poster:"))
 
     if mode == PosterConst.MASTODON.value:
-        user = input("\nUsername:")
-        password = input("\nPassword:")
-        register = input(f"\nRegister app '{instance.config.mastodon_app_name}' (y/n):")
+        user = input("Username:")
+        password = input("Password:")
+
+        register = None
         try:
-            if distutils.util.strtobool(register):
-                MastodonPoster.create_app(instance.config.mastodon_app_name, instance.config.mastodon_base_url,
-                                          instance.config.mastodon_client_cred_path)
-                print(f"Registered app '{instance.config.mastodon_app_name}' OK")
+            while register != "n" and register != "y":
+                register = input(f"Register app '{instance.config.mastodon_app_name}' (y/n):")
+                register = register.lower()
+                if register == "y":
+                    MastodonPoster.create_app(instance.config.mastodon_app_name, instance.config.mastodon_base_url,
+                                              instance.config.mastodon_client_cred_path)
+                    print(f"Registered app '{instance.config.mastodon_app_name}' OK")
+                elif register != "n":
+                    print(f"Invalid response '{register}'")
         except ValueError as e:
             print(e)
         poster = MastodonPoster(mode=instance.config.use_keychain,
