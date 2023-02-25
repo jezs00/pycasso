@@ -365,6 +365,7 @@ def test_major_complete_config():
     assert instance.config.charge_display == 30
 
     # Post Settings
+    assert instance.config.post_connector == "TEST POST CONNECTOR"
     assert instance.config.post_to_mastodon is True
     assert instance.config.mastodon_app_name == "test_app"
     assert instance.config.mastodon_base_url == "https://aus.social"

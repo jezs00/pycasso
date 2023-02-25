@@ -258,6 +258,9 @@ charge_display = 30
 # Post Configuration #
 ######################
 
+# Connect to use between title and artist when posting to a connected website
+post_connector="TEST POST CONNECTOR"
+
 # Flag indicating whether to post to Mastodon
 post_to_mastodon=True
 
