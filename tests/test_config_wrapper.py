@@ -48,7 +48,7 @@ def test_write_config():
     config_old_path = os.path.join(os.path.dirname(__file__), UnitTestConst.CONFIG_FOLDER.value,
                                    UnitTestConst.CONFIG_OLD_FILE.value)
     config_new_path = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value,
-                              UnitTestConst.CONFIG_FILE.value)
+                                   UnitTestConst.CONFIG_FILE.value)
 
     # Cleanup files before
     if os.path.exists(config_new_path):
@@ -82,3 +82,24 @@ def test_does_config_file_exist_not():
                                UnitTestConst.CONFIG_FAIL_FILE.value)
     config = Configs(config_path=config_path)
     assert not config.does_config_file_exist()
+
+
+def test_read_string():
+    s = "\"STRING WITH QUOTES\""
+    expected = "STRING WITH QUOTES"
+    result = Configs.read_string(s)
+    assert result == expected
+
+
+def test_read_string_half_quotes():
+    s = "\"STRING WITH 1 QUOTE"
+    expected = "\"STRING WITH 1 QUOTE"
+    result = Configs.read_string(s)
+    assert result == expected
+
+
+def test_read_string_no_quotes():
+    s = "STRING WITHOUT QUOTES"
+    expected = "STRING WITHOUT QUOTES"
+    result = Configs.read_string(s)
+    assert result == expected

@@ -33,6 +33,10 @@ class Configs:
 
     set_config_terminal(path) # Not yet implemented
         Sets config file via terminal prompts
+
+    read_string(s)
+        Reads a string, if it is encapsulated in quotes it will remove the quotes, if it is not encapsulated in quotes
+        it will return the string as input.
     """
 
     def __init__(self, path=os.getcwd(), config_path=ConfigConst.CONFIG_PATH.value,
@@ -324,3 +328,9 @@ class Configs:
 
     def set_config_terminal(self, path):
         return
+
+    @staticmethod
+    def read_string(s):
+        if s[0] == "\"" and s[len(s) - 1] == "\"":
+            s = s[1:-1]
+        return s
