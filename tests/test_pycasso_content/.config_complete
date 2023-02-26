@@ -7,19 +7,19 @@
 save_image=False
 
 # File paths to external and generated images folder [string]
-external_image_location=test_location
-generated_image_location=test_location
+external_image_location="test_location"
+generated_image_location="test_location"
 
 # Image format (most of the time it will be png) [string]
 image_format=jpg
 
 # File path to font file [string]
-font_file=test_location/Font.ttc
+font_file="test_location/Font.ttc"
 
 # File paths to prompt subjects, artists and raw prompts text files [string]
-subjects_file=test_pycasso_content/test_subjects.txt
-artists_file=test_pycasso_content/test_artists.txt
-prompts_file=test_pycasso_content/test_prompts.txt
+subjects_file="test_pycasso_content/test_subjects.txt"
+artists_file="test_pycasso_content/test_artists.txt"
+prompts_file="test_pycasso_content/test_prompts.txt"
 
 # Flag indicating how to deal with larger images, resize_external set to 'False' to fully fill frame [boolean]
 resize_external=False
@@ -167,7 +167,7 @@ icon_gap=2
 icon_opacity = 190
 
 # Path to icon folder relative to working directory [string]
-icon_path=test_location/test/test
+icon_path="test_location/test/test"
 
 # Show an icon displaying the battery level [boolean]
 show_battery_icon=False
@@ -184,7 +184,7 @@ show_status_icon=False
 ####################
 
 # File path of pycasso log file [string]
-log_file = pycasso_test.log
+log_file = "pycasso_test.log"
 
 # Logging level to save to log file. [integer]
 # Levels: CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0
@@ -265,16 +265,16 @@ post_connector="TEST POST CONNECTOR"
 post_to_mastodon=True
 
 # Name of app to register
-mastodon_app_name=test_app
+mastodon_app_name="test_app"
 
 # URL to mastodon server to use
-mastodon_base_url=https://aus.social
+mastodon_base_url="https://aus.social"
 
 # Path to mastodon client secret
-mastodon_client_cred_path=test1.secret
+mastodon_client_cred_path="test1.secret"
 
 # Path to mastodon user secret
-mastodon_user_cred_path=test2.secret
+mastodon_user_cred_path="test2.secret"
 
 [Debug]
 #######################

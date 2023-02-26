@@ -7,19 +7,19 @@
 save_image=True
 
 # File paths to external and generated images folder [string]
-external_image_location=images/external
-generated_image_location=images/generated
+external_image_location="images/external"
+generated_image_location="images/generated"
 
 # Image format (most of the time it will be png) [string]
 image_format=png
 
 # File path to font file [string]
-font_file=resources/fonts/Font.ttc
+font_file="resources/fonts/Font.ttc"
 
 # File paths to prompt subjects, artists and raw prompts text files [string]
-subjects_file=prompts/subjects.txt
-artists_file=prompts/artists.txt
-prompts_file=prompts/prompts.txt
+subjects_file="prompts/subjects.txt"
+artists_file="prompts/artists.txt"
+prompts_file="prompts/prompts.txt"
 
 # Flag indicating how to deal with larger images, resize_external set to 'False' to fully fill frame [boolean]
 resize_external=True
@@ -168,7 +168,7 @@ icon_gap=5
 icon_opacity=150
 
 # Path to icon folder relative to working directory [string]
-icon_path=resources/icons
+icon_path="resources/icons"
 
 # Show an icon displaying the battery level [boolean]
 show_battery_icon=True
@@ -186,7 +186,7 @@ show_status_icon=True
 # Please note logging settings are currently not implemented in run.py
 
 # File path of pycasso log file [string]
-log_file=pycasso.log
+log_file="pycasso.log"
 
 # Logging level to save to log file. [integer]
 # Levels: CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0
@@ -210,7 +210,7 @@ automatic_amount=0
 use_keychain=False
 
 # File path to credentials file [string]
-credential_path=.creds
+credential_path=".creds"
 
 # If all other modes fail or are not selected, show a test image [boolean]
 test_enabled=True
@@ -267,16 +267,16 @@ post_connector=" in the style of "
 post_to_mastodon=False
 
 # Name of app to register
-mastodon_app_name=pycasso
+mastodon_app_name="pycasso"
 
 # URL to mastodon server to use
-mastodon_base_url=https://mastodon.social
+mastodon_base_url="https://mastodon.social"
 
 # Path to mastodon client secret
-mastodon_client_cred_path=m_client.secret
+mastodon_client_cred_path="m_client.secret"
 
 # Path to mastodon user secret
-mastodon_user_cred_path=m_user.secret
+mastodon_user_cred_path="m_user.secret"
 
 [Debug]
 #######################
