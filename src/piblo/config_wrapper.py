@@ -171,13 +171,20 @@ class Configs:
         self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
         self.external_image_location = config.get("File", "external_image_location",
                                                   fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
+        self.external_image_location = self.read_string(self.external_image_location)
         self.generated_image_location = config.get("File", "generated_image_location",
                                                    fallback=ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
+        self.generated_image_location = self.read_string(self.generated_image_location)
         self.image_format = config.get("File", "image_format", fallback=ConfigConst.FILE_IMAGE_FORMAT.value)
+        self.image_format = self.read_string(self.image_format)
         self.font_file = config.get("File", "font_file", fallback=ConfigConst.FILE_FONT_FILE.value)
+        self.font_file = self.read_string(self.font_file)
         self.subjects_file = config.get("File", "subjects_file", fallback=ConfigConst.FILE_SUBJECTS_FILE.value)
+        self.subjects_file = self.read_string(self.subjects_file)
         self.artists_file = config.get("File", "artists_file", fallback=ConfigConst.FILE_ARTISTS_FILE.value)
+        self.artists_file = self.read_string(self.artists_file)
         self.prompts_file = config.get("File", "prompts_file", fallback=ConfigConst.FILE_PROMPTS_FILE.value)
+        self.prompts_file = self.read_string(self.prompts_file)
         self.resize_external = config.getboolean("File", "resize_external",
                                                  fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
 
@@ -190,14 +197,16 @@ class Configs:
         self.parse_brackets = []
         for text in config.get("Text", "parse_brackets",
                                fallback=ConfigConst.TEXT_PARSE_BRACKETS.value).split("\n"):
-            self.parse_brackets.append(text[1:-1])
+            self.parse_brackets.append(self.read_string(text))
         self.preamble_regex = config.get("Text", "preamble_regex",
-                                         fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)[1:-1]
-        self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)[1:-1]
+                                         fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
+        self.preamble_regex = self.read_string(self.preamble_regex)
+        self.artist_regex = config.get("Text", "artist_regex", fallback=ConfigConst.TEXT_ARTIST_REGEX.value)
+        self.artist_regex = self.read_string(self.artist_regex)
 
         self.remove_text = []
         for text in config.get("Text", "remove_text", fallback=ConfigConst.TEXT_REMOVE_TEXT.value).split("\n"):
-            self.remove_text.append(text[1:-1])
+            self.remove_text.append(self.read_string(text))
 
         self.box_to_floor = config.getboolean("Text", "box_to_floor",
                                               fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
@@ -211,13 +220,16 @@ class Configs:
 
         # Prompt
         self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
-        self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)[1:-1]
-        self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)[1:-1]
-        self.prompt_postscript = config.get("Prompt", "postscript",
-                                            fallback=ConfigConst.PROMPT_POSTSCRIPT.value)[1:-1]
+        self.prompt_preamble = config.get("Prompt", "preamble", fallback=ConfigConst.PROMPT_PREAMBLE.value)
+        self.prompt_preamble = self.read_string(self.prompt_preamble)
+        self.prompt_connector = config.get("Prompt", "connector", fallback=ConfigConst.PROMPT_CONNECTOR.value)
+        self.prompt_connector = self.read_string(self.prompt_connector)
+        self.prompt_postscript = config.get("Prompt", "postscript", fallback=ConfigConst.PROMPT_POSTSCRIPT.value)
+        self.prompt_postscript = self.read_string(self.prompt_postscript)
 
         # Icon
         self.icon_color = config.get("Icon", "icon_color", fallback=ConfigConst.ICON_COLOR.value)
+        self.icon_color = self.read_string(self.icon_color)
         self.icon_padding = config.getint("Icon", "icon_padding", fallback=ConfigConst.ICON_PADDING)
         self.icon_corner = config.get("Icon", "icon_corner", fallback=ConfigConst.ICON_CORNER.value)
         self.icon_size = config.getint("Icon", "icon_size", fallback=ConfigConst.ICON_SIZE.value)
@@ -225,6 +237,7 @@ class Configs:
         self.icon_gap = config.getint("Icon", "icon_gap", fallback=ConfigConst.ICON_GAP.value)
         self.icon_opacity = config.getint("Icon", "icon_opacity", fallback=ConfigConst.ICON_OPACITY.value)
         self.icon_path = config.get("Icon", "icon_path", fallback=ConfigConst.ICON_PATH.value)
+        self.icon_path = self.read_string(self.icon_path)
         self.show_battery_icon = config.getboolean("Icon", "show_battery_icon",
                                                    fallback=ConfigConst.SHOW_BATTERY_ICON.value)
         self.show_provider_icon = config.getboolean("Icon", "show_provider_icon",
@@ -234,6 +247,7 @@ class Configs:
 
         # Display (rest of EPD config is just passed straight into displayfactory
         self.display_type = config.get("EPD", "type", fallback=ConfigConst.DISPLAY_TYPE.value)
+        self.display_type = self.read_string(self.display_type)
 
         # Provider
         self.external_amount = config.getint("Providers", "external_amount",
@@ -250,11 +264,12 @@ class Configs:
                                               fallback=ProvidersConst.USE_KEYCHAIN.value)
         self.credential_path = config.get("Providers", "credential_path",
                                           fallback=ProvidersConst.CREDENTIAL_PATH.value)
+        self.credential_path = self.read_string(self.credential_path)
         self.test_enabled = config.getboolean("Providers", "test_enabled",
                                               fallback=ProvidersConst.TEST_ENABLED.value)
-
         self.automatic_host = config.get("Providers", "automatic_host",
                                          fallback=AutomaticConst.DEFAULT_HOST.value)
+        self.automatic_host = self.read_string(self.automatic_host)
         self.automatic_port = config.getint("Providers", "automatic_port",
                                             fallback=AutomaticConst.DEFAULT_PORT.value)
         self.provider_fallback = config.getboolean("Providers", "provider_fallback",
@@ -262,6 +277,7 @@ class Configs:
 
         # Logging Settings
         self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
+        self.log_file = self.read_string(self.log_file)
         self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
 
         # Generation Settings
@@ -279,17 +295,22 @@ class Configs:
         self.charge_display = config.getint("PiJuice", "charge_display", fallback=ConfigConst.CHARGE_DISPLAY.value)
 
         # Poster Settings
-        self.post_connector = config.get("Post", "post_connector", fallback=ConfigConst.POST_CONNECTOR.value)[1:-1]
+        self.post_connector = config.get("Post", "post_connector", fallback=ConfigConst.POST_CONNECTOR.value)
+        self.post_connector = self.read_string(self.post_connector)
         self.post_to_mastodon = config.getboolean("Post", "post_to_mastodon",
                                                   fallback=ConfigConst.POST_TO_MASTODON.value)
         self.mastodon_app_name = config.get("Post", "mastodon_app_name",
                                             fallback=ConfigConst.MASTODON_APP_NAME.value)
+        self.mastodon_app_name = self.read_string(self.mastodon_app_name)
         self.mastodon_base_url = config.get("Post", "mastodon_base_url",
                                             fallback=ConfigConst.MASTODON_BASE_URL.value)
+        self.mastodon_base_url = self.read_string(self.mastodon_base_url)
         self.mastodon_client_cred_path = config.get("Post", "mastodon_client_cred_path",
                                                     fallback=ConfigConst.MASTODON_CLIENT_CRED_PATH.value)
+        self.mastodon_client_cred_path = self.read_string(self.mastodon_client_cred_path)
         self.mastodon_user_cred_path = config.get("Post", "mastodon_user_cred_path",
                                                   fallback=ConfigConst.MASTODON_USER_CRED_PATH.value)
+        self.mastodon_user_cred_path = self.read_string(self.mastodon_user_cred_path)
 
         # Debug Settings
         self.test_epd_width = config.getint("Debug", "test_epd_width", fallback=ConfigConst.TEST_EPD_WIDTH.value)
