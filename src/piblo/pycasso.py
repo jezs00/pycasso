@@ -161,6 +161,7 @@ class Pycasso:
         self.prompt = ""
         self.artist_text = ""
         self.title_text = ""
+        self.full_text = ""
         self.metadata = None
 
         # Icon
@@ -456,6 +457,7 @@ class Pycasso:
             self.prompt, self.artist_text, self.title_text = prompt_gen
             self.metadata.add_text(PropertiesConst.ARTIST.value, self.artist_text)
             self.metadata.add_text(PropertiesConst.TITLE.value, self.title_text)
+            self.full_text = f"'{self.title_text}'{self.config.post_connector}{self.artist_text}"
 
         elif prompt_mode == PromptModeConst.PROMPT.value:
             # Build prompt from prompt file
@@ -464,12 +466,14 @@ class Pycasso:
                                                  self.config.parse_random_text)
             self.prompt, self.title_text = prompt_gen
             self.artist_text = ""
+            self.full_text = self.title_text
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
             prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                  self.config.prompt_postscript)
             self.prompt, self.title_text = prompt_gen
+            self.full_text = self.title_text
 
         self.metadata.add_text(PropertiesConst.PROMPT.value, self.prompt)
         return self.prompt, self.metadata, self.artist_text, self.title_text
@@ -786,7 +790,7 @@ class Pycasso:
             mastodon = MastodonPoster(mode=self.config.use_keychain, creds_path=self.config.credential_path,
                                       client_cred_file=self.config.mastodon_client_cred_path,
                                       user_cred_file=self.config.mastodon_user_cred_path)
-            mastodon.post_image(self.image_base, self.title_text)
+            mastodon.post_image(self.image_base, self.full_text)
         return
 
     def run(self):
