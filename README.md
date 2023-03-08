@@ -39,9 +39,11 @@ bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 * Select `Option 1` - Install/Upgrade pycasso
 * Select "Yes" to enable service on boot if that is what you want to do _(it is probably what you want to do)_
 * (Optional) If you want to use pijuice, select "Yes" to install PiJuice
-* (Optional) Select `Option 4` - Fix GRPCIO _(There are issues with GLIBC on raspberry pi, and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
-* Select `Option 5 - API Key`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys) and [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. **Please note that these providers are a paid service, and after any free credits expire, you will need to pay for more credits to maintain functionality.** _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default, this will be stored in a plaintext file in the application folder. This is not ideal, but it is the best I have figured out until I can get GRPCIO playing nicely.)_
-* (Optional) Select `Option 6 - Disable pijuice LEDs`. IF you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
+* (Optional) Select `Option 5 - Apply GRPCIO Fix` _(There are issues with GLIBC on raspberry pi, and it was installed by the Stable Diffusion package. This fixes it up and does not appear to break Stable Diffusion. You'll probably have to do this.)_
+  * If this does not work, try `Option 6 - Apply GRPCIO Update`. _(GRPCIO can be a tough cookie and acts differently on different operating systems, which makes this bit a little complicated)_
+* Select `Option 7 - Set an API key or connect website`, enter your provider and enter your key. Currently supporting [openai](https://beta.openai.com/account/api-keys), [Stable Diffusion](https://beta.dreamstudio.ai/membership?tab=apiKeys). You can run this multiple times to add multiple providers or update your keys. **Please note that these providers are a paid service, and after any free credits expire, you will need to pay for more credits to maintain functionality.** _(You don't have to do this if you are loading external images, but to request images from an AI image provider, you'll need to define your API key here. By default, this will be stored in a plaintext file in the application folder. This is not ideal, but it is the best I have figured out until I can get GRPCIO playing nicely.)_
+* (Optional) Select `Option 9 - Disable pijuice LEDs`. If you have a PiJuice unit, you can run this to disable the constantly flashing LED on the device to save precious battery.
+* (Optional) Select `Option 10 - Install SMB and default shares`. This will set up a full access share in prompts and images folders, useful for easy management over the network but risky as it shares the folders with full permissions. Only do this on a trusted network. 
 
 ### Configure pycasso
 * Make sure you are in your pycasso install directory.
@@ -112,7 +114,7 @@ Here are a few more examples of how one may use these to make simple prompts mor
 You can run `nano .config` in the pycasso install folder to configure the way pycasso runs. There are a lot of options to configure your experience, and it is highly recommended to play around with these options to find the settings that work best for your setup. If at any time you wish to roll back to the default configuration you can find it is `/examples/.config-example`, or you can delete .config and running pycasso will restore the defaults automatically. If you are running pycasso frequently to see what changes your updates make, it is recommended to either use the test mode by setting all providers to 0, or using external/generated modes so that you are not being charged by your provider for each time you run the program. Below you will find a full explanation of all configuration sections and items.
 
 ### File
-Settings related to file operations within pycasso.
+Settings related to file operations within pycasso
 
 * `save_image`: A boolean flag that instructs pycasso whether to save images retrieved from providers or not. If 'True', pycasso will always save images retrieved in a defined location. If 'False' pycasso will only display the image on the EPD, once the EPD is updated again this image will be lost. `(Boolean)`
 * `external_image_location`: A file path relative to the pycasso working directory to load external images from, when using **external** mode. `(String)`
@@ -149,7 +151,7 @@ These settings are consumed by omni-epd to customise the display on the EPD. See
 * `sharpness`: Sets sharpness amount for EPD. 1 is normal. `(Integer)`
 
 ### Prompt
-Settings related to creation of prompts for submission and requests from AI art providers.
+Settings related to creation of prompts for submission and requests from AI art providers
 
 * `mode`: The mode to use in prompt generation. `(Integer)` This currently supports 3 different types of modes:
   * `1` -  (`preamble` - **subjects.txt** - `connector` - **artists.txt** - `postscript`)
@@ -181,13 +183,20 @@ Settings related to parsing text of filenames and strings, and text display on t
 ### Icon
 Settings related to status icons to display on EPD
 
+* `icon_color`: Color to show icon in. Set to `auto` to automatically detect white or black depending on shade of background `(String)` 
 * `icon_padding`: Padding from the top left corner in pixels to place the icon `(Integer)`
+* `icon_corner`: Which corner to place the icons in. Can be `nw`, `ne`, `sw` or `se`. `(String)`
 * `icon_size`: Size of the status icon in pixels `(Integer)`
-* `icon_width`: The width of the line of the status icon in pixels `(Integer)`
+* `icon_width`: The width of the line of the status icon in pixels (currently unused due to new icon system) `(Integer)`
+* `icon_gap`: Gap in pixels in between individual icons `(Integer)`
 * `icon_opacity`: Opacity of the status icon. 0 for fully transparent and 255 for fully opaque. `(Integer)`
+* `icon_path`: A file path relative to the pycasso working directory to find the icons in. `(String)`
+* `show_battery_icon`: A boolean flag that instructs pycasso to show a battery status icon. `(Boolean)` 
+* `show_provider_icon`: A boolean flag that instructs pycasso to show an icon based on provider used, and any provider failure. `(Boolean)` 
+* `show_status_icon`: A boolean flag that instructs pycasso to show an icon on exception. `(Boolean)`
 
 ### Logging
-Settings related to error and information logging from pycasso
+Settings related to error and information logging from pycasso.
 * `log_file`: A file path relative to the pycasso working directory to save log file `(String)`
 * `log_level`: Minimum logging level to save to log file. Possible options - CRITICAL:50, ERROR:40, WARNING:30, INFO:20, DEBUG:10, NOTSET:0 `(Integer)`
 
@@ -205,6 +214,7 @@ Settings related to image providers.
 * `test_enabled`: A boolean flag that instructs pycasso to run a test mode when all other providers are set to 0. `(Boolean)`
 * `automatic_host`: If using `automatic` mode, this is the IP address or host of the Automatic1111 WebUI API. `(String)`
 * `automatic_port`: If using `automatic` mode, this is the port to use for the Automatic1111 WebUI API. `(Integer)`
+* `provider_fallback`: A boolean flag that instructs pycasso to fall back to another random non-zero provider if originally chosen provider fails. `(Boolean)`
 
 ### Generation
 Settings related to generation of images with AI image providers
@@ -220,6 +230,15 @@ Settings related to PiJuice HAT configuration.
 * `shutdown_on_exception`: A boolean flag that instructs the run script whether to shut down if program encounters an exception. Used to stop battery running down on error. **WARNING: Worst case scenario this could result in having to flash your device, if pycasso keeps restarting after failures you may not be able to SSH in even after a wait time**. `(Boolean)`
 * `wait_to_run`: Time to wait in seconds before running pycasso. Can help in ensuring PiJuice class is ready, and gives a buffer to SSH into device if encountering issues. `(Integer)`
 * `charge_display`: Battery percentage that pycasso should start showing low battery symbol. `(Integer)`
+
+### Post
+Settings related to posting and sharing pycasso output on the web. Use set_keys.py to set up.
+* `post_connector`: A string to put between subject and artist if posting in this mode. `(String)`
+* `post_to_mastodon`: A boolean flag that instructs pycasso to attempt to post image to Mastodon. `(Boolean)`
+* `mastodon_app_name`: The app name to associate with your account. `(String)`
+* `mastodon_base_url`: The url to the account's mastodon instance `(String)`
+* `mastodon_client_cred_path`: A file path relative to the pycasso working directory to mastodon's client secret `(String)`
+* `mastodon_user_cred_path`: A file path relative to the pycasso working directory to mastodon's user secret  `(String)`
 
 ### Debug
 The following settings are only relevant for development. Only use them if you know what you're doing.
