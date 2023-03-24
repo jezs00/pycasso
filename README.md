@@ -136,7 +136,7 @@ These settings are consumed by omni-epd to customise the EPD information. See [o
 ### Display
 These settings are consumed by omni-epd to customise the display on the EPD. See [omni-epd](https://github.com/robweber/omni-epd) for more information on these options.
 
-* `rotate`: Rotation of the image in degrees `(Integer)`
+* `rotate`: Rotation of the image in degrees. You probably don't need to use this, use the other rotate option in Generation instead. `(Integer)`
 * `flip_horizontal`: A boolean flag that instructs the EPD to flip the image horizontally or not `(Boolean)`
 * `flip_vertical`: A boolean flag that instructs the EPD to flip the image vertically or not `(Boolean)`
 * `dither`: By default commented out. Uncomment to set a dithering mode to use. See [the omni-epd wiki](https://github.com/robweber/omni-epd/wiki/Image-Dithering-Options) for supported modes and more information. `(String)`
@@ -219,6 +219,7 @@ Settings related to image providers.
 ### Generation
 Settings related to generation of images with AI image providers
 
+* `image_rotate`: Rotation of the image PRIOR to sending to providers. This way you can get an image that fits well in portrait or landscape as per your preference. `(Integer)`
 * `infill`: A boolean flag that instructs pycasso to request an image to be infilled again if original image does not fill out the whole frame. `(Boolean)`
 * `infill_percent`: If infill is set to true, this will make the original image request smaller by this percentage, and then infill the rest of the image to fit the frame. `(Integer)`
 
