@@ -263,6 +263,26 @@ def test_run_fallback():
         os.remove(output_path)
 
 
+def test_set_rotate_normal():
+    width = 467
+    height = 212
+    new_width, new_height = Pycasso.set_rotate(width, height, 0)
+    expected_width = 467
+    expected_height = 212
+    assert new_width == expected_width
+    assert new_height == expected_height
+
+
+def test_set_rotate_side():
+    width = 400
+    height = 200
+    new_width, new_height = Pycasso.set_rotate(width, height, 90)
+    expected_width = 200
+    expected_height = 400
+    assert new_width == expected_width
+    assert new_height == expected_height
+
+
 def test_major_complete_config():
     here = os.path.dirname(__file__)
     test_folder = UnitTestConst.PYCASSO_FOLDER.value
@@ -354,6 +374,7 @@ def test_major_complete_config():
     assert instance.config.log_level == 50
 
     # Generation Settings
+    assert instance.config.image_rotate == 90
     assert instance.config.infill is True
     assert instance.config.infill_percent == 40
 

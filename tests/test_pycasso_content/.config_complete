@@ -225,6 +225,9 @@ provider_fallback=False
 # Image Generation Configuration #
 ##################################
 
+# Rotation angle for image prior to requesting image on screen [integer]
+image_rotate = 90
+
 # Flag indicating whether to utilise 'infilling' to resend image back to provider and fill full frame [boolean]
 infill = True
 

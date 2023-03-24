@@ -40,6 +40,9 @@ class Pycasso:
     display_image_on_EPD(display_image, epd)
         Displays PIL image object 'display_image' on omni_epd object 'epd'
 
+    set_rotate()
+        Swaps width and height if epd rotation is 90 or 270.
+
     load_test_image(width, height, title_text, artist_text, image_path, resize_external)
         Loads the default test image for pycasso. Good starting point to see if the screen works, and provides facility
         for unit tests.
@@ -156,6 +159,8 @@ class Pycasso:
         # Image
         self.image_base = None
         self.image_display = None
+        self.width = ConfigConst.TEST_EPD_WIDTH.value
+        self.height = ConfigConst.TEST_EPD_HEIGHT.value
 
         # Prompt
         self.prompt = ""
@@ -193,7 +198,6 @@ class Pycasso:
         # Set up poster list
         if self.config.post_to_mastodon:
             self.posters.append(PosterConst.MASTODON.value)
-
 
         return
 
@@ -295,6 +299,14 @@ class Pycasso:
         logging.info("Send epaper to sleep")
         epd.close()
         return
+
+    @staticmethod
+    def set_rotate(width, height, rotate=0):
+        if (rotate / 90) % 2 == 1:
+            temp = width
+            width = height
+            height = temp
+        return width, height
 
     @staticmethod
     def load_test_image(width, height, title_text="", artist_text="",
@@ -632,7 +644,7 @@ class Pycasso:
 
         if provider_type == ProvidersConst.EXTERNAL.value:
             # External image load
-            mode_list = self.load_external_image(self.config.external_image_location, self.epd.width, self.epd.height,
+            mode_list = self.load_external_image(self.config.external_image_location, self.width, self.height,
                                                  self.config.preamble_regex, self.config.artist_regex,
                                                  self.config.remove_text, self.config.parse_file_text,
                                                  self.config.image_format, self.config.resize_external)
@@ -645,7 +657,7 @@ class Pycasso:
 
         else:
             # Build prompt, get metadata
-            self.prompt, self.metadata, self.artist_text, self.title_text =\
+            self.prompt, self.metadata, self.artist_text, self.title_text = \
                 self.prep_prompt_text(self.config.prompt_mode)
             logging.info(f"Requesting \'{self.prompt}\'")
 
@@ -657,29 +669,28 @@ class Pycasso:
                     "'.config' to enable your preferred functionality. Set 'test_enabled = False' to prevent test mode "
                     "from ever running again."
                 )
-                self.image_base, self.title_text, self.artist_text = self.load_test_image(self.epd.width,
-                                                                                          self.epd.height,
+                self.image_base, self.title_text, self.artist_text = self.load_test_image(self.width, self.height,
                                                                                           self.title_text,
                                                                                           self.artist_text)
                 self.config.save_image = False
 
             elif provider_type == ProvidersConst.STABLE.value:
                 # Stable Diffusion
-                self.image_base = self.load_stability_image(self.prompt, self.epd.width, self.epd.height,
+                self.image_base = self.load_stability_image(self.prompt, self.width, self.height,
                                                             stability_key=self.stability_key,
                                                             creds_mode=self.config.use_keychain,
                                                             creds_path=self.config.credential_path)
 
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle
-                self.image_base = self.load_dalle_image(self.prompt, self.epd.width, self.epd.height,
+                self.image_base = self.load_dalle_image(self.prompt, self.width, self.height,
                                                         infill=self.config.infill, dalle_key=self.dalle_key,
                                                         creds_mode=self.config.use_keychain,
                                                         creds_path=self.config.credential_path)
 
             elif provider_type == ProvidersConst.AUTOMATIC.value:
                 # Automatic
-                self.image_base = self.load_automatic_image(self.prompt, self.epd.width, self.epd.height,
+                self.image_base = self.load_automatic_image(self.prompt, self.width, self.height,
                                                             host=self.config.automatic_host,
                                                             port=self.config.automatic_port)
 
@@ -803,6 +814,9 @@ class Pycasso:
                 self.epd.width = self.config.test_epd_width
                 self.epd.height = self.config.test_epd_height
 
+            # Set width and height for pycasso program
+            self.width, self.height = self.set_rotate(self.epd.width, self.epd.height, self.config.image_rotate)
+
         except EPDNotFoundError:
             logging.error(f"Couldn't find {self.config.display_type}")
             exit()
@@ -832,13 +846,14 @@ class Pycasso:
 
             # Make sure image is correct size and centered after thumbnail set
             # Define locations and crop settings
-            image_crop = ImageFunctions.get_crop_size(self.image_base.width, self.image_base.height, self.epd.width,
-                                                      self.epd.height)
+            image_crop = ImageFunctions.get_crop_size(self.image_base.width, self.image_base.height, self.width,
+                                                      self.height)
             crop_left = image_crop[0]
             crop_right = image_crop[2]
 
             # Crop and prepare image
             self.image_base = self.image_base.crop(image_crop)
+
             if self.image_base.mode not in ImageConst.SUPPORTED_MODES.value:
                 self.image_base = self.image_base.convert(ImageConst.CONVERT_MODE.value)
 
@@ -868,7 +883,7 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
-                self.add_text_to_image(draw, self.config.font_file, self.image_display.height, self.epd.width,
+                self.add_text_to_image(draw, self.config.font_file, self.image_display.height, self.width,
                                        self.title_text, self.artist_text, self.config.title_loc, self.config.artist_loc,
                                        self.config.padding, self.config.opacity, self.config.title_size,
                                        self.config.artist_size, self.config.box_to_floor, self.config.box_to_edge,

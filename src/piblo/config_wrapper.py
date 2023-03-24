@@ -122,6 +122,7 @@ class Configs:
         self.log_level = ConfigConst.LOGGING_LEVEL.value
 
         # Generation Settings
+        self.image_rotate = ConfigConst.GENERATION_ROTATE.value
         self.infill = ConfigConst.GENERATION_INFILL.value
         self.infill_percent = ConfigConst.GENERATION_INFILL_PERCENT.value
 
@@ -281,6 +282,7 @@ class Configs:
         self.log_level = config.getint("Logging", "log_level", fallback=ConfigConst.LOGGING_LEVEL.value)
 
         # Generation Settings
+        self.image_rotate = config.getint("Generation", "image_rotate", fallback=ConfigConst.GENERATION_ROTATE.value)
         self.infill = config.getboolean("Generation", "infill", fallback=ConfigConst.GENERATION_INFILL.value)
         self.infill_percent = config.getint("Generation", "infill_percent",
                                             fallback=ConfigConst.GENERATION_INFILL_PERCENT.value)

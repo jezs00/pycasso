@@ -74,6 +74,7 @@ class ConfigConst(Enum):
     LOGGING_LEVEL = logging.DEBUG
 
     # Generation Settings
+    GENERATION_ROTATE = 0
     GENERATION_INFILL = False
     GENERATION_INFILL_PERCENT = 10
 
