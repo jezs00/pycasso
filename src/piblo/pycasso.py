@@ -290,7 +290,9 @@ class Pycasso:
         return config
 
     @staticmethod
-    def display_image_on_epd(display_image, epd):
+    def display_image_on_epd(display_image, epd, rotate):
+        # Rotate image back to save
+        display_image = display_image.rotate(-rotate, expand=1)
         logging.info("Prepare epaper")
         epd.prepare()
 
@@ -693,7 +695,6 @@ class Pycasso:
                 self.image_base = self.load_automatic_image(self.prompt, self.width, self.height,
                                                             host=self.config.automatic_host,
                                                             port=self.config.automatic_port)
-
             else:
                 # Invalid provider
                 warnings.warn(f"Invalid provider option chosen: '{provider_type}'")
@@ -889,7 +890,7 @@ class Pycasso:
                                        self.config.artist_size, self.config.box_to_floor, self.config.box_to_edge,
                                        crop_left, crop_right)
 
-            self.display_image_on_epd(self.image_display, self.epd)
+            self.display_image_on_epd(self.image_display, self.epd, self.config.image_rotate)
 
             # Post image if necessary
             self.post_image()

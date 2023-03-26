@@ -41,7 +41,7 @@ def test_display_image_on_epd():
     res = (epd.width, epd.height)
     img = Image.new(mode="RGB", size=res)
 
-    Pycasso.display_image_on_epd(img, epd)
+    Pycasso.display_image_on_epd(img, epd, 0)
     assert os.path.exists(output_path)
 
     # Cleanup files after
