@@ -59,11 +59,14 @@ class MastodonPoster(PostWrapper):
         return
 
     def post_image(self, img, text):
-        buffer = io.BytesIO()
-        img.save(buffer, format=PosterConst.MASTODON_IMG_FORMAT.value)
-        media_dict = self.mastodon.media_post(buffer.getvalue(), mime_type=PosterConst.MASTODON_MIME_FORMAT.value,
-                                              description=text)
-        self.mastodon.status_post(text, media_ids=media_dict)
+        try:
+            buffer = io.BytesIO()
+            img.save(buffer, format=PosterConst.MASTODON_IMG_FORMAT.value)
+            media_dict = self.mastodon.media_post(buffer.getvalue(), mime_type=PosterConst.MASTODON_MIME_FORMAT.value,
+                                                  description=text)
+            self.mastodon.status_post(text, media_ids=media_dict)
+        except Exception as e:
+            logging.error(e)
         return
 
     def authenticate(self, user, password):
