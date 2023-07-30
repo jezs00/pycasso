@@ -419,9 +419,10 @@ class Pycasso:
 
     @staticmethod
     def load_stability_image(prompt, width, height, stability_key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
-                             creds_path=ProvidersConst.CREDENTIAL_PATH.value):
+                             creds_path=ProvidersConst.CREDENTIAL_PATH.value, stability_host=None):
         logging.info("Loading Stability API")
-        stability_provider = StabilityProvider(key=stability_key, creds_mode=creds_mode, creds_path=creds_path)
+        stability_provider = StabilityProvider(key=stability_key, host=stability_host, creds_mode=creds_mode,
+                                               creds_path=creds_path)
 
         logging.info("Getting Image")
         image = stability_provider.get_image_from_string(prompt, height, width)

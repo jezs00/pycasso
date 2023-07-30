@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 # Provider class to wrap APIs for web operations
+import base64
 import configparser
 import io
 import logging
@@ -58,6 +59,7 @@ class Provider(object):
         self.creds_path = creds_path
         self.keychain = ProvidersConst.KEYCHAIN.value
         self.keyname = keyname
+        self.host = None
         return
 
     def get_image_from_string(self, text):
@@ -161,16 +163,11 @@ class StabilityProvider(Provider):
                          creds_path=creds_path)
         self.get_secret()
 
-        if host is None:
-            host = StabilityConst.DEFAULT_HOST.value
-        logging.info(f"Using {host} as stability host")
+        self.host = host
+        if self.host is None:
+            self.host = StabilityConst.DEFAULT_HOST.value
 
-        self.stability_api = client.StabilityInference(
-            key=self.key,
-            host=host,
-            verbose=False,
-            wait_for_ready=False
-        )
+        logging.info(f"Using {host} as stability host")
 
         return
 
@@ -178,27 +175,45 @@ class StabilityProvider(Provider):
         try:
             fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
             fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
-            if height == 0 or width == 0:
-                answers = self.stability_api.generate(
-                    prompt=text,
-                )
-            else:
-                answers = self.stability_api.generate(
-                    prompt=text,
-                    height=fetch_height,
-                    width=fetch_width
-                )
 
-            # iterating over the generator produces the api response
-            for resp in answers:
-                for artifact in resp.artifacts:
-                    if artifact.finish_reason == stability_sdk.interfaces.gooseai.generation.generation_pb2.FILTER:
-                        logging.error(
-                            "Your request activated the APIs safety filters and could not be processed."
-                            "Please modify the prompt and try again.")
-                        return None
-                    if artifact.type == stability_sdk.interfaces.gooseai.generation.generation_pb2.ARTIFACT_IMAGE:
-                        img = Image.open(io.BytesIO(artifact.binary))
+            url = self.host
+
+            body = {
+                "width": fetch_width,
+                "height": fetch_height,
+                "steps": 50,
+                "seed": 0,
+                "cfg_scale": 7,
+                "samples": 1,
+                "style_preset": "enhance",
+                "text_prompts": [
+                    {
+                        "text": text,
+                        "weight": 1
+                    }
+                ],
+            }
+
+            headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.key}",
+            }
+
+            response = requests.post(
+                url,
+                headers=headers,
+                json=body,
+            )
+
+            if response.status_code != 200:
+                raise Exception("Non-200 response: " + str(response.text))
+
+            data = response.json()
+
+            for i, image in enumerate(data["artifacts"]):
+                img = Image.open(BytesIO(base64.b64decode(image["base64"])))
+
             img = self.fit_image(img, width, height)
 
         except BaseException as e:
