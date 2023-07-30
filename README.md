@@ -212,6 +212,7 @@ Settings related to image providers.
 * `use_keychain`: A boolean flag that instructs pycasso whether to use keychain to manage keys. When set to false will just look for .creds file with credentials in it. This may or may not work depending on your board. See [grpcio issues](https://github.com/jezs00/pycasso/issues/1) for more information. `(Boolean)`
 * `credential_path`: A file path relative to the pycasso working directory to find API credentials. `(String)`
 * `test_enabled`: A boolean flag that instructs pycasso to run a test mode when all other providers are set to 0. `(Boolean)`
+* `stable_host`: A string that provides the API location to send the request to for Stable Diffusion online. `(String)`
 * `automatic_host`: If using `automatic` mode, this is the IP address or host of the Automatic1111 WebUI API. `(String)`
 * `automatic_port`: If using `automatic` mode, this is the port to use for the Automatic1111 WebUI API. `(Integer)`
 * `provider_fallback`: A boolean flag that instructs pycasso to fall back to another random non-zero provider if originally chosen provider fails. `(Boolean)`
