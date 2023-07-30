@@ -682,7 +682,8 @@ class Pycasso:
                 self.image_base = self.load_stability_image(self.prompt, self.width, self.height,
                                                             stability_key=self.stability_key,
                                                             creds_mode=self.config.use_keychain,
-                                                            creds_path=self.config.credential_path)
+                                                            creds_path=self.config.credential_path,
+                                                            stability_host=self.config.stable_host)
 
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle
