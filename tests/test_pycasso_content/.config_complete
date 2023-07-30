@@ -213,6 +213,9 @@ credential_path = .test_creds
 # If all other modes fail or are not selected, show a test image [boolean]
 test_enabled = False
 
+# Host to use for Stable Diffusion online API
+stable_host = "https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image"
+
 # IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
 automatic_host = 1.1.1.1
 automatic_port = 1337

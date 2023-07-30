@@ -5,7 +5,7 @@ import configparser
 import logging
 import os
 
-from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst
+from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst, StabilityConst
 from piblo.file_operations import FileOperations
 
 
@@ -116,6 +116,7 @@ class Configs:
         self.automatic_host = AutomaticConst.DEFAULT_HOST.value
         self.automatic_port = AutomaticConst.DEFAULT_PORT.value
         self.provider_fallback = ProvidersConst.PROVIDER_FALLBACK.value
+        self.stable_host = StabilityConst.DEFAULT_HOST.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -275,6 +276,8 @@ class Configs:
                                             fallback=AutomaticConst.DEFAULT_PORT.value)
         self.provider_fallback = config.getboolean("Providers", "provider_fallback",
                                                    fallback=ProvidersConst.PROVIDER_FALLBACK.value)
+        self.stable_host = config.get("Providers", "stable_host", fallback=StabilityConst.DEFAULT_HOST.value)
+        self.stable_host = self.read_string(self.stable_host)
 
         # Logging Settings
         self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)
