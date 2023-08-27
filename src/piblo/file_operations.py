@@ -37,6 +37,9 @@ class FileOperations:
     get_lines(path)
         returns every line as a separate item in an array from a text file located at 'path'
 
+    get_first_line(path)
+        returns the first line from a text file located at 'path'
+
     get_random_line(path)
         returns a random line from file located at 'path'
 
@@ -137,6 +140,16 @@ class FileOperations:
             for line in file:
                 lines.append(line.strip())
         return lines
+
+    @staticmethod
+    def get_first_line(path):
+        lines = FileOperations.get_lines(path)
+        lines = FileOperations.parse_weighted_lines(lines)
+        size = len(lines)
+        if size == 0:
+            logging.warning(f"No lines to parse found in file {path}")
+            return
+        return lines[0]
 
     @staticmethod
     def get_random_line(path):
