@@ -319,7 +319,7 @@ def test_major_complete_config():
     assert instance.config.padding == 20
     assert instance.config.opacity == 220
     assert instance.config.override_text is True
-    assert instance.config.override_path == "prompts/test.txt"
+    assert instance.config.override_path == file.get_full_path("prompts/test.txt")
 
     # Icon Settings
     assert instance.config.icon_color == "#FABDAB"

@@ -335,6 +335,7 @@ class Configs:
         self.external_image_location = self.file.get_full_path(self.external_image_location)
         self.generated_image_location = self.file.get_full_path(self.generated_image_location)
         self.font_file = self.file.get_full_path(self.font_file)
+        self.override_path = self.file.get_full_path(self.override_path)
         self.credential_path = self.file.get_full_path(self.credential_path)
         self.icon_path = self.file.get_full_path(self.icon_path)
         self.mastodon_user_cred_path = self.file.get_full_path(self.mastodon_user_cred_path)
