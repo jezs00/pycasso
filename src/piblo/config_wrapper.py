@@ -222,7 +222,7 @@ class Configs:
         self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
         self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
         self.override_text = config.getboolean("Text", "override_text", fallback=ConfigConst.TEXT_OVERRIDE_TEXT.value)
-        self.override_path = config.get("Text", "override_text", fallback=ConfigConst.TEXT_OVERRIDE_PATH.value)
+        self.override_path = config.get("Text", "override_path", fallback=ConfigConst.TEXT_OVERRIDE_PATH.value)
         self.override_path = self.read_string(self.override_path)
 
         # Prompt

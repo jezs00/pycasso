@@ -140,6 +140,12 @@ padding = 20
 # Opacity of the text box [integer]
 opacity = 220
 
+# Override text display as custom string[boolean]
+override_text = True
+
+# File path for override text if set to True [string]
+override_path = "prompts/test.txt"
+
 [Icon]
 #################
 # Icon Settings #
