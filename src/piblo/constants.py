@@ -45,6 +45,8 @@ class ConfigConst(Enum):
     TEXT_TITLE_SIZE = 20
     TEXT_PADDING = 10
     TEXT_OPACITY = 150
+    TEXT_OVERRIDE_TEXT = False
+    TEXT_OVERRIDE_PATH = "prompts/override.txt"
 
     # Icon Settings
     ICON_COLOR = "auto"

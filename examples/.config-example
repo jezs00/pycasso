@@ -141,6 +141,10 @@ padding = 10
 # Opacity of the text box [integer]
 opacity = 150
 
+# Override text display as custom string, and file path if
+override_text = False
+override_path = "prompts/override.txt"
+
 [Icon]
 #################
 # Icon Settings #

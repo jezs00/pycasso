@@ -81,6 +81,8 @@ class Configs:
         self.title_size = ConfigConst.TEXT_TITLE_SIZE.value
         self.padding = ConfigConst.TEXT_PADDING.value
         self.opacity = ConfigConst.TEXT_OPACITY.value
+        self.override_text = ConfigConst.TEXT_OVERRIDE_TEXT.value
+        self.override_path = ConfigConst.TEXT_OVERRIDE_PATH.value
 
         # Icon Settings
         self.icon_color = ConfigConst.ICON_COLOR.value
@@ -219,6 +221,9 @@ class Configs:
         self.title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
         self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
         self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
+        self.override_text = config.getboolean("Text", "override_text", fallback=ConfigConst.TEXT_OVERRIDE_TEXT.value)
+        self.override_path = config.get("Text", "override_text", fallback=ConfigConst.TEXT_OVERRIDE_PATH.value)
+        self.override_path = self.read_string(self.override_path)
 
         # Prompt
         self.prompt_mode = config.getint("Prompt", "mode", fallback=ConfigConst.PROMPT_MODE.value)
