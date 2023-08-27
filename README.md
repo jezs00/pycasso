@@ -179,6 +179,8 @@ Settings related to parsing text of filenames and strings, and text display on t
 * `title_size`: Font size of the title text. `(Integer)`
 * `padding`: Padding of the text box containing title and artist text. `(Integer)`
 * `opacity`: Opacity of the text box. 0 for fully transparent and 255 for fully opaque. `(Integer)`
+* `override_text`: A boolean flag to indicate whether to override final text with other text from a file `(Boolean)`
+* `override_path`: A file path relative to the pycasso working directory to load the override text from when override_text is enabled `(String)`
 
 ### Icon
 Settings related to status icons to display on EPD
