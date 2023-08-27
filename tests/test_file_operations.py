@@ -193,3 +193,10 @@ def test_version_file():
     for f in glob.glob(f"{new_path}*"):
         os.remove(f)
 
+
+def test_get_first_line():
+    directory = os.path.join(os.path.dirname(__file__), UnitTestConst.FILE_OPERATIONS_FOLDER.value)
+    path = os.path.join(directory, "lines.txt")
+    result = FileOperations.get_first_line(path)
+    expected = "first_line"
+    assert result == expected
