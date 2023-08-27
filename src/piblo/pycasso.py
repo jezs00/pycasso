@@ -79,10 +79,14 @@ class Pycasso:
         Takes 'text' and applies parsing based on all 2 string bracket strings in 'bracket_pairs' list, sequentially.
         returns updated text
 
-    prep_prompt_text(self, prompt_mode)
+    prep_prompt_text(prompt_mode)
         Function to prepare prompt text based on current state of the class. Prompt mode to select which generation mode
         to be used.
         returns prompt string, PNG metadata object, artist string and title string
+
+    override_text(override_path)
+        Updates the title_text to the first line of the file located at override_path. Sets artist_text to None.
+        returns title_text and artist_text
 
     parse_multiple_brackets(text, bracket_pairs)
         Reads a string 'text' and parses the brackets from the list 'bracket_pairs' into a valid string.
@@ -493,6 +497,12 @@ class Pycasso:
         self.metadata.add_text(PropertiesConst.PROMPT.value, self.prompt)
         return self.prompt, self.metadata, self.artist_text, self.title_text
 
+    def override_text(self, override_path=ConfigConst.TEXT_OVERRIDE_PATH.value):
+        # Update text to be displayed with information from file.
+        self.title_text = FileOperations.get_first_line(override_path)
+        self.artist_text = None
+        return self.artist_text, self.title_text
+
     @staticmethod
     def parse_multiple_brackets(text, bracket_pairs=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         pairs = bracket_pairs.copy()
@@ -606,7 +616,8 @@ class Pycasso:
             artist_font = ImageFont.truetype(font_file, artist_size)
 
         # proceed flag only to be set if set by prerequisite requirements
-        proceed = False
+        artist_proceed = False
+        title_proceed = False
 
         artist_box = (0, image_height, 0, image_height)
         title_box = artist_box
@@ -614,11 +625,11 @@ class Pycasso:
         if artist_text != "" and artist_text is not None:
             artist_box = draw.textbbox((epd_width / 2, image_height - artist_location),
                                        artist_text, font=artist_font, anchor="mb")
-            proceed = True
+            artist_proceed = True
         if title_text != "" and title_text is not None:
             title_box = draw.textbbox((epd_width / 2, image_height - title_location),
                                       title_text, font=title_font, anchor="mb")
-            proceed = True
+            title_proceed = True
 
         draw_box = ImageFunctions.max_area([artist_box, title_box])
         draw_box = tuple(numpy.add(draw_box, (-padding, -padding, padding, padding)))
@@ -634,12 +645,14 @@ class Pycasso:
             draw_box = ImageFunctions.set_tuple_sides(draw_box, -crop_left, crop_right)
 
         # Only draw if we previously set proceed flag
-        if proceed is True:
+        if artist_proceed is True or title_proceed is True:
             draw.rectangle(draw_box, fill=(255, 255, 255, opacity))
-            draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font,
-                      anchor="mb", fill=0)
-            draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font,
-                      anchor="mb", fill=0)
+            if artist_proceed is True:
+                draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font, anchor="mb",
+                          fill=0)
+            if title_proceed is True:
+                draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font, anchor="mb",
+                          fill=0)
         return draw
 
     def get_image(self):
@@ -886,6 +899,9 @@ class Pycasso:
 
             # Draw text(s) if necessary
             if self.config.add_text:
+                if self.config.override_text:
+                    self.override_text(self.config.override_path)
+
                 self.add_text_to_image(draw, self.config.font_file, self.image_display.height, self.width,
                                        self.title_text, self.artist_text, self.config.title_loc, self.config.artist_loc,
                                        self.config.padding, self.config.opacity, self.config.title_size,
