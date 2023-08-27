@@ -195,6 +195,25 @@ def test_add_text_to_image_blank():
     assert pixel == expected
 
 
+def test_override_text():
+    here = os.path.dirname(__file__)
+    output_path = "mock_output.png"
+    test_folder = UnitTestConst.PYCASSO_FOLDER.value
+    config_path = os.path.join(here, test_folder, UnitTestConst.PYCASSO_CONFIG_RUN.value)
+    instance = Pycasso(config_path, file_path=os.path.dirname(__file__))
+    instance.config.override_text = True
+    instance.config.override_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                                                 UnitTestConst.ARTISTS_FILE.value)
+    instance.run()
+
+    assert os.path.exists(output_path)
+    assert instance.title_text == "Test Artist"
+
+    # Cleanup files after
+    if os.path.exists(output_path):
+        os.remove(output_path)
+
+
 def test_run_normal():
     here = os.path.dirname(__file__)
     output_path = "mock_output.png"
