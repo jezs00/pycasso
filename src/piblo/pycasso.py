@@ -729,17 +729,17 @@ class Pycasso:
         error = True
         while error:
             error = False
-            self.image_base, provider = self.get_image()
+            self.image_base, provider_type = self.get_image()
             if self.image_base is None:
                 # If there's a failure to get the image
                 error = True
                 # Remove provider from possibilities
-                logging.warning(f"Image failed to load on provider '{provider}'. Removing from circulation on this "
+                logging.warning(f"Image failed to load on provider '{provider_type}'. Removing from circulation on this "
                                 f"run.")
-                self.remove_provider_mode(provider)
-                self.add_provider_fail_icon(provider)
-        self.add_provider_icon(provider)
-        return self.image_base
+                self.remove_provider_mode(provider_type)
+                self.add_provider_fail_icon(provider_type)
+        self.add_provider_icon(provider_type)
+        return self.image_base, provider_type
 
     def add_battery_icon(self, battery_percent):
         if battery_percent in BatteryConst.EMPTY.value:
@@ -851,9 +851,9 @@ class Pycasso:
 
         try:
             if self.config.provider_fallback:
-                self.get_image_fallback_modes()
+                self.image_base, provider = self.get_image_fallback_modes()
             else:
-                self.get_image()
+                self.image_base, provider = self.get_image()
 
             if self.image_base is None:
                 logging.error("Image failed to load and there is no fallback. Please check providers or folders. "
@@ -911,7 +911,8 @@ class Pycasso:
             self.display_image_on_epd(self.image_display, self.epd, self.config.image_rotate)
 
             # Post image if necessary
-            self.post_image()
+            if provider != ProvidersConst.TEST.value:
+                self.post_image()
 
             logging.shutdown()
 
