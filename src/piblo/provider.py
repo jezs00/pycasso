@@ -12,8 +12,8 @@ from io import BytesIO
 
 import keyring
 import openai
+from openai import OpenAI
 import requests
-import stability_sdk
 from stability_sdk import client
 from PIL import Image, ImageDraw
 
@@ -239,8 +239,8 @@ class DalleProvider(Provider):
                          creds_path=creds_path)
 
         self.get_secret()
+        self.client = OpenAI(api_key=self.key)
 
-        openai.api_key = self.key
         return
 
     def get_image_from_string(self, text, height=0, width=0):
@@ -254,12 +254,12 @@ class DalleProvider(Provider):
                         res = DalleConst.SIZES.value[key]
                         break
 
-            response = openai.Image.create(prompt=text, n=1, size=res)
+            response = self.client.images.generate(prompt=text, n=1, size=res)
 
-            url = response['data'][0]['url']
+            url = response.data[0].url
             img = Image.open(BytesIO(requests.get(url).content))
 
-        except openai.APIConnectionError as e:
+        except openai.error.APIConnectionError as e:
             logging.error(e)
             logging.error("Unable to contact OpenAI. Internet or provider may be down.")
             return None
@@ -287,8 +287,7 @@ class DalleProvider(Provider):
 
         return img
 
-    @staticmethod
-    def infill_image_from_image(text, img, infill_percent=0):
+    def infill_image_from_image(self, text, img, infill_percent=0):
         # Infills image based on next size up possible from available image
         mask_size = (0, 0)
 
@@ -298,21 +297,21 @@ class DalleProvider(Provider):
             if key > img.height and key > img.height:
                 break
 
+        logging.info(f"Using Dalle to infill to {mask_size}")
+
         mask = DalleProvider.create_image_mask(img, mask_size)
         img_bytes = io.BytesIO()
         img.save(img_bytes, format='PNG')
         mask_bytes = io.BytesIO()
         mask.save(mask_bytes, format='PNG')
 
-        response = openai.Image.create_edit(
-            image=mask_bytes.getvalue(),
-            mask=mask_bytes.getvalue(),
-            prompt=text,
-            n=1,
-            size=res
-        )
+        response = self.client.images.edit(image=mask_bytes.getvalue(),
+                                           mask=mask_bytes.getvalue(),
+                                           prompt=text,
+                                           n=1,
+                                           size=res)
 
-        url = response['data'][0]['url']
+        url = response.data[0].url
         img = Image.open(BytesIO(requests.get(url).content))
 
         # Resize image based on infill_percent
