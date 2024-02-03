@@ -8,8 +8,8 @@ SKIP_DEPS=false
 
 # Set the local directory
 LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
-PROMPTS_DIR="${LOCAL_DIR}/prompts/"
-IMAGES_DIR="${LOCAL_DIR}/images/"
+PROMPTS_DIR="${LOCAL_DIR}/prompts"
+IMAGES_DIR="${LOCAL_DIR}/images"
 
 # File paths
 SERVICE_DIR=/etc/systemd/system
