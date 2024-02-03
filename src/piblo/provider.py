@@ -259,45 +259,27 @@ class DalleProvider(Provider):
             url = response['data'][0]['url']
             img = Image.open(BytesIO(requests.get(url).content))
 
-        except openai.error.APIConnectionError as e:
+        except openai.APIConnectionError as e:
             logging.error(e)
             logging.error("Unable to contact OpenAI. Internet or provider may be down.")
             return None
-        except openai.error.APIError as e:
+        except openai.APIError as e:
             logging.error(e)
             return None
-        except openai.error.AuthenticationError as e:
+        except openai.AuthenticationError as e:
             logging.error(e)
             logging.error("Error authenticating with OpenAI. Please check your credentials in '.creds'.")
             return None
-        except openai.error.InvalidAPIType as e:
+        except openai.OpenAIError as e:
             logging.error(e)
             return None
-        except openai.error.InvalidRequestError as e:
-            logging.error(e)
-            return None
-        except openai.error.OpenAIError as e:
-            logging.error(e)
-            return None
-        except openai.error.PermissionError as e:
-            logging.error(e)
-            return None
-        except openai.error.RateLimitError as e:
+        except openai.RateLimitError as e:
             logging.error(e)
             logging.error("OpenAI reporting Rate Limiting. Please check your account at openai.com.")
             return None
-        except openai.error.ServiceUnavailableError as e:
-            logging.error(e)
-            return None
-        except openai.error.SignatureVerificationError as e:
-            logging.error(e)
-            return None
-        except openai.error.Timeout as e:
+        except openai.Timeout as e:
             logging.error(e)
             logging.error("Timeout contacting OpenAI. Internet or provider may be down.")
-            return None
-        except openai.error.TryAgain as e:
-            logging.error(e)
             return None
         except BaseException as e:
             logging.error(e)
