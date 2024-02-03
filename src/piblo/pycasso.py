@@ -701,8 +701,9 @@ class Pycasso:
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle
                 self.image_base = self.load_dalle_image(self.prompt, self.width, self.height,
-                                                        infill=self.config.infill, dalle_key=self.dalle_key,
-                                                        creds_mode=self.config.use_keychain,
+                                                        infill=self.config.infill,
+                                                        infill_percent=self.config.infill_percent,
+                                                        dalle_key=self.dalle_key, creds_mode=self.config.use_keychain,
                                                         creds_path=self.config.credential_path)
 
             elif provider_type == ProvidersConst.AUTOMATIC.value:
