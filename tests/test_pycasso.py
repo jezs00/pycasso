@@ -145,7 +145,7 @@ def test_save_image():
     if os.path.exists(save_path):
         os.remove(save_path)
 
-    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value)
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, True)
 
     assert os.path.exists(save_path)
 
