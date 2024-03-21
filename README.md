@@ -117,6 +117,7 @@ You can run `nano .config` in the pycasso install folder to configure the way py
 Settings related to file operations within pycasso
 
 * `save_image`: A boolean flag that instructs pycasso whether to save images retrieved from providers or not. If 'True', pycasso will always save images retrieved in a defined location. If 'False' pycasso will only display the image on the EPD, once the EPD is updated again this image will be lost. `(Boolean)`
+* `save_date`: A boolean flag that instructs pycasso whether to append a datetime at the start of the saved filename. `(Boolean)`
 * `external_image_location`: A file path relative to the pycasso working directory to load external images from, when using **external** mode. `(String)`
 * `generated_image_location`: A file path relative to the pycasso working directory to save generated images to when using a provider, and load them from when using **generated** mode. `(String)`
 * `image_format`: The file type to look for when loading images from external or generated image folders. Most of the time it will be "png". `(String)`
