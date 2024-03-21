@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import warnings
+from datetime import datetime
 
 import numpy
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
@@ -546,8 +547,12 @@ class Pycasso:
         return prompt, title_text
 
     @staticmethod
-    def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT.value):
-        image_name = PropertiesConst.FILE_PREAMBLE.value + prompt + "." + extension
+    def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT.value,
+                   save_date=ConfigConst.FILE_SAVE_DATE.value):
+        preamble = PropertiesConst.FILE_PREAMBLE.value
+        if save_date:
+            preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
+        image_name = f"{preamble}{prompt}.{extension}"
         save_path = os.path.join(path, image_name)
         logging.info(f"Saving image as {save_path}")
 
@@ -722,7 +727,8 @@ class Pycasso:
                 return None, provider_type
 
             if self.config.save_image:
-                self.save_image(self.prompt, self.image_base, self.metadata, self.config.generated_image_location)
+                self.save_image(self.prompt, self.image_base, self.metadata, self.config.generated_image_location,
+                                save_date=self.config.save_date)
 
         return self.image_base, provider_type
 

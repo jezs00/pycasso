@@ -53,6 +53,7 @@ class Configs:
         # Set Defaults
         # File Settings
         self.save_image = ConfigConst.FILE_SAVE_IMAGE.value
+        self.save_date = ConfigConst.FILE_SAVE_DATE.value
         self.external_image_location = self.file.get_full_path(ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
         self.generated_image_location = self.file.get_full_path(ConfigConst.FILE_GENERATED_IMAGE_LOCATION.value)
         self.image_format = ConfigConst.FILE_IMAGE_FORMAT.value
@@ -173,6 +174,7 @@ class Configs:
     def load_config(self, config):
         # File Settings
         self.save_image = config.getboolean("File", "save_image", fallback=ConfigConst.FILE_SAVE_IMAGE.value)
+        self.save_date = config.getboolean("File", "save_date", fallback=ConfigConst.FILE_SAVE_DATE.value)
         self.external_image_location = config.get("File", "external_image_location",
                                                   fallback=ConfigConst.FILE_EXTERNAL_IMAGE_LOCATION.value)
         self.external_image_location = self.read_string(self.external_image_location)

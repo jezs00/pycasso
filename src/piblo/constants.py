@@ -14,7 +14,8 @@ class ConfigConst(Enum):
 
     # Defaults
     # File Settings
-    FILE_SAVE_IMAGE = 1
+    FILE_SAVE_IMAGE = True
+    FILE_SAVE_DATE = True
     FILE_EXTERNAL_IMAGE_LOCATION = "images/external"
     FILE_GENERATED_IMAGE_LOCATION = "images/generated"
     FILE_IMAGE_FORMAT = "png"
