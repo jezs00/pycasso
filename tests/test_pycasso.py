@@ -312,6 +312,7 @@ def test_major_complete_config():
     config_dict = instance.config.read_config()
     # File Settings
     assert instance.config.save_image is False
+    assert instance.config.save_date is False
     assert instance.config.external_image_location == file.get_full_path("test_location")
     assert instance.config.generated_image_location == file.get_full_path("test_location")
     assert instance.config.image_format == "jpg"

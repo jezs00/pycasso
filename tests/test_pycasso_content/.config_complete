@@ -6,6 +6,9 @@
 # Flag indicating whether to save image after generation or not [boolean]
 save_image=False
 
+# Flag indicating whether to include datetime in save filename [boolean]
+save_date=False
+
 # File paths to external and generated images folder [string]
 external_image_location="test_location"
 generated_image_location="test_location"
