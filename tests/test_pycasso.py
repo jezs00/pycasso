@@ -134,8 +134,8 @@ def test_prep_normal_prompt():
 
 def test_save_image():
     dir_path = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value)
-    save_path = os.path.join(dir_path,
-                             PropertiesConst.FILE_PREAMBLE.value + "TestPrompt." + ConfigConst.FILE_IMAGE_FORMAT.value)
+    save_path = os.path.join(dir_path, PropertiesConst.FILE_PREAMBLE.value + "TestPrompt." +
+                             ConfigConst.FILE_IMAGE_FORMAT.value)
     img = Image.new(mode="RGBA", size=(600, 400))
     prompt = "TestPrompt"
     metadata = PngImagePlugin.PngInfo()
@@ -145,7 +145,7 @@ def test_save_image():
     if os.path.exists(save_path):
         os.remove(save_path)
 
-    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, True)
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False)
 
     assert os.path.exists(save_path)
 
