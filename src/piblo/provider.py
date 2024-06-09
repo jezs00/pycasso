@@ -259,7 +259,7 @@ class DalleProvider(Provider):
             url = response.data[0].url
             img = Image.open(BytesIO(requests.get(url).content))
 
-        except openai.error.APIConnectionError as e:
+        except openai.APIConnectionError as e:
             logging.error(e)
             logging.error("Unable to contact OpenAI. Internet or provider may be down.")
             return None
