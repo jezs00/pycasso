@@ -2,7 +2,7 @@
 # Due to the similarity in projects, a lot of this is based on TomWhitwell's install script from SlowMovie
 # https://github.com/TomWhitwell/SlowMovie/blob/main/Install/install.sh
 
-GIT_REPO=https://github.com/jezs00/pycasso
+GIT_REPO=https://github.com/lennartvandeguchte/pycasso
 GIT_BRANCH=main
 SKIP_DEPS=false
 
@@ -39,13 +39,13 @@ function install_pijuice_package(){
 }
 
 function install_python_packages(){
-  sudo pip3 install "git+https://github.com/jezs00/pycasso@$(curl -s https://api.github.com/repos/jezs00/pycasso/releases/latest | jq -r ".tag_name")"
+  sudo pip3 install "git+https://github.com/lennartvandeguchte/pycasso@$(curl -s https://api.github.com/repos/lennartvandeguchte/pycasso/releases/latest | jq -r ".tag_name")"
   sudo pip3 install stability-sdk @ git+https://github.com/Stability-AI/stability-sdk.git
   sudo pip3 install openai @ git+https://github.com/openai/openai-python.git
 }
 
 function install_python_minimal(){
-  sudo pip3 install "git+https://github.com/jezs00/pycasso@$(curl -s https://api.github.com/repos/jezs00/pycasso/releases/latest | jq -r ".tag_name")" --no-dependencies
+  sudo pip3 install "git+https://github.com/lennartvandeguchte/pycasso@$(curl -s https://api.github.com/repos/lennartvandeguchte/pycasso/releases/latest | jq -r ".tag_name")" --no-dependencies
 }
 
 function uninstall_python_packages(){
