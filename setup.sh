@@ -40,8 +40,8 @@ function install_pijuice_package(){
 
 function install_python_packages(){
   sudo pip3 install "git+https://github.com/lennartvandeguchte/pycasso@$(curl -s https://api.github.com/repos/lennartvandeguchte/pycasso/releases/latest | jq -r ".tag_name")"
-  sudo pip3 install stability-sdk @ git+https://github.com/Stability-AI/stability-sdk.git
-  sudo pip3 install openai @ git+https://github.com/openai/openai-python.git
+  sudo pip3 install stability-sdk@git+https://github.com/Stability-AI/stability-sdk.git
+  sudo pip3 install openai@git+https://github.com/openai/openai-python.git
 }
 
 function install_python_minimal(){
