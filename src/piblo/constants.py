@@ -128,7 +128,7 @@ class ProvidersConst(Enum):
     TEST_FILE = "examples/images/test.png"
 
     KEYCHAIN = "PYCASSO"
-    STABLE_KEYNAME = "STABILITY"
+    STABLE_KEYNAME = "STABILITY_KEY"
     DALLE_KEYNAME = "DALLE"
     MIDJOURNEY_KEYNAME = "MIDJOURNEY"
 
