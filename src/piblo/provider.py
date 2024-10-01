@@ -180,19 +180,10 @@ class StabilityProvider(Provider):
             url = self.host
 
             body = {
-                "width": fetch_width,
-                "height": fetch_height,
-                "steps": 50,
+                "aspect_ratio": f"{fetch_width}:{fetch_height}",
                 "seed": 0,
-                "cfg_scale": 7,
-                "samples": 1,
                 "style_preset": "enhance",
-                "text_prompts": [
-                    {
-                        "text": text,
-                        "weight": 1
-                    }
-                ],
+                "prompt": text
             }
 
             headers = {
