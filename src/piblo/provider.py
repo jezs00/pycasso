@@ -197,7 +197,7 @@ class StabilityProvider(Provider):
 
             headers = {
                 "Accept": "application/json",
-                "Content-Type": "application/json",
+                #"Content-Type": "application/json",
                 "Authorization": f"Bearer {self.key}",
             }
 
