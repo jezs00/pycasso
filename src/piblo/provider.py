@@ -212,7 +212,8 @@ class StabilityProvider(Provider):
             )
 
             if response.status_code != 200:
-                raise Exception("Non-200 response: " + str(response.text))
+                raise Exception(str(response.json()))
+                #raise Exception("Non-200 response: " + str(response.text))
 
             data = response.json()
 
