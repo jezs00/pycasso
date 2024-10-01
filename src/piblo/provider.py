@@ -145,6 +145,7 @@ class Provider(object):
     @staticmethod
     def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value,
                            path=ProvidersConst.CREDENTIAL_PATH.value):
+        logging.info(f"keychain {keychain}, keyname {keyname}, mode {ProvidersConst.USE_KEYCHAIN.value}")
         if mode:
             keyring.get_keyring()
             key = keyring.get_password(keychain, keyname)
