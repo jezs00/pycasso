@@ -181,21 +181,21 @@ class StabilityProvider(Provider):
 
             body = {
                 "aspect_ratio": f"{fetch_width}:{fetch_height}",
-                "seed": 0,
+                "seed": "0",
                 "style_preset": "enhance",
                 "prompt": text
             }
 
             headers = {
                 "Accept": "application/json",
-                "Content-Type": "multipart/form-data",
+                #"Content-Type": "multipart/form-data",
                 "Authorization": f"Bearer {self.key}",
             }
 
             response = requests.post(
                 url,
                 headers=headers,
-                json=body,
+                data=body,
             )
 
             if response.status_code != 200:
