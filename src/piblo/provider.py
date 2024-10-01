@@ -177,25 +177,38 @@ class StabilityProvider(Provider):
             fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
             fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
 
-            url = self.host
+            # url = self.host
 
-            body = {
-                "aspect_ratio": f"{fetch_width}:{fetch_height}",
-                "seed": "0",
-                "style_preset": "enhance",
-                "prompt": text
-            }
+            # body = {
+            #     "aspect_ratio": f"{fetch_width}:{fetch_height}",
+            #     "seed": "0",
+            #     "style_preset": "enhance",
+            #     "prompt": text
+            # }
 
-            headers = {
-                "Accept": "application/json",
-                #"Content-Type": "multipart/form-data",
-                "Authorization": f"Bearer {self.key}",
-            }
+            # headers = {
+            #     "Accept": "application/json",
+            #     #"Content-Type": "multipart/form-data",
+            #     "Authorization": f"Bearer {self.key}",
+            # }
+
+            # response = requests.post(
+            #     url,
+            #     headers=headers,
+            #     data=body,
+            # )
 
             response = requests.post(
-                url,
-                headers=headers,
-                data=body,
+                f"https://api.stability.ai/v2beta/stable-image/generate/core",
+                headers={
+                    "authorization": f"Bearer sk-MYAPIKEY",
+                    "accept": "image/*"
+                },
+                files={"none": ''},
+                data={
+                    "prompt": "Lighthouse on a cliff overlooking the ocean",
+                    "output_format": "webp",
+                },
             )
 
             if response.status_code != 200:
