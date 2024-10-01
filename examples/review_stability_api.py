@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Get prompt, API Key and Endpoint
 
 prompt = input("Prompt:\n")
-os.environ["STABILITY"] = input("API key:\n")
+os.environ["STABILITY_KEY"] = input("API key:\n")
 os.environ["STABILITY_HOST"] = input("Endpoint:\n")
 
 logging.info("Loading Stability API")
