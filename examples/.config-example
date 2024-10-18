@@ -225,7 +225,7 @@ credential_path = ".creds"
 test_enabled = True
 
 # Host to use for Stable Diffusion online API
-stable_host = "https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/text-to-image"
+stable_host = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
 # IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
 automatic_host = 127.0.0.1
