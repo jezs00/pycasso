@@ -271,6 +271,10 @@ class DalleProvider(Provider):
             logging.error(e)
             logging.error("Timeout contacting OpenAI. Internet or provider may be down.")
             return None
+        except openai.BadRequestError as e:
+            logging.error(e)
+            logging.error("Bad Request. Possible issue with provider module or update to API.")
+            return None
         except BaseException as e:
             logging.error(e)
             return None
@@ -278,39 +282,70 @@ class DalleProvider(Provider):
         return img
 
     def infill_image_from_image(self, text, img, infill_percent=0):
-        # Infills image based on next size up possible from available image
-        mask_size = (0, 0)
+        try:
+            # Infills image based on next size up possible from available image
+            mask_size = (0, 0)
 
-        for key in DalleConst.SIZES.value:
-            res = DalleConst.SIZES.value[key]
-            mask_size = (key, key)
-            if key > img.height and key > img.height:
-                break
+            for key in DalleConst.SIZES.value:
+                res = DalleConst.SIZES.value[key]
+                mask_size = (key, key)
+                if key > img.height and key > img.height:
+                    break
 
-        logging.info(f"Using Dalle to infill to {mask_size}")
+            logging.info(f"Using Dalle to infill to {mask_size}")
 
-        mask = DalleProvider.create_image_mask(img, mask_size)
-        img_bytes = io.BytesIO()
-        img.save(img_bytes, format='PNG')
-        mask_bytes = io.BytesIO()
-        mask.save(mask_bytes, format='PNG')
+            mask = DalleProvider.create_image_mask(img, mask_size)
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format='PNG')
+            mask_bytes = io.BytesIO()
+            mask.save(mask_bytes, format='PNG')
 
-        response = self.client.images.edit(image=mask_bytes.getvalue(),
-                                           mask=mask_bytes.getvalue(),
-                                           prompt=text,
-                                           n=1,
-                                           size=res)
+            response = self.client.images.edit(image=mask_bytes.getvalue(),
+                                               mask=mask_bytes.getvalue(),
+                                               prompt=text,
+                                               n=1,
+                                               size=res)
 
-        url = response.data[0].url
-        img = Image.open(BytesIO(requests.get(url).content))
+            url = response.data[0].url
+            img = Image.open(BytesIO(requests.get(url).content))
 
-        # Resize image based on infill_percent
-        if infill_percent > 0:
-            res = (img.width, img.height)
-            new_res = ImageFunctions.resize_tup_smaller(res, infill_percent)
-            img.thumbnail(new_res)
+            # Resize image based on infill_percent
+            if infill_percent > 0:
+                res = (img.width, img.height)
+                new_res = ImageFunctions.resize_tup_smaller(res, infill_percent)
+                img.thumbnail(new_res)
 
-        return img
+            return img
+
+        except openai.APIConnectionError as e:
+            logging.error(e)
+            logging.error("Unable to contact OpenAI. Internet or provider may be down.")
+            return None
+        except openai.APIError as e:
+            logging.error(e)
+            return None
+        except openai.AuthenticationError as e:
+            logging.error(e)
+            logging.error("Error authenticating with OpenAI. Please check your credentials in '.creds'.")
+            return None
+        except openai.OpenAIError as e:
+            logging.error(e)
+            return None
+        except openai.RateLimitError as e:
+            logging.error(e)
+            logging.error("OpenAI reporting Rate Limiting. Please check your account at openai.com.")
+            return None
+        except openai.Timeout as e:
+            logging.error(e)
+            logging.error("Timeout contacting OpenAI. Internet or provider may be down.")
+            return None
+        except openai.BadRequestError as e:
+            logging.error(e)
+            logging.error("Bad Request. Possible issue with provider module or update to API.")
+            return None
+        except BaseException as e:
+            logging.error(e)
+            return None
 
     @staticmethod
     def create_image_mask(img, new_size):

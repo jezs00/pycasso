@@ -136,7 +136,7 @@ class ProvidersConst(Enum):
 class StabilityConst(Enum):
     KEY = "STABILITY_KEY"
     HOST = "STABILITY_HOST"
-    DEFAULT_HOST = "https://api.stability.ai/v2beta/stable-image/generate/core"
+    DEFAULT_HOST = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
     MULTIPLE = 64
 
 
