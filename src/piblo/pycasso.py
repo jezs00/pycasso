@@ -498,7 +498,8 @@ class Pycasso:
                 prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
                                                      self.config.prompt_postscript)
             else:
-                self.prompt, self.title_text = prompt_gen
+                self.prompt = prompt_gen
+                self.title_text = prompt_gen
                 self.full_text = self.title_text
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")

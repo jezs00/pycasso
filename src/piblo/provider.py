@@ -146,13 +146,13 @@ class Provider(object):
     def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value,
                            path=ProvidersConst.CREDENTIAL_PATH.value):
         logging.info(f"keychain {keychain}, keyname {keyname}, mode {ProvidersConst.USE_KEYCHAIN.value}")
-        # if mode:
-        #     logging.info(f'Get keyring, mode {mode}')
-        #     keyring.get_keyring()
-        #     key = keyring.get_password(keychain, keyname)
-        # else:
-        logging.info('Read creds')
-        key = Provider.read_creds(keyname, path)
+        if mode:
+            logging.info(f'Get keyring, mode {mode}')
+            keyring.get_keyring()
+            key = keyring.get_password(keychain, keyname)
+        else:
+            logging.info('Read creds')
+            key = Provider.read_creds(keyname, path)
         return key
 
 
