@@ -3,6 +3,7 @@
 # https://github.com/TomWhitwell/SlowMovie/blob/main/Install/install.sh
 
 GIT_REPO=https://github.com/jezs00/pycasso
+GIT_LATEST_RELEASE=https://api.github.com/repos/jezs00/pycasso/releases/latest
 GIT_BRANCH=main
 SKIP_DEPS=false
 # For debugging on the raspberry pi, set this to true to install pycassso in editable mode
@@ -45,7 +46,7 @@ function install_python_packages(){
   if [ "$EDITABLE_MODE" = true ]; then
     sudo pip3 install -e .
   else
-    sudo pip3 install "git+https://github.com/lennartvandeguchte/pycasso@$(curl -s https://api.github.com/repos/lennartvandeguchte/pycasso/releases/latest | jq -r ".tag_name")"
+    sudo pip3 install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")"
   fi
   sudo pip3 install stability-sdk@git+https://github.com/Stability-AI/stability-sdk.git
   sudo pip3 install openai@git+https://github.com/openai/openai-python.git
@@ -55,7 +56,7 @@ function install_python_minimal(){
   if [ "$EDITABLE_MODE" = true ]; then
     sudo pip3 install -e . --no-dependencies
   else
-    sudo pip3 install "git+https://github.com/lennartvandeguchte/pycasso@$(curl -s https://api.github.com/repos/lennartvandeguchte/pycasso/releases/latest | jq -r ".tag_name")" --no-dependencies
+    sudo pip3 install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")" --no-dependencies
   fi
 }
 
