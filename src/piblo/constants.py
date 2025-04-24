@@ -176,6 +176,7 @@ class PromptModeConst(Enum):
     RANDOM = 0
     SUBJECT_ARTIST = 1
     PROMPT = 2
+    QUOTE = 3
 
 
 class DisplayShapeConst(Enum):

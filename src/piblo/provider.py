@@ -145,10 +145,13 @@ class Provider(object):
     @staticmethod
     def process_get_secret(keychain, keyname, mode=ProvidersConst.USE_KEYCHAIN.value,
                            path=ProvidersConst.CREDENTIAL_PATH.value):
+        logging.info(f"keychain {keychain}, keyname {keyname}, mode {ProvidersConst.USE_KEYCHAIN.value}")
         if mode:
+            logging.info(f'Get keyring, mode {mode}')
             keyring.get_keyring()
             key = keyring.get_password(keychain, keyname)
         else:
+            logging.info('Read creds')
             key = Provider.read_creds(keyname, path)
         return key
 
@@ -167,7 +170,7 @@ class StabilityProvider(Provider):
         if self.host is None:
             self.host = StabilityConst.DEFAULT_HOST.value
 
-        logging.info(f"Using {host} as stability host")
+        logging.info(f"Using {self.host} as stability host")
 
         return
 
@@ -175,45 +178,32 @@ class StabilityProvider(Provider):
         try:
             fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
             fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
-
-            url = self.host
-
-            body = {
-                "width": fetch_width,
-                "height": fetch_height,
-                "steps": 50,
-                "seed": 0,
-                "cfg_scale": 7,
-                "samples": 1,
-                "style_preset": "enhance",
-                "text_prompts": [
-                    {
-                        "text": text,
-                        "weight": 1
-                    }
-                ],
-            }
-
-            headers = {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.key}",
-            }
+            
+            # TODO: make sure the height/width is fetched automatically
+            fetch_height = 9
+            fetch_width = 16
 
             response = requests.post(
-                url,
-                headers=headers,
-                json=body,
+                self.host,
+                headers={
+                    "authorization": f"Bearer {self.key}",
+                    "accept": "image/*"
+                },
+                files={"none": ''},
+                data={
+                    "aspect_ratio": f"{fetch_width}:{fetch_height}",
+                    "seed": "0",
+                    "style_preset": "enhance",
+                    "prompt": text,
+                    "output_format": "png",
+                },
             )
-
+    
             if response.status_code != 200:
-                raise Exception("Non-200 response: " + str(response.text))
+                raise Exception(str(response.json()))
 
-            data = response.json()
-
-            for i, image in enumerate(data["artifacts"]):
-                img = Image.open(BytesIO(base64.b64decode(image["base64"])))
-
+            img = Image.open(BytesIO(response.content))
+    
             img = self.fit_image(img, width, height)
 
         except BaseException as e:

@@ -80,6 +80,7 @@ sharpness = 1
 # Pycasso mode to use in prompt generation [integer]
 # Mode 1 - (preamble - subjects.txt - connector - artists.txt - postscript)
 # Mode 2 - (preamble - prompts.txt - postscript)
+# Mode 3 - Use a random quote from zenquotes.io as the prompt
 # Mode 0 - Any of the above (randomly chosen)
 mode = 1
 

@@ -20,6 +20,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
+from piblo.prompt_generation import QuoteBlock
 
 
 # noinspection PyTypeChecker
@@ -487,6 +488,19 @@ class Pycasso:
             self.prompt, self.title_text = prompt_gen
             self.artist_text = ""
             self.full_text = self.title_text
+        elif prompt_mode == PromptModeConst.QUOTE.value:
+            # Build prompt based on Quote
+            quote_block = QuoteBlock()   
+            prompt_gen = quote_block.generate()
+
+            if prompt_gen is None:
+                warnings.warn("Failed to generate quote prompt. Using default prompt.")
+                prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
+                                                     self.config.prompt_postscript)
+            else:
+                self.prompt = prompt_gen
+                self.title_text = prompt_gen
+                self.full_text = self.title_text
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
@@ -553,7 +567,7 @@ class Pycasso:
         if save_date:
             preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
         image_name = f"{preamble}{prompt}.{extension}"
-        save_path = os.path.join(path, image_name)
+        save_path = os.path.join(path, image_name[:100])
         logging.info(f"Saving image as {save_path}")
 
         # Save the image
