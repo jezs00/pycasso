@@ -2,8 +2,8 @@
 # Due to the similarity in projects, a lot of this is based on TomWhitwell's install script from SlowMovie
 # https://github.com/TomWhitwell/SlowMovie/blob/main/Install/install.sh
 
-GIT_REPO=https://github.com/lennartvandeguchte/pycasso
-GIT_BRANCH=add_new_generation_mode
+GIT_REPO=https://github.com/jezs00/pycasso
+GIT_BRANCH=main
 SKIP_DEPS=false
 # For debugging on the raspberry pi, set this to true to install pycassso in editable mode
 EDITABLE_MODE=false

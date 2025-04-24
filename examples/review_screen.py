@@ -10,7 +10,7 @@ from omni_epd import displayfactory, EPDNotFoundError
 from PIL import Image
 
 # Display Settings
-DEFAULT_DISPLAY_TYPE = "inky.impression"
+DEFAULT_DISPLAY_TYPE = "omni_epd.mock"
 
 logging.basicConfig(level=logging.DEBUG)
 
