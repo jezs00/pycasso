@@ -567,7 +567,7 @@ class Pycasso:
         preamble = PropertiesConst.FILE_PREAMBLE.value
         if save_date:
             preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
-        image_name = f"{preamble}{prompt}.{extension}"
+        image_name = f"{preamble}{prompt}"
         file_name = f"{image_name[:file_name_limit]}.{extension}"
         save_path = os.path.join(path, file_name)
         logging.info(f"Saving image as {save_path}")

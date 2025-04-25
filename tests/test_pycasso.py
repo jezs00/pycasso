@@ -145,7 +145,31 @@ def test_save_image():
     if os.path.exists(save_path):
         os.remove(save_path)
 
-    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False)
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False,
+                       file_name_limit=500)
+
+    assert os.path.exists(save_path)
+
+    # Cleanup files after
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+
+def test_save_image_file_name_limit():
+    dir_path = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value)
+    file_name = f"{PropertiesConst.FILE_PREAMBLE.value} TestPrompt"
+    save_path = os.path.join(dir_path, file_name[:5] + "." + ConfigConst.FILE_IMAGE_FORMAT.value)
+    img = Image.new(mode="RGBA", size=(600, 400))
+    prompt = "TestPrompt"
+    metadata = PngImagePlugin.PngInfo()
+    metadata.add_text(PropertiesConst.PROMPT.value, prompt)
+
+    # Cleanup files before
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False,
+                       file_name_limit=5)
 
     assert os.path.exists(save_path)
 
