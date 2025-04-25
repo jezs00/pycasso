@@ -6,6 +6,6 @@ keyring
 requests
 numpy
 webuiapi
-mastodon.py
+mastodon-py
 requests
 responses
