@@ -27,6 +27,7 @@ class ConfigConst(Enum):
     FILE_ARTISTS_EG = "examples/prompts/artists-example.txt"
     FILE_PROMPTS_EG = "examples/prompts/prompts-example.txt"
     FILE_RESIZE_EXTERNAL = True
+    FILE_NAME_MAX_LENGTH = 100
 
     # Text Settings
     TEXT_ADD_TEXT = False

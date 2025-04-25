@@ -27,6 +27,9 @@ prompts_file = "prompts/prompts.txt"
 # Flag indicating how to deal with larger images, resize_external set to 'False' to fully fill frame [boolean]
 resize_external = True
 
+# Limit to file name length - does not include file extension [int]
+file_name_max_length = 100
+
 [EPD]
 ######################
 # EPD Information    #

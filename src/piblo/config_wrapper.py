@@ -65,6 +65,7 @@ class Configs:
         self.artists_example = self.file.get_full_path(ConfigConst.FILE_ARTISTS_EG.value)
         self.prompts_example = self.file.get_full_path(ConfigConst.FILE_PROMPTS_EG.value)
         self.resize_external = ConfigConst.FILE_RESIZE_EXTERNAL.value
+        self.file_name_max_length = ConfigConst.FILE_NAME_MAX_LENGTH.value
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
@@ -193,6 +194,8 @@ class Configs:
         self.prompts_file = self.read_string(self.prompts_file)
         self.resize_external = config.getboolean("File", "resize_external",
                                                  fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
+        self.file_name_max_length = config.getint("File", "file_name_max_length",
+                                                      fallback=ConfigConst.FILE_NAME_MAX_LENGTH.value)
 
         # Text Settings
         self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)

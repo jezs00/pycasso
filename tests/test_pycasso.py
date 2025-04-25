@@ -321,6 +321,7 @@ def test_major_complete_config():
     assert instance.config.artists_file == file.get_full_path("test_pycasso_content/test_artists.txt")
     assert instance.config.prompts_file == file.get_full_path("test_pycasso_content/test_prompts.txt")
     assert instance.config.resize_external is False
+    assert instance.config.file_name_max_length == 95
 
     # Text Settings
     assert instance.config.add_text is False
