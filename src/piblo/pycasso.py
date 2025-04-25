@@ -562,12 +562,14 @@ class Pycasso:
 
     @staticmethod
     def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT.value,
-                   save_date=ConfigConst.FILE_SAVE_DATE.value):
+                   save_date=ConfigConst.FILE_SAVE_DATE.value,
+                   file_name_limit=ConfigConst.FILE_NAME_MAX_LENGTH.value):
         preamble = PropertiesConst.FILE_PREAMBLE.value
         if save_date:
             preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
         image_name = f"{preamble}{prompt}.{extension}"
-        save_path = os.path.join(path, image_name[:100])
+        file_name = f"{image_name[:file_name_limit]}.{extension}"
+        save_path = os.path.join(path, file_name)
         logging.info(f"Saving image as {save_path}")
 
         # Save the image
