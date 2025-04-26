@@ -183,7 +183,28 @@ class FileOperations:
         return full_path
 
     @staticmethod
+    def check_brackets(text, bracket_one="(", bracket_two=")"):
+        # Checks if all brackets have matching partners
+
+        count = 0
+
+        for c in text:
+            if c == bracket_one:
+                count += 1
+            elif c == bracket_two:
+                count -= 1
+            if count < 0:
+                return False
+
+        if not count == 0:
+            return False
+        return True
+
+    @staticmethod
     def parse_text(text, bracket_one="(", bracket_two=")"):
+        if not FileOperations.check_brackets(text):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text
         # Get everything inside brackets
         regex = fr"\{bracket_one}.*?\{bracket_two}"
         brackets = re.findall(regex, text)
