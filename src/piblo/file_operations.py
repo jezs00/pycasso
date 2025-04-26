@@ -219,6 +219,34 @@ class FileOperations:
         return text
 
     @staticmethod
+    def parse_text_nested(text="", bracket_one="(", bracket_two=")", loop_limit=100):
+        if not FileOperations.check_brackets(text):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text
+
+        # Get everything inside brackets
+        regex = fr"(\{bracket_one}[^\{bracket_one}\{bracket_two}]*\{bracket_two})"
+        match = re.search(regex, text)
+
+        while match is not None and loop_limit > 0:
+            bracket = match.group()
+            bracket = bracket.replace(bracket_one, '').replace(bracket_two, '')
+
+            # Get random from split
+            random.seed()
+            options = FileOperations.parse_weighted_lines(bracket.split('|'))
+            option = random.choice(options)
+
+            # Substitute brackets
+            text = re.sub(regex, option, text, 1)
+            match = re.search(regex, text)
+
+            # Use loop_limit to stop this going forever due to error. Should not happen
+            loop_limit -= 1
+
+        return text
+
+    @staticmethod
     def parse_weighted_lines(weighted_lines):
         lines = []
         # Find any colons at the start of the line, use preceding text if it's an integer

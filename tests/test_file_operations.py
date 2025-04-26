@@ -164,6 +164,33 @@ def test_parse_text_bad():
     assert result == expected
 
 
+def test_parse_text_nested_simple():
+    text = "part1 (option1|option2) part3"
+    result = FileOperations.parse_text(text)
+    expected = ["part1 option1 part3", "part1 option2 part3"]
+    assert result in expected
+
+
+def test_parse_text_nested_complex():
+    text = "part(|)1 (()(option1|(option2()(|)(||)|(|)((||))option3(|)()))()((())) ((part3))(|)())"
+    result = FileOperations.parse_text_nested(text)
+    expected = ["part1 option1 part3", "part1 option2 part3", "part1 option3 part3"]
+    assert result in expected
+
+
+def test_parse_text_nested_bad():
+    text = "part1 ((option1|option2) part3"
+    result = FileOperations.parse_text_nested(text)
+    expected = "part1 ((option1|option2) part3"
+    assert result == expected
+
+
+def test_parse_text_nested_limit():
+    text = "part1 (option1|(((((option2|option3)))))) part3"
+    result = FileOperations.parse_text_nested(text, loop_limit=5)
+    expected = ["part1 (option1|option3) part3", "part1 (option1|option2) part3"]
+    assert result in expected
+
 
 def test_parse_weighted_lines():
     lines = ["5:Five", "1:One", "0:Zero"]
