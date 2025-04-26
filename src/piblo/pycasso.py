@@ -523,7 +523,7 @@ class Pycasso:
         pairs = bracket_pairs.copy()
         pairs.reverse()
         for brackets in pairs:
-            text = FileOperations.parse_text(text, brackets[0], brackets[1])
+            text = FileOperations.parse_text_nested(text, brackets[0], brackets[1])
         return text
 
     @staticmethod

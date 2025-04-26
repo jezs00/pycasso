@@ -86,14 +86,14 @@ more information. My preferred configuration is to set a wakeup timer to start a
 ### Hierarchical Bracket Wildcards
 To enhance dynamic prompt generation within pycasso, many text files and strings in pycasso are parsed to replace wildcard text. This allows more flexibility when defining prompts.
 
-By default, the three types of brackets used are:
+In the past, the three types of brackets used are:
 1. ()
 2. []
 3. {}
 
-These can be added to, removed, or customised in `.config`.
+These can be added to, removed, or customised in `.config`. They are included to keep functionality by default with any old text parsers, however there is no reason to use multiple brackets anymore. It is suggested to just use ().
 
-Different options are separated by a pipe, for example `(Option 1|Option 2|[Option {3|4|5|6}|Option 7])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
+Different options are separated by a pipe, for example `(Option 1|Option 2|(Option (3|4|5|6)|Option 7))`. The parser will first look for the lowest level of brackets, choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|(B|R)ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
 
 At the start of any segment, you can also provide a weighting for a particular option. For example `(20:Option A|Option B|0:Option C)` should provide `Option A` about 20 times more often than `Option B`. `Option C` would never appear. These weightings can also be used at the start of every line in one of the prompt-building text files to specify the likelihood of that line being chosen.
 
@@ -104,7 +104,7 @@ Here are a few more examples of how one may use these to make simple prompts mor
 `A (|Happy|Sad) (Dog|Cat|Bird)` could result in:
 * `A Dog`, `A Happy Dog`, `A Sad Dog`, `A Cat`, `A Happy Cat`, `A Sad Cat`, `A Cat`, `A Happy Bird` or `A Sad Bird`. All options have the same probability of occurring.
 
-`A (Dog|Cat) (|[Carrying|Stealing] A[n Apple| Banana])` could result in:
+`A (Dog|Cat) (|(Carrying|Stealing) A(n Apple| Banana))` could result in:
 * **1/4** of the time `A Dog`, **1/4** of the time `A Cat`, **1/16** of the time `A Dog Carrying An Apple`, **1/16** of the time `A Dog Carrying A Banana`, **1/16** of the time `A Dog Stealing An Apple`, **1/16** of the time `A Dog Stealing A Banana`, **1/16** of the time `A Cat Carrying An Apple`, **1/16** of the time `A Cat Stealing An Apple`, **1/16** of the time `A Cat Stealing An Apple` or **1/16** of the time `A Cat Stealing A Banana`
 
 `A(5: Friendly|2:n Uncommon| Rare) (3:Dog|Cat)` could result in:
