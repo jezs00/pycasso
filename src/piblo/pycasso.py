@@ -20,7 +20,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
-from piblo.prompt_generation import QuoteBlock
+from piblo.prompt_block import QuoteBlock
 
 
 # noinspection PyTypeChecker

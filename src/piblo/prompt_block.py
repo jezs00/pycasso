@@ -6,6 +6,7 @@ import abc
 import requests
 import logging
 
+
 class PromptBlock(abc.ABC):
     """
     Abstract base class for all prompt generation blocks.
@@ -41,13 +42,14 @@ class PromptBlock(abc.ABC):
         """Provides a detailed string representation."""
         return f"{self.__class__.__name__}()"
 
+
 class QuoteBlock(PromptBlock):
     """
     A prompt block that generates text containing a random Zen quote.
     Fetches data from https://zenquotes.io/
     """
     API_URL = "https://zenquotes.io/api/random"
-    TIMEOUT = 10 # seconds
+    TIMEOUT = 10  # seconds
 
     def __init__(self):
         # No specific initialization needed for this block
@@ -63,7 +65,7 @@ class QuoteBlock(PromptBlock):
         try:
             logging.info(f"Fetching random zen quote from {self.API_URL}...")
             response = requests.get(self.API_URL, timeout=self.TIMEOUT)
-            response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+            response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
             data = response.json()
 
             if data and isinstance(data, list) and len(data) > 0:
@@ -91,4 +93,3 @@ class QuoteBlock(PromptBlock):
             # Catch any other unexpected errors during processing
             logging.exception(f"An unexpected error occurred processing the ZenQuotes API response: {e}")
             return None
- 
