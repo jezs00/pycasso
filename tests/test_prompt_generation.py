@@ -4,7 +4,7 @@
 
 import pytest
 import responses
-from piblo.prompt_generation import PromptBlock, QuoteBlock
+from piblo.prompt_block import PromptBlock, QuoteBlock
 
 def test_quote_block_str_representation():
     quote_block = QuoteBlock()
