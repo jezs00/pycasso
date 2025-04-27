@@ -105,11 +105,15 @@ def test_prep_subject_artist_prompt():
     preamble = "Preamble"
     connector = "Connector"
     postscript = "Postscript"
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     artist_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.ARTISTS_FILE.value)
     subject_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                 UnitTestConst.SUBJECTS_FILE.value)
-    prompt, artist_text, title_text = Pycasso.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
+    instance = Pycasso(config_path)
+
+    prompt, artist_text, title_text = instance.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
                                                                          postscript)
     expected_prompt = "PreambleTest SubjectConnectorTest ArtistPostscript"
     expected_artist = "Test Artist"
@@ -120,11 +124,14 @@ def test_prep_subject_artist_prompt():
 
 
 def test_prep_normal_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     preamble = "Preamble"
     postscript = "Postscript"
     prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.PROMPTS_FILE.value)
-    prompt, title_text = Pycasso.prep_normal_prompt(prompt_path, preamble, postscript)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
     expected_prompt = "PreambleTest PromptPostscript"
     expected_title = "Test Prompt"
 
@@ -349,6 +356,7 @@ def test_major_complete_config():
 
     # Text Settings
     assert instance.config.add_text is False
+    assert instance.config.use_blocks is False
     assert instance.config.parse_file_text is True
     assert instance.config.preamble_regex == " .* - test - "
     assert instance.config.artist_regex == "test_artist"

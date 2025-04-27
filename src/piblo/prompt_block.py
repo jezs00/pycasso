@@ -25,7 +25,7 @@ class PromptBlock(abc.ABC):
         Generates the text content for this block.
 
         Returns:
-            str: The generated text content.
+            str: The generated text content, empty string on failure.
 
         Raises:
             NotImplementedError: If the subclass does not implement this method.
@@ -60,7 +60,7 @@ class QuoteBlock(PromptBlock):
         Fetches a random Zen quote and returns it.
 
         Returns:
-            str: The Zen quote string, or an error message/fallback.
+            str: The Zen quote string, or an empty string on failure
         """
         try:
             logging.info(f"Fetching random zen quote from {self.API_URL}...")
@@ -78,18 +78,63 @@ class QuoteBlock(PromptBlock):
                     return full_quote
                 else:
                     logging.error("API response missing quote or author.")
-                    return None
+                    return ""
             else:
                 logging.error(f"Unexpected API response format from ZenQuotes: {data}")
-                return None
+                return ""
 
         except requests.exceptions.Timeout:
             logging.error(f"Timeout occurred while fetching Zen quote from {self.API_URL}")
-            return None
+            return ""
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching zen quote: {e}")
-            return None
+            return ""
         except Exception as e:
             # Catch any other unexpected errors during processing
-            logging.exception(f"An unexpected error occurred processing the ZenQuotes API response: {e}")
-            return None
+            logging.error(f"An unexpected error occurred processing the ZenQuotes API response: {e}")
+            return ""
+
+    class FileBlock(PromptBlock):
+        """
+        A prompt block that generates text containing a random Zen quote.
+        Fetches data from https://zenquotes.io/
+        """
+        API_URL = "https://zenquotes.io/api/random"
+        TIMEOUT = 10  # seconds
+
+        def __init__(self):
+            # No specific initialization needed for this block
+            pass
+
+        def generate(self, path) -> str:
+            """
+            Fetches a line from a file available at 'path'
+
+            Returns:
+                str: A random line from the file, or empty string on failure
+            """
+            try:
+                logging.info(f"Fetching random zen quote from {self.API_URL}...")
+                response = requests.get(self.API_URL, timeout=self.TIMEOUT)
+                response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+                data = response.json()
+
+                if data and isinstance(data, list) and len(data) > 0:
+                    quote_data = data[0]
+                    quote = quote_data.get('q')
+                    author = quote_data.get('a')
+                    if quote and author:
+                        full_quote = f'\"{quote}\" - {author}'
+                        logging.info(f"Successfully fetched quote: {full_quote}")
+                        return full_quote
+                    else:
+                        logging.error("API response missing quote or author.")
+                        return None
+                else:
+                    logging.error(f"Unexpected API response format from ZenQuotes: {data}")
+                    return None
+
+            except Exception as e:
+                # Catch any other unexpected errors during processing
+                logging.error(f"An error occurred loading file from {path}")
+                return ""

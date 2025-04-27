@@ -103,6 +103,9 @@ postscript="{test postscript|0:don't display this}"
 # Flag indicating whether to add text to the display or not [boolean]
 add_text = False
 
+# Flag indicating whether to parse and process 'blocks' for prompt generation (eg using ChatGPT) [boolean]
+use_blocks = False
+
 # Flag indicating whether to parse text from file names for use in pycasso [boolean]
 parse_file_text = True
 

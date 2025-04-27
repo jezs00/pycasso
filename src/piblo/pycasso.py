@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import warnings
+import re
 from datetime import datetime
 
 import numpy
@@ -15,7 +16,7 @@ from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
 from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst, \
-    IconFileConst, BatteryConst, PosterConst
+    IconFileConst, BatteryConst, PosterConst, BlockConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
@@ -80,6 +81,15 @@ class Pycasso:
     parse_multiple_brackets(text, bracket_pairs)
         Takes 'text' and applies parsing based on all 2 string bracket strings in 'bracket_pairs' list, sequentially.
         returns updated text
+
+    parse_blocks_nested(text, block_bracket_one="<", block_bracket_two=">", subset_bracket_one="{",
+            subset_bracket_two="}", loop_limit=100):
+        Takes 'text' and applies actions based on blocks defined within brackets, starting inside first.
+        Returns updated text and subset of text if defined
+
+    def process_block():
+        Processes block based on the contents of the text block
+        Returns updated text, returns "" if fails
 
     prep_prompt_text(prompt_mode)
         Function to prepare prompt text based on current state of the class. Prompt mode to select which generation mode
@@ -490,7 +500,7 @@ class Pycasso:
             self.full_text = self.title_text
         elif prompt_mode == PromptModeConst.QUOTE.value:
             # Build prompt based on Quote
-            quote_block = QuoteBlock()   
+            quote_block = QuoteBlock()
             prompt_gen = quote_block.generate()
 
             if prompt_gen is None:
@@ -518,6 +528,79 @@ class Pycasso:
         self.artist_text = None
         return self.artist_text, self.title_text
 
+    def parse_blocks_nested(self, text="", block_bracket_one="<", block_bracket_two=">", subset_bracket_one="{",
+                            subset_bracket_two="}", loop_limit=100):
+        if not FileOperations.check_brackets(text):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text
+
+        # Get everything inside brackets
+        regex = fr"(\{block_bracket_one}[^\{block_bracket_one}\{block_bracket_two}]*\{block_bracket_two})"
+        match = re.search(regex, text)
+
+        while match is not None and loop_limit > 0:
+            bracket = match.group()
+            bracket = bracket.replace(block_bracket_one, '').replace(block_bracket_two, '')
+
+            # Process block
+            block = self.process_block()
+
+            # Substitute brackets
+            text = re.sub(regex, block, text, 1)
+            match = re.search(regex, text)
+
+            # Use loop_limit to stop this going forever due to error. Should not happen
+            loop_limit -= 1
+
+        # Get everything inside brackets
+        regex = fr"(\{subset_bracket_one}[^\{subset_bracket_one}\{subset_bracket_two}]*\{subset_bracket_two})"
+        match = re.search(regex, text)
+
+        subset = ""
+
+        while match is not None and loop_limit > 0:
+            bracket = match.group()
+            bracket = bracket.replace(subset_bracket_one, '').replace(subset_bracket_two, '')
+
+            subset = subset + bracket
+
+            # Substitute brackets
+            text = re.sub(regex, bracket, text, 1)
+            match = re.search(regex, text)
+
+            # Use loop_limit to stop this going forever due to error. Should not happen
+            loop_limit -= 1
+
+        return text, subset
+
+    def process_block(self, block_text=""):
+        split = block_text.split(':')
+        block_function = split[0].lower()
+
+        # If the block came with arguments
+        args = []
+        if len(split > 1):
+            args = split[1:]
+
+        if block_function == BlockConst.FILE.value:
+            # File block
+            return ""
+
+        elif block_function == BlockConst.CHAT.value:
+            # Chatgpt block
+            return ""
+
+        elif block_function == BlockConst.ZEN.value:
+            # Zen block
+            return ""
+
+        elif block_function == BlockConst.WEATHER.value:
+            # Zen block
+            return ""
+
+        logging.warning(f"{block_function} not found, please check readme for valid blocks. Using blank string.")
+        return ""
+
     @staticmethod
     def parse_multiple_brackets(text, bracket_pairs=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         pairs = bracket_pairs.copy()
@@ -526,8 +609,7 @@ class Pycasso:
             text = FileOperations.parse_text_nested(text, brackets[0], brackets[1])
         return text
 
-    @staticmethod
-    def prep_subject_artist_prompt(artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
+    def prep_subject_artist_prompt(self, artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                                    connector=ConfigConst.PROMPT_CONNECTOR.value,
                                    postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
                                    brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
@@ -542,11 +624,17 @@ class Pycasso:
             connector = Pycasso.parse_multiple_brackets(connector, brackets)
             postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
 
+        if self.config.use_blocks:
+            artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
+            title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
+            preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
+            connector = Pycasso.parse_multiple_brackets(connector, brackets)
+            postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+
         prompt = (preamble + title_text + connector + artist_text + postscript)
         return prompt, artist_text, title_text
 
-    @staticmethod
-    def prep_normal_prompt(prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
+    def prep_normal_prompt(self, prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                            postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
                            brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
                            parse=ConfigConst.TEXT_PARSE_RANDOM_TEXT):

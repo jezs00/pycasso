@@ -31,10 +31,11 @@ class ConfigConst(Enum):
 
     # Text Settings
     TEXT_ADD_TEXT = False
+    TEXT_USE_BLOCKS = True
     TEXT_PARSE_FILE_TEXT = False
     TEXT_PARSE_RANDOM_TEXT = True
-    TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\"\n\"{}\""
-    TEXT_PARSE_BRACKETS_LIST = ["()", "[]", "{}"]
+    TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\""
+    TEXT_PARSE_BRACKETS_LIST = ["()", "[]"]
     TEXT_PREAMBLE_REGEX = ".*- "
     TEXT_ARTIST_REGEX = " by "
     TEXT_REMOVE_TEXT = "\"()\"\n\"[]\"\n\"{}\""
@@ -280,3 +281,12 @@ class PosterConst(Enum):
     MASTODON_PASSWORD_KEYNAME = "MASTODON_PASSWORD"
     MASTODON_IMG_FORMAT = "PNG"
     MASTODON_MIME_FORMAT = "image/png"
+
+
+class BlockConst(Enum):
+    DEFAULT = ""
+    FILE = "file"
+    CHAT = "chat"
+    ZEN = "zen"
+    WEATHER = "weather"
+

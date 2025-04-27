@@ -37,7 +37,7 @@ def test_quote_block_empty_response():
     )
     
     result = quote_block.generate()
-    assert result is None
+    assert result is ""
 
 @responses.activate
 def test_quote_block_invalid_response():
@@ -50,7 +50,7 @@ def test_quote_block_invalid_response():
     )
     
     result = quote_block.generate()
-    assert result is None
+    assert result is ""
 
 @responses.activate
 def test_quote_block_timeout():
@@ -62,7 +62,7 @@ def test_quote_block_timeout():
     )
     
     result = quote_block.generate()
-    assert result is None
+    assert result is ""
 
 class MockPromptBlock(PromptBlock):
     def generate(self) -> str:

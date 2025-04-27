@@ -69,6 +69,7 @@ class Configs:
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
+        self.use_blocks = ConfigConst.TEXT_USE_BLOCKS.value
         self.parse_file_text = ConfigConst.TEXT_PARSE_FILE_TEXT.value
         self.parse_random_text = ConfigConst.TEXT_PARSE_RANDOM_TEXT.value
         self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
@@ -199,6 +200,7 @@ class Configs:
 
         # Text Settings
         self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
+        self.use_blocks = config.getboolean("Text", "use_blocks", fallback=ConfigConst.TEXT_USE_BLOCKS.value)
         self.parse_file_text = config.getboolean("Text", "parse_file_text",
                                                  fallback=ConfigConst.TEXT_PARSE_FILE_TEXT.value)
         self.parse_random_text = config.getboolean("Text", "parse_random_text",
