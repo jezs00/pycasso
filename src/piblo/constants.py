@@ -32,10 +32,13 @@ class ConfigConst(Enum):
     # Text Settings
     TEXT_ADD_TEXT = False
     TEXT_USE_BLOCKS = True
+    TEXT_SPECIFY_SUBJECT = True
     TEXT_PARSE_FILE_TEXT = False
     TEXT_PARSE_RANDOM_TEXT = True
     TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\""
     TEXT_PARSE_BRACKETS_LIST = ["()", "[]"]
+    TEXT_BLOCK_BRACKETS = "<>"
+    TEXT_SUBJECT_BRACKETS = "{}"
     TEXT_PREAMBLE_REGEX = ".*- "
     TEXT_ARTIST_REGEX = " by "
     TEXT_REMOVE_TEXT = "\"()\"\n\"[]\"\n\"{}\""
@@ -204,10 +207,15 @@ class UnitTestConst(Enum):
     ARTISTS_FILE = "test_artists.txt"
     SUBJECTS_FILE = "test_subjects.txt"
     PROMPTS_FILE = "test_prompts.txt"
+    FILE_BLOCK_FILE = "test_file_block.txt"
+    NESTED_FILE_BLOCK_FILE = "test_nested_file_block.txt"
+    QUOTE_BLOCK_FILE = "test_quote_block.txt"
     FONT_FILE = "Font.ttc"
     PROVIDER_FOLDER = "test_provider_content"
     PROVIDER_CRED = ".creds-test"
     PROVIDER_CRED_NEW = ".creds-test-new"
+    PROMPT_BLOCK_FOLDER = "test_prompt_block_content"
+    PROMPT_BLOCK_FILE = "test_block.txt"
 
 
 class ImageConst(Enum):

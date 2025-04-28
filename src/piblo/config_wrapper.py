@@ -70,9 +70,12 @@ class Configs:
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
         self.use_blocks = ConfigConst.TEXT_USE_BLOCKS.value
+        self.specify_subject = ConfigConst.TEXT_SPECIFY_SUBJECT.value
         self.parse_file_text = ConfigConst.TEXT_PARSE_FILE_TEXT.value
         self.parse_random_text = ConfigConst.TEXT_PARSE_RANDOM_TEXT.value
         self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
+        self.block_brackets = ConfigConst.TEXT_BLOCK_BRACKETS.value
+        self.subject_brackets = ConfigConst.TEXT_SUBJECT_BRACKETS.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
         self.remove_text = ConfigConst.TEXT_REMOVE_TEXT_LIST.value
@@ -201,6 +204,7 @@ class Configs:
         # Text Settings
         self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
         self.use_blocks = config.getboolean("Text", "use_blocks", fallback=ConfigConst.TEXT_USE_BLOCKS.value)
+        self.specify_subject = config.getboolean("Text", "specify_subject", fallback=ConfigConst.TEXT_SPECIFY_SUBJECT.value)
         self.parse_file_text = config.getboolean("Text", "parse_file_text",
                                                  fallback=ConfigConst.TEXT_PARSE_FILE_TEXT.value)
         self.parse_random_text = config.getboolean("Text", "parse_random_text",
@@ -209,6 +213,11 @@ class Configs:
         for text in config.get("Text", "parse_brackets",
                                fallback=ConfigConst.TEXT_PARSE_BRACKETS.value).split("\n"):
             self.parse_brackets.append(self.read_string(text))
+
+        self.block_brackets = config.get("Text", "block_brackets", fallback=ConfigConst.TEXT_BLOCK_BRACKETS.value)
+        self.block_brackets = self.read_string(self.block_brackets)
+        self.subject_brackets = config.get("Text", "subject_brackets", fallback=ConfigConst.TEXT_SUBJECT_BRACKETS.value)
+        self.subject_brackets= self.read_string(self.subject_brackets)
         self.preamble_regex = config.get("Text", "preamble_regex",
                                          fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
         self.preamble_regex = self.read_string(self.preamble_regex)

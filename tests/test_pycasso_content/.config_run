@@ -80,6 +80,9 @@ sharpness=1
 # Mode 0 - Any of the above (randomly chosen)
 mode=1
 
+# Flag indicating whether to parse and process 'blocks' for prompt generation (eg using ChatGPT) [boolean]
+use_blocks = True
+
 # Preamble text to insert before main prompt [string]
 preamble="test preamble"
 

@@ -4,6 +4,7 @@
 
 import os.path
 
+import responses
 from omni_epd import displayfactory
 from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst, IconConst
 from piblo.file_operations import FileOperations
@@ -137,6 +138,61 @@ def test_prep_normal_prompt():
 
     assert prompt == expected_prompt
     assert title_text == expected_title
+
+
+def test_file_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.FILE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleOpen the file, it says \"I am the block reference\"Postscript"
+    expected_title = "Open the file, it says \"I am the block reference\""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_nested_file_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.NESTED_FILE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested 2 - Open the file, it says \"I am the block reference\"Postscript"
+    expected_title = "Nested 2 - Open the file, it says \"I am the block reference\""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+@responses.activate
+def test_quote_block_prompt():
+    mock_response = [{"q": "Life is what happens while you are busy making other plans.", "a": "John Lennon"}]
+    responses.add(
+        responses.GET,
+        "https://zenquotes.io/api/random",
+        json=mock_response,
+        status=200
+    )
+
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = ""
+    postscript = ""
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.QUOTE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+
+    expected_prompt = "Words: \"Life is what happens while you are busy making other plans.\" - John Lennon"
+    assert prompt == expected_prompt
 
 
 def test_save_image():
@@ -357,12 +413,15 @@ def test_major_complete_config():
     # Text Settings
     assert instance.config.add_text is False
     assert instance.config.use_blocks is False
+    assert instance.config.specify_subject is False
     assert instance.config.parse_file_text is True
     assert instance.config.preamble_regex == " .* - test - "
     assert instance.config.artist_regex == "test_artist"
     assert instance.config.remove_text == ["test _ one", "test element two", "test element 3"]
     assert instance.config.parse_random_text is False
     assert instance.config.parse_brackets == ["{}", "()", "[]"]
+    assert instance.config.block_brackets == "[]"
+    assert instance.config.subject_brackets == "[]"
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False
     assert instance.config.artist_loc == 50

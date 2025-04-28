@@ -107,6 +107,9 @@ add_text = True
 # Flag indicating whether to parse and process 'blocks' for prompt generation (eg using ChatGPT) [boolean]
 use_blocks = True
 
+# Flag indicating whether to parse and process specific subjects for display on the epd [boolean]
+specify_subject = True
+
 # Flag indicating whether to parse text from file names for use in pycasso [boolean]
 parse_file_text = True
 
@@ -129,11 +132,21 @@ remove_text = ", digital art"
 parse_random_text = True
 
 # List of types of brackets to use to parse text. Enter in order of hierarchy [strings]
-# Custom randomisation looks like: "A (Good|[B|R]ad) Dog".
-# Given brackets = "()" and "[]", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
+# Custom randomisation looks like: "A (Good|(B|R)ad) Dog".
+# Given brackets = "()", the above may return "A Good Dog.", "A Bad Dog." or "A Rad Dog"
 parse_brackets = "()"
-               "[]"
-               "{}"
+
+# A set of brackets to be used for block generation. [string]
+# Custom blocks look like "A painting of <zen>"
+# The above may return "A painting of Life is what happens while you are busy making other plans."
+# Brackets can be nested, and some will require arguments, eg "<zen> painted by <file:<file:list_of_file_paths.txt>>"
+block_brackets = "<>"
+
+# A set of brackets to be used for subject selection. [string]
+# Custom prompts may be large and wordy, and you may wish to only display a subset of the whole prompt on your screen
+# This might look like "a masterful painting of {A nice cat} with a dreamy composure, drawn by <file:artists>"
+# The above will only show "A nice cat"
+subject_brackets = "{}"
 
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True

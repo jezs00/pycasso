@@ -21,7 +21,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
-from piblo.prompt_block import QuoteBlock
+from piblo.prompt_block import FileBlock, QuoteBlock
 
 
 # noinspection PyTypeChecker
@@ -528,11 +528,15 @@ class Pycasso:
         self.artist_text = None
         return self.artist_text, self.title_text
 
-    def parse_blocks_nested(self, text="", block_bracket_one="<", block_bracket_two=">", subset_bracket_one="{",
-                            subset_bracket_two="}", loop_limit=100):
+    def parse_blocks_nested(self, text="", loop_limit=100):
         if not FileOperations.check_brackets(text):
             logging.warning(f"Mismatching brackets in \"{text}\"")
             return text
+
+        block_bracket_one = self.config.block_brackets[0]
+        block_bracket_two = self.config.block_brackets[1]
+        subject_bracket_one = self.config.subject_brackets[0]
+        subject_bracket_two = self.config.subject_brackets[1]
 
         # Get everything inside brackets
         regex = fr"(\{block_bracket_one}[^\{block_bracket_one}\{block_bracket_two}]*\{block_bracket_two})"
@@ -543,7 +547,7 @@ class Pycasso:
             bracket = bracket.replace(block_bracket_one, '').replace(block_bracket_two, '')
 
             # Process block
-            block = self.process_block()
+            block = self.process_block(bracket)
 
             # Substitute brackets
             text = re.sub(regex, block, text, 1)
@@ -553,25 +557,25 @@ class Pycasso:
             loop_limit -= 1
 
         # Get everything inside brackets
-        regex = fr"(\{subset_bracket_one}[^\{subset_bracket_one}\{subset_bracket_two}]*\{subset_bracket_two})"
+        regex = fr"(\{subject_bracket_one}[^\{subject_bracket_one}\{subject_bracket_two}]*\{subject_bracket_two})"
         match = re.search(regex, text)
 
-        subset = ""
+        subject = ""
+        if self.config.specify_subject:
+            while match is not None and loop_limit > 0:
+                bracket = match.group()
+                bracket = bracket.replace(subject_bracket_one, '').replace(subject_bracket_two, '')
 
-        while match is not None and loop_limit > 0:
-            bracket = match.group()
-            bracket = bracket.replace(subset_bracket_one, '').replace(subset_bracket_two, '')
+                subject = subject + bracket
 
-            subset = subset + bracket
+                # Substitute brackets
+                text = re.sub(regex, bracket, text, 1)
+                match = re.search(regex, text)
 
-            # Substitute brackets
-            text = re.sub(regex, bracket, text, 1)
-            match = re.search(regex, text)
+                # Use loop_limit to stop this going forever due to error. Should not happen
+                loop_limit -= 1
 
-            # Use loop_limit to stop this going forever due to error. Should not happen
-            loop_limit -= 1
-
-        return text, subset
+        return text, subject
 
     def process_block(self, block_text=""):
         split = block_text.split(':')
@@ -579,11 +583,18 @@ class Pycasso:
 
         # If the block came with arguments
         args = []
-        if len(split > 1):
+        if len(split) > 1:
             args = split[1:]
 
         if block_function == BlockConst.FILE.value:
             # File block
+
+            the_block = FileBlock()
+            if len(args) >= 1:
+                return the_block.generate(args[0])
+            else:
+                logging.warning("File Block found without arguments. Please use the format <file:path> when using file "
+                                "block. Replacing block with blank string.")
             return ""
 
         elif block_function == BlockConst.CHAT.value:
@@ -591,11 +602,12 @@ class Pycasso:
             return ""
 
         elif block_function == BlockConst.ZEN.value:
-            # Zen block
-            return ""
+            # Zen Quote Block
+            quote_block = QuoteBlock()
+            return quote_block.generate()
 
         elif block_function == BlockConst.WEATHER.value:
-            # Zen block
+            # Weather block
             return ""
 
         logging.warning(f"{block_function} not found, please check readme for valid blocks. Using blank string.")
@@ -624,14 +636,29 @@ class Pycasso:
             connector = Pycasso.parse_multiple_brackets(connector, brackets)
             postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
 
+        artist_subset = ""
+        title_subset = ""
+        preamble_subset = ""
+        connector_subset = ""
+        postscript_subset = ""
+
         if self.config.use_blocks:
-            artist_text = Pycasso.parse_multiple_brackets(artist_text, brackets)
-            title_text = Pycasso.parse_multiple_brackets(title_text, brackets)
-            preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
-            connector = Pycasso.parse_multiple_brackets(connector, brackets)
-            postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
+            artist_text, artist_subset = self.parse_blocks_nested(artist_text)
+            title_text, title_subset = self.parse_blocks_nested(title_text)
+            preamble, preamble_subset = self.parse_blocks_nested(preamble)
+            connector, connector_subset = self.parse_blocks_nested(connector)
+            postscript, postscript_subset = self.parse_blocks_nested(postscript)
 
         prompt = (preamble + title_text + connector + artist_text + postscript)
+
+        prompt_subset = title_subset + preamble_subset + connector_subset + postscript_subset
+
+        if prompt_subset != "" and prompt_subset is not None:
+            title_text = prompt_subset
+
+        if artist_subset != "" and artist_subset is not None:
+            artist_text = prompt_subset
+
         return prompt, artist_text, title_text
 
     def prep_normal_prompt(self, prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
@@ -645,7 +672,22 @@ class Pycasso:
             preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
             postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
 
+        title_subset = ""
+        preamble_subset = ""
+        postscript_subset = ""
+
+        if self.config.use_blocks:
+            title_text, title_subset = self.parse_blocks_nested(title_text)
+            preamble, preamble_subset = self.parse_blocks_nested(preamble)
+            postscript, postscript_subset = self.parse_blocks_nested(postscript)
+
         prompt = preamble + title_text + postscript
+
+        prompt_subset = title_subset + preamble_subset + postscript_subset
+
+        if prompt_subset != "" and prompt_subset is not None:
+            title_text = prompt_subset
+
         return prompt, title_text
 
     @staticmethod
