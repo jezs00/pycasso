@@ -7,6 +7,7 @@ import os
 import random
 import re
 import shutil
+from piblo.constants import Regex
 
 
 class FileOperations:
@@ -288,3 +289,7 @@ class FileOperations:
 
         os.rename(file_path, new_path)
         return new_path
+    @staticmethod
+    def clean_file_name(text):
+        # Cleans file names of forbidden characters
+        return re.sub(Regex.FILE_REGEX.value, "", text)

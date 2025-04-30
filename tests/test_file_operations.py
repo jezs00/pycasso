@@ -256,3 +256,10 @@ def test_check_brackets_bad():
     expected = False
     result = FileOperations.check_brackets(text)
     assert result == expected
+
+
+def test_clean_file_name():
+    text = "It's a\\ pretty bad\" name?"
+    expected = "Its a pretty bad name"
+    result = FileOperations.clean_file_name(text)
+    assert result == expected

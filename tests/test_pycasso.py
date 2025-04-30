@@ -140,6 +140,22 @@ def test_prep_normal_prompt():
     assert title_text == expected_title
 
 
+def test_subset():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.SUBSET_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleTest Prompt Test SubjectPostscript"
+    expected_title = "Test Subject"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
 def test_file_block_prompt():
     config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)

@@ -588,6 +588,7 @@ class Pycasso:
 
         if block_function == BlockConst.FILE.value:
             # File block
+            logging.info("Processing file block")
 
             the_block = FileBlock()
             if len(args) >= 1:
@@ -601,8 +602,10 @@ class Pycasso:
             # Chatgpt block
             return ""
 
-        elif block_function == BlockConst.ZEN.value:
-            # Zen Quote Block
+        elif block_function == BlockConst.QUOTE.value:
+            # Quote Block
+            logging.info("Processing quote block")
+
             quote_block = QuoteBlock()
             return quote_block.generate()
 
@@ -610,7 +613,9 @@ class Pycasso:
             # Weather block
             return ""
 
-        logging.warning(f"{block_function} not found, please check readme for valid blocks. Using blank string.")
+        else:
+            logging.warning(f"{block_function} not found, please check readme for valid blocks. Using blank string.")
+
         return ""
 
     @staticmethod
@@ -699,7 +704,7 @@ class Pycasso:
             preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
         image_name = f"{preamble}{prompt}"
         file_name = f"{image_name[:file_name_limit]}.{extension}"
-        save_path = os.path.join(path, file_name)
+        save_path = os.path.join(path, FileOperations.clean_file_name(file_name))
         logging.info(f"Saving image as {save_path}")
 
         # Save the image

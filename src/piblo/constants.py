@@ -207,6 +207,7 @@ class UnitTestConst(Enum):
     ARTISTS_FILE = "test_artists.txt"
     SUBJECTS_FILE = "test_subjects.txt"
     PROMPTS_FILE = "test_prompts.txt"
+    SUBSET_FILE = "test_subset.txt"
     FILE_BLOCK_FILE = "test_file_block.txt"
     NESTED_FILE_BLOCK_FILE = "test_nested_file_block.txt"
     QUOTE_BLOCK_FILE = "test_quote_block.txt"
@@ -295,6 +296,9 @@ class BlockConst(Enum):
     DEFAULT = ""
     FILE = "file"
     CHAT = "chat"
-    ZEN = "zen"
+    QUOTE = "quote"
     WEATHER = "weather"
 
+
+class Regex(Enum):
+    FILE_REGEX = r'[\\/*?:\"\'<>|]'
