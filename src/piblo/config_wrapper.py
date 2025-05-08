@@ -5,7 +5,7 @@ import configparser
 import logging
 import os
 
-from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst, StabilityConst
+from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst, StabilityConst, LLMConst
 from piblo.file_operations import FileOperations
 
 
@@ -125,6 +125,10 @@ class Configs:
         self.automatic_port = AutomaticConst.DEFAULT_PORT.value
         self.provider_fallback = ProvidersConst.PROVIDER_FALLBACK.value
         self.stable_host = StabilityConst.DEFAULT_HOST.value
+        self.llm_model = LLMConst.MODEL.value
+        self.llm_temperature = LLMConst.TEMPERATURE.value
+        self.llm_max_tokens = LLMConst.MAX_TOKENS.value
+        self.llm_system_prompt = LLMConst.SYSTEM_PROMPT.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -299,6 +303,10 @@ class Configs:
                                                    fallback=ProvidersConst.PROVIDER_FALLBACK.value)
         self.stable_host = config.get("Providers", "stable_host", fallback=StabilityConst.DEFAULT_HOST.value)
         self.stable_host = self.read_string(self.stable_host)
+        self.llm_model = config.get("Providers", "llm_model", fallback=LLMConst.MODEL.value)
+        self.llm_temperature = config.get("Providers", "llm_temperature", fallback=LLMConst.TEMPERATURE.value)
+        self.llm_max_tokens = config.get("Providers", "llm_max_tokens", fallback=LLMConst.MAX_TOKENS.value)
+        self.llm_system_prompt = config.get("Providers", "llm_system_prompt", fallback=LLMConst.SYSTEM_PROMPT.value)
 
         # Logging Settings
         self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)

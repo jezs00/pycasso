@@ -21,7 +21,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
-from piblo.prompt_block import FileBlock, QuoteBlock
+from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock
 
 
 # noinspection PyTypeChecker
@@ -598,9 +598,14 @@ class Pycasso:
                                 "block. Replacing block with blank string.")
             return ""
 
-        elif block_function == BlockConst.CHAT.value:
-            # Chatgpt block
-            return ""
+        elif block_function == BlockConst.LLM.value:
+            # LLM Block
+            logging.info("Processing LLM block")
+
+            llm_block = LLMBlock(key=self.dalle_key, 
+                                creds_mode=self.config.use_keychain,
+                                creds_path=self.config.credential_path)
+            return llm_block.generate(args[0])
 
         elif block_function == BlockConst.QUOTE.value:
             # Quote Block

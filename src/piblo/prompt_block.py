@@ -5,8 +5,12 @@ Defines the base class for prompt generation blocks.
 import abc
 import requests
 import logging
+import os
+import openai
 
 from piblo.file_operations import FileOperations
+from piblo.constants import LLMConst, ProvidersConst
+from piblo.provider import DalleProvider
 
 
 class PromptBlock(abc.ABC):
@@ -129,3 +133,84 @@ class FileBlock(PromptBlock):
             # Catch any other unexpected errors during processing
             logging.error(f"An error occurred loading file from {path}")
             return ""
+
+class LLMBlock(PromptBlock):
+    """
+    A prompt block that uses LLM APIs to enhance image generation prompts.
+    Currently supports OpenAI's GPT models.
+    """
+
+    def __init__(self, key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
+                 creds_path=ProvidersConst.CREDENTIAL_PATH.value):
+        """
+        Initialize the LLM block with model configuration.
+        """
+        logging.info(f"Initializing LLM block")
+
+        self.llm_provider = DalleProvider(key=key, creds_mode=creds_mode, creds_path=creds_path)
+        self.model_name = LLMConst.MODEL.value
+        self.temperature = LLMConst.TEMPERATURE.value
+        self.max_tokens = LLMConst.MAX_TOKENS.value
+
+    def generate(self, prompt: str, system_prompt: str = LLMConst.SYSTEM_PROMPT.value) -> str:
+        """
+        Enhances an image generation prompt using the configured LLM.
+
+        Args:
+            prompt (str): The original image generation prompt to enhance
+            system_prompt (str, optional): Custom system prompt to guide the LLM's behavior
+
+        Returns:
+            str: The enhanced prompt string, or empty string on failure
+        """
+        if not prompt:
+            logging.error("No prompt provided to enhance")
+            return ""   
+
+        try:
+            logging.info(f"Enhancing prompt with {self.model_name}...")
+            
+            response = self.llm_provider.client.chat.completions.create(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"{prompt}"}
+                ],
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                top_p=1.0,
+                frequency_penalty=0.0,
+                presence_penalty=0.0
+            )
+
+            enhanced_prompt = response.choices[0].message.content.strip()
+
+            # Clean up the response
+            if enhanced_prompt.startswith('"') and enhanced_prompt.endswith('"'):
+                enhanced_prompt = enhanced_prompt[1:-1]
+            if enhanced_prompt.startswith("'") and enhanced_prompt.endswith("'"):
+                enhanced_prompt = enhanced_prompt[1:-1]
+            enhanced_prompt = enhanced_prompt.replace('"', '')
+
+            if not enhanced_prompt:
+                logging.error("LLM returned an empty prompt")
+                return prompt  # Return original prompt as fallback
+            
+            logging.info(f"Successfully enhanced prompt: {enhanced_prompt}")
+            return enhanced_prompt
+
+        except openai.APIConnectionError as e:
+            logging.error(f"Connection error with OpenAI API: {e}")
+            return prompt
+        except openai.APIError as e:
+            logging.error(f"OpenAI API error: {e}")
+            return prompt
+        except openai.AuthenticationError as e:
+            logging.error(f"OpenAI authentication error: {e}")
+            return prompt
+        except openai.RateLimitError as e:
+            logging.error(f"OpenAI rate limit exceeded: {e}")
+            return prompt
+        except Exception as e:
+            logging.error(f"An unexpected error occurred during prompt enhancement: {e}")
+            return prompt

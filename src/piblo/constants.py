@@ -295,9 +295,15 @@ class PosterConst(Enum):
 class BlockConst(Enum):
     DEFAULT = ""
     FILE = "file"
-    CHAT = "chat"
+    LLM = "llm"
     QUOTE = "quote"
     WEATHER = "weather"
+
+class LLMConst(Enum):
+    MODEL = "gpt-3.5-turbo"
+    TEMPERATURE = 0.7
+    MAX_TOKENS = 80
+    SYSTEM_PROMPT = "You are an expert at writing high-quality, detailed prompts for AI image generation. Enhance the given prompt to be more descriptive and visually compelling while maintaining its original intent."
 
 
 class Regex(Enum):
