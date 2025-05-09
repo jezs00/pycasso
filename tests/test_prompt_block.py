@@ -42,7 +42,7 @@ def test_quote_block_empty_response():
     )
 
     result = quote_block.generate()
-    assert result is ""
+    assert result == ""
 
 
 @responses.activate
@@ -56,7 +56,7 @@ def test_quote_block_invalid_response():
     )
 
     result = quote_block.generate()
-    assert result is ""
+    assert result == ""
 
 
 @responses.activate
@@ -69,7 +69,7 @@ def test_quote_block_timeout():
     )
 
     result = quote_block.generate()
-    assert result is ""
+    assert result == ""
 
 
 class MockPromptBlock(PromptBlock):
