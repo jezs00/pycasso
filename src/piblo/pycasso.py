@@ -529,51 +529,79 @@ class Pycasso:
         return self.artist_text, self.title_text
 
     def parse_blocks_nested(self, text="", loop_limit=100):
-        if not FileOperations.check_brackets(text):
-            logging.warning(f"Mismatching brackets in \"{text}\"")
-            return text
+        subject = ""
 
-        block_bracket_one = self.config.block_brackets[0]
-        block_bracket_two = self.config.block_brackets[1]
-        subject_bracket_one = self.config.subject_brackets[0]
-        subject_bracket_two = self.config.subject_brackets[1]
+        b_one = self.config.block_brackets[0]
+        b_two = self.config.block_brackets[1]
+        s_one = self.config.subject_brackets[0]
+        s_two = self.config.subject_brackets[1]
+
+        if not FileOperations.check_brackets(text, b_one, b_two):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text, subject
+
+        if self.config.specify_subject and not FileOperations.check_brackets(text, s_one, s_two):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text, subject
 
         # Get everything inside brackets
-        regex = fr"(\{block_bracket_one}[^\{block_bracket_one}\{block_bracket_two}]*\{block_bracket_two})"
+        #regex = fr"(\{b_one}[^\{b_one}\{b_two}]*\{b_two})"
+        regex = fr"([\{b_one}\{s_one}][^\{b_one}\{s_one}\{b_two}{s_two}]*[\{b_two}\{s_two}])"
         match = re.search(regex, text)
 
         while match is not None and loop_limit > 0:
             bracket = match.group()
-            bracket = bracket.replace(block_bracket_one, '').replace(block_bracket_two, '')
+            open_bracket = bracket[0]
+            close_bracket = bracket[len(bracket)-1]
 
-            # Process block
-            block = self.process_block(bracket)
+            # Check if brackets are mismatching types
+            if open_bracket == b_one and close_bracket != b_two:
+                logging.warning(f"Mismatching brackets in \"{text}\" : \"{bracket}\"")
+                return text, subject
+            if open_bracket == s_one and close_bracket != s_two:
+                logging.warning(f"Mismatching brackets in \"{text}\" : \"{bracket}\"")
+                return text, subject
+
+            if open_bracket == b_one:
+                bracket = bracket.replace(b_one, '').replace(b_two, '')
+                # Process block
+                bracket = self.process_block(bracket)
+            elif open_bracket == s_one:
+                if self.config.specify_subject:
+                    bracket = bracket.replace(s_one, '').replace(s_two, '')
+                    # Process subset
+                    subject = subject + bracket
+                else:
+                    logging.warning(f"Bracket {s_one} found, however specify subject mode not used")
+            else:
+                # Should never happen
+                logging.warning(f"Although processed, brackets \"{b_one}\" or \"{s_one}\" not found in \"{bracket}\"."
+                                f"Logic error processing \"{text}\"")
 
             # Substitute brackets
-            text = re.sub(regex, block, text, 1)
+            text = re.sub(regex, bracket, text, 1)
             match = re.search(regex, text)
 
             # Use loop_limit to stop this going forever due to error. Should not happen
             loop_limit -= 1
 
         # Get everything inside brackets
-        regex = fr"(\{subject_bracket_one}[^\{subject_bracket_one}\{subject_bracket_two}]*\{subject_bracket_two})"
-        match = re.search(regex, text)
-
-        subject = ""
-        if self.config.specify_subject:
-            while match is not None and loop_limit > 0:
-                bracket = match.group()
-                bracket = bracket.replace(subject_bracket_one, '').replace(subject_bracket_two, '')
-
-                subject = subject + bracket
-
-                # Substitute brackets
-                text = re.sub(regex, bracket, text, 1)
-                match = re.search(regex, text)
-
-                # Use loop_limit to stop this going forever due to error. Should not happen
-                loop_limit -= 1
+        # regex = fr"(\{s_one}[^\{s_one}\{s_two}]*\{s_two})"
+        # match = re.search(regex, text)
+        #
+        # if self.config.specify_subject:
+        #     while match is not None and loop_limit > 0:
+        #         bracket = match.group()
+        #         bracket = bracket.replace(s_one, '').replace(s_two, '')
+        #
+        #
+        #
+        #         # Substitute brackets
+        #         text = re.sub(regex, bracket, text, 1)
+        #         match = re.search(regex, text)
+        #
+        #         # Use loop_limit to stop this going forever due to error. Should not happen
+        #         loop_limit -= 1
 
         return text, subject
 

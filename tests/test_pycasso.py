@@ -156,6 +156,38 @@ def test_subset():
     assert title_text == expected_title
 
 
+def test_block_bracket_missing():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.BLOCK_MISSING_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - <<file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>Postscript"
+    expected_title = "Nested Subset - <<file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_block_bracket_mismatch():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.BLOCK_MISMATCH_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - <file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}Postscript"
+    expected_title = "Nested Subset - <file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
 def test_file_block_prompt():
     config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)
@@ -183,6 +215,22 @@ def test_nested_file_block_prompt():
     prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
     expected_prompt = "PreambleNested 2 - Open the file, it says \"I am the block reference\"Postscript"
     expected_title = "Nested 2 - Open the file, it says \"I am the block reference\""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_nested_file_block_subset_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.NESTED_FILE_BLOCK_SUBSET_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - Open the file, it says \"I am the block reference\"Postscript"
+    expected_title = "tests/test_pycasso_content/test_file_block.txt"
 
     assert prompt == expected_prompt
     assert title_text == expected_title
