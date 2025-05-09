@@ -134,6 +134,7 @@ class FileBlock(PromptBlock):
             logging.error(f"An error occurred loading file from {path}")
             return ""
 
+
 class LLMBlock(PromptBlock):
     """
     A prompt block that uses LLM APIs to enhance image generation prompts.
@@ -165,11 +166,11 @@ class LLMBlock(PromptBlock):
         """
         if not prompt:
             logging.error("No prompt provided to enhance")
-            return ""   
+            return ""
 
         try:
             logging.info(f"Enhancing prompt with {self.model_name}...")
-            
+
             response = self.llm_provider.client.chat.completions.create(
                 model=self.model_name,
                 messages=[
@@ -195,7 +196,7 @@ class LLMBlock(PromptBlock):
             if not enhanced_prompt:
                 logging.error("LLM returned an empty prompt")
                 return prompt  # Return original prompt as fallback
-            
+
             logging.info(f"Successfully enhanced prompt: {enhanced_prompt}")
             return enhanced_prompt
 
