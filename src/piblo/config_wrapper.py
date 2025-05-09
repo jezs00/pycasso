@@ -304,9 +304,11 @@ class Configs:
         self.stable_host = config.get("Providers", "stable_host", fallback=StabilityConst.DEFAULT_HOST.value)
         self.stable_host = self.read_string(self.stable_host)
         self.llm_model = config.get("Providers", "llm_model", fallback=LLMConst.MODEL.value)
-        self.llm_temperature = config.get("Providers", "llm_temperature", fallback=LLMConst.TEMPERATURE.value)
-        self.llm_max_tokens = config.get("Providers", "llm_max_tokens", fallback=LLMConst.MAX_TOKENS.value)
+        self.llm_model = self.read_string(self.llm_model)
+        self.llm_temperature = config.getfloat("Providers", "llm_temperature", fallback=LLMConst.TEMPERATURE.value)
+        self.llm_max_tokens = config.getint("Providers", "llm_max_tokens", fallback=LLMConst.MAX_TOKENS.value)
         self.llm_system_prompt = config.get("Providers", "llm_system_prompt", fallback=LLMConst.SYSTEM_PROMPT.value)
+        self.llm_system_prompt = self.read_string(self.llm_system_prompt)
 
         # Logging Settings
         self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)

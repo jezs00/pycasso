@@ -499,6 +499,10 @@ def test_major_complete_config():
     assert instance.config.automatic_host == "1.1.1.1"
     assert instance.config.automatic_port == 1337
     assert instance.config.provider_fallback is False
+    assert instance.config.llm_model == "cool model"
+    assert instance.config.llm_temperature == 1.0
+    assert instance.config.llm_max_tokens == 40
+    assert instance.config.llm_system_prompt == "Nice LLM, thank you"
 
     # Logging Settings
     assert instance.config.log_file == "pycasso_test.log"

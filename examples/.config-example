@@ -255,9 +255,17 @@ automatic_port = 7860
 provider_fallback = True
 
 # LLM configuration, used by LLMBlock
-llm_model = "gpt-3.5-turbo" # Currently only supports OpenAI models
-llm_temperature = 0.7 # Controls randomness in the output (0.0-1.0)
-llm_max_tokens = 80 # Maximum number of tokens in the response
+
+# Currently only supports OpenAI models
+llm_model = "gpt-3.5-turbo"
+
+# Controls randomness in the output (0.0-1.0)
+llm_temperature = 0.7
+
+# Maximum number of tokens in the response
+llm_max_tokens = 80
+
+# Prompt to encourage the LLM to do what you want it to do
 llm_system_prompt = "You are an expert at writing high-quality, detailed prompts for AI image generation. Enhance the given prompt to be more descriptive and visually compelling while maintaining its original intent."
 
 [Generation]

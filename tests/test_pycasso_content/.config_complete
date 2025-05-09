@@ -253,6 +253,14 @@ automatic_port = 1337
 # Whether to try another provider on failure
 provider_fallback=False
 
+# LLM configuration, used by LLMBlock
+
+# Currently only supports OpenAI models
+llm_model = "cool model"
+llm_temperature = 1.0
+llm_max_tokens = 40
+llm_system_prompt = "Nice LLM, thank you"
+
 [Generation]
 ##################################
 # Image Generation Configuration #
