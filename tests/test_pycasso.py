@@ -165,8 +165,9 @@ def test_block_bracket_missing():
                                UnitTestConst.BLOCK_MISSING_FILE.value)
     instance = Pycasso(config_path)
     prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
-    expected_prompt = "PreambleNested Subset - <<file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>Postscript"
-    expected_title = "Nested Subset - <<file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>"
+    expected_prompt = "PreambleNested Subset - <<file;{tests/test_pycasso_content/test_nested_subset_file_reference." \
+                      "txt}>Postscript"
+    expected_title = "Nested Subset - <<file;{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>"
 
     assert prompt == expected_prompt
     assert title_text == expected_title
@@ -181,8 +182,9 @@ def test_block_bracket_mismatch():
                                UnitTestConst.BLOCK_MISMATCH_FILE.value)
     instance = Pycasso(config_path)
     prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
-    expected_prompt = "PreambleNested Subset - <file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}Postscript"
-    expected_title = "Nested Subset - <file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}"
+    expected_prompt = "PreambleNested Subset - <file;{tests/test_pycasso_content/test_nested_subset_file_reference." \
+                      "txt>}Postscript"
+    expected_title = "Nested Subset - <file;{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}"
 
     assert prompt == expected_prompt
     assert title_text == expected_title
@@ -239,13 +241,30 @@ def test_nested_file_block_subset_prompt():
 def test_recursive_file_block_limit():
     config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.CONFIG_FILE.value)
-    relative_file_path = f"{UnitTestConst.TEST_FOLDER.value}{UnitTestConst.PYCASSO_FOLDER.value}/{UnitTestConst.RECURSIVE_LIMIT_FILE.value}"
+    relative_file_path = f"{UnitTestConst.TEST_FOLDER.value}{UnitTestConst.PYCASSO_FOLDER.value}/" \
+                         f"{UnitTestConst.RECURSIVE_LIMIT_FILE.value}"
     instance = Pycasso(config_path)
-    text = f"R <file:{relative_file_path}>"
+    text = f"R <file;{relative_file_path}>"
     prompt, title_text = instance.parse_blocks_nested(text=text, loop_limit=20)
     expected_prompt = "R R R R R R R R R R R R R R R R R R R R R R R " \
-                      "<file:tests/test_pycasso_content/test_file_block_recursive.txt>"
+                      "<file;tests/test_pycasso_content/test_file_block_recursive.txt>"
     expected_title = ""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_rss_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.RSS_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNews - Local woman worried as new Pope is a LeoPostscript"
+    expected_title = "Local woman worried as new Pope is a Leo"
 
     assert prompt == expected_prompt
     assert title_text == expected_title
@@ -500,6 +519,7 @@ def test_major_complete_config():
     assert instance.config.parse_random_text is False
     assert instance.config.parse_brackets == ["{}", "()", "[]"]
     assert instance.config.block_brackets == "[]"
+    assert instance.config.block_seperator == ":"
     assert instance.config.subject_brackets == "[]"
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False

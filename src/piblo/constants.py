@@ -38,6 +38,7 @@ class ConfigConst(Enum):
     TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\""
     TEXT_PARSE_BRACKETS_LIST = ["()", "[]"]
     TEXT_BLOCK_BRACKETS = "<>"
+    TEXT_BLOCK_SEPERATOR = ";"
     TEXT_SUBJECT_BRACKETS = "{}"
     TEXT_PREAMBLE_REGEX = ".*- "
     TEXT_ARTIST_REGEX = " by "
@@ -214,6 +215,7 @@ class UnitTestConst(Enum):
     BLOCK_MISSING_FILE = "test_block_missing.txt"
     BLOCK_MISMATCH_FILE = "test_block_mismatch.txt"
     RECURSIVE_LIMIT_FILE = "test_file_block_recursive.txt"
+    RSS_BLOCK_FILE = "test_rss_block.txt"
     QUOTE_BLOCK_FILE = "test_quote_block.txt"
     FONT_FILE = "Font.ttc"
     PROVIDER_FOLDER = "test_provider_content"
@@ -297,17 +299,22 @@ class PosterConst(Enum):
 
 
 class BlockConst(Enum):
+    SEPERATOR = ';'
     DEFAULT = ""
     FILE = "file"
     LLM = "llm"
+    RSS = "rss"
     QUOTE = "quote"
     WEATHER = "weather"
+
 
 class LLMConst(Enum):
     MODEL = "gpt-3.5-turbo"
     TEMPERATURE = 0.7
     MAX_TOKENS = 80
-    SYSTEM_PROMPT = "You are an expert at writing high-quality, detailed prompts for AI image generation. Enhance the given prompt to be more descriptive and visually compelling while maintaining its original intent."
+    SYSTEM_PROMPT = "You are an expert at writing high-quality, detailed prompts for AI image generation. Enhance " \
+                    "the given prompt to be more descriptive and visually compelling while maintaining its original " \
+                    "intent."
 
 
 class Regex(Enum):

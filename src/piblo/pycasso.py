@@ -21,7 +21,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
-from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock
+from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock, RSSBlock
 
 
 # noinspection PyTypeChecker
@@ -593,8 +593,8 @@ class Pycasso:
 
         return text, subject
 
-    def process_block(self, block_text=""):
-        split = block_text.split(':')
+    def process_block(self, block_text="", arg_seperator=BlockConst.SEPERATOR.value):
+        split = block_text.split(arg_seperator)
         block_function = split[0].lower()
 
         # If the block came with arguments
@@ -618,10 +618,26 @@ class Pycasso:
             # LLM Block
             logging.info("Processing LLM block")
 
-            llm_block = LLMBlock(key=self.dalle_key, 
-                                creds_mode=self.config.use_keychain,
-                                creds_path=self.config.credential_path)
+            llm_block = LLMBlock(key=self.dalle_key,
+                                 creds_mode=self.config.use_keychain,
+                                 creds_path=self.config.credential_path)
             return llm_block.generate(args[0])
+
+        elif block_function == BlockConst.RSS.value:
+            # RSS Block
+            logging.info("Processing RSS block")
+
+            the_block = RSSBlock()
+            if len(args) >= 3:
+                return the_block.generate(args[0], args[1], args[2])
+            elif len(args) >= 2:
+                return the_block.generate(args[0], args[1])
+            elif len(args) >= 1:
+                return the_block.generate(args[0])
+            else:
+                logging.warning("RSS Block found without arguments. Please use the format <rss:feed> when using rss "
+                                "block. Replacing block with blank string.")
+            return ""
 
         elif block_function == BlockConst.QUOTE.value:
             # Quote Block
@@ -635,7 +651,8 @@ class Pycasso:
             return ""
 
         else:
-            logging.warning(f"{block_function} not found, please check readme for valid blocks. Using blank string.")
+            logging.warning(f"\"{block_function}\" not found, please check readme for valid blocks. Using blank string."
+                            f"")
 
         return ""
 

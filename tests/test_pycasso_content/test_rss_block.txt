@@ -1,0 +1,1 @@
+News - {<rss;tests/test_pycasso_content/test_rss_chaser_20250511.rss>}

@@ -1,1 +1,1 @@
-Nested Subset - <<file:{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>
+Nested Subset - <<file;{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>

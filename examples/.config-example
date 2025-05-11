@@ -142,6 +142,9 @@ parse_brackets = "()"
 # Brackets can be nested, and some will require arguments, eg "<zen> painted by <file:<file:list_of_file_paths.txt>>"
 block_brackets = "<>"
 
+# The seperator of arguments within blocks. By default this is ';'. [string]
+block_seperator = ";"
+
 # A set of brackets to be used for subject selection. [string]
 # Custom prompts may be large and wordy, and you may wish to only display a subset of the whole prompt on your screen
 # This might look like "a masterful painting of {A nice cat} with a dreamy composure, drawn by <file:artists>"

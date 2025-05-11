@@ -5,8 +5,8 @@ Defines the base class for prompt generation blocks.
 import abc
 import requests
 import logging
-import os
 import openai
+import feedparser
 
 from piblo.file_operations import FileOperations
 from piblo.constants import LLMConst, ProvidersConst
@@ -103,11 +103,8 @@ class QuoteBlock(PromptBlock):
 
 class FileBlock(PromptBlock):
     """
-    A prompt block that generates text containing a random Zen quote.
-    Fetches data from https://zenquotes.io/
+    A prompt block that loads information from a file
     """
-    API_URL = "https://zenquotes.io/api/random"
-    TIMEOUT = 10  # seconds
 
     def __init__(self):
         # No specific initialization needed for this block
@@ -215,3 +212,31 @@ class LLMBlock(PromptBlock):
         except Exception as e:
             logging.error(f"An unexpected error occurred during prompt enhancement: {e}")
             return prompt
+
+
+class RSSBlock(PromptBlock):
+    """
+    A prompt block that loads text from an RSS feed
+    """
+
+    def __init__(self):
+        # No specific initialization needed for this block
+        pass
+
+    def generate(self, feed, tag='title', index=0) -> str:
+        """
+        Fetches text from an RSS feed available at 'feed'. Default 'title' tag works for most rss news feeds, however
+        can be set to something else. 'index' can define another item, by default it should load the most recent.
+
+        Returns:
+            str: Text found in RSS feed, or empty string on failure
+        """
+        try:
+            feed = feedparser.parse(feed)
+            text = feed.entries[0].title
+            return text
+
+        except Exception as e:
+            # Catch any other unexpected errors during processing
+            logging.error(f"An error occurred loading text from \"{feed}\"")
+            return ""

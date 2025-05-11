@@ -1,1 +1,1 @@
-Nested 2 - <file:tests/test_pycasso_content/test_file_block.txt>
+Nested 2 - <file;tests/test_pycasso_content/test_file_block.txt>

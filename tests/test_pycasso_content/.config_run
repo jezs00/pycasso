@@ -131,6 +131,9 @@ parse_brackets = "()"
                 "[]"
                 "{}"
 
+# The seperator of arguments within blocks. By default this is ';'. [string]
+block_seperator = ";"
+
 # Flags indicating whether to draw text box background to the bottom or edges of the cropped image or not [boolean]
 box_to_floor = True
 box_to_edge = True

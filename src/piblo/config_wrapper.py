@@ -75,6 +75,7 @@ class Configs:
         self.parse_random_text = ConfigConst.TEXT_PARSE_RANDOM_TEXT.value
         self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
         self.block_brackets = ConfigConst.TEXT_BLOCK_BRACKETS.value
+        self.block_seperator = ConfigConst.TEXT_BLOCK_SEPERATOR.value
         self.subject_brackets = ConfigConst.TEXT_SUBJECT_BRACKETS.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
@@ -220,6 +221,8 @@ class Configs:
 
         self.block_brackets = config.get("Text", "block_brackets", fallback=ConfigConst.TEXT_BLOCK_BRACKETS.value)
         self.block_brackets = self.read_string(self.block_brackets)
+        self.block_seperator = config.get("Text", "block_seperator", fallback=ConfigConst.TEXT_BLOCK_SEPERATOR.value)
+        self.block_seperator = self.read_string(self.block_seperator)
         self.subject_brackets = config.get("Text", "subject_brackets", fallback=ConfigConst.TEXT_SUBJECT_BRACKETS.value)
         self.subject_brackets= self.read_string(self.subject_brackets)
         self.preamble_regex = config.get("Text", "preamble_regex",
