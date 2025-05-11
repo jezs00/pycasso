@@ -14,7 +14,6 @@ import keyring
 import openai
 from openai import OpenAI
 import requests
-from stability_sdk import client
 from PIL import Image, ImageDraw
 
 from piblo.constants import ProvidersConst, StabilityConst, DalleConst, AutomaticConst
@@ -157,7 +156,6 @@ class Provider(object):
 
 
 class StabilityProvider(Provider):
-    stability_api = object
 
     # inherits from Provider
     def __init__(self, key=None, host=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
@@ -178,10 +176,6 @@ class StabilityProvider(Provider):
         try:
             fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
             fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
-            
-            # TODO: make sure the height/width is fetched automatically
-            fetch_height = 9
-            fetch_width = 16
 
             response = requests.post(
                 self.host,
@@ -191,7 +185,8 @@ class StabilityProvider(Provider):
                 },
                 files={"none": ''},
                 data={
-                    "aspect_ratio": f"{fetch_width}:{fetch_height}",
+                    "width": fetch_width,
+                    "height" : fetch_height,
                     "seed": "0",
                     "style_preset": "enhance",
                     "prompt": text,
