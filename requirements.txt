@@ -9,3 +9,4 @@ webuiapi
 mastodon-py
 requests
 responses
+feedparser
