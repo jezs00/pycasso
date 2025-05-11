@@ -27,13 +27,19 @@ class ConfigConst(Enum):
     FILE_ARTISTS_EG = "examples/prompts/artists-example.txt"
     FILE_PROMPTS_EG = "examples/prompts/prompts-example.txt"
     FILE_RESIZE_EXTERNAL = True
+    FILE_NAME_MAX_LENGTH = 100
 
     # Text Settings
     TEXT_ADD_TEXT = False
+    TEXT_USE_BLOCKS = True
+    TEXT_SPECIFY_SUBJECT = True
     TEXT_PARSE_FILE_TEXT = False
     TEXT_PARSE_RANDOM_TEXT = True
-    TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\"\n\"{}\""
-    TEXT_PARSE_BRACKETS_LIST = ["()", "[]", "{}"]
+    TEXT_PARSE_BRACKETS = "\"()\"\n\"[]\""
+    TEXT_PARSE_BRACKETS_LIST = ["()", "[]"]
+    TEXT_BLOCK_BRACKETS = "<>"
+    TEXT_BLOCK_SEPERATOR = ";"
+    TEXT_SUBJECT_BRACKETS = "{}"
     TEXT_PREAMBLE_REGEX = ".*- "
     TEXT_ARTIST_REGEX = " by "
     TEXT_REMOVE_TEXT = "\"()\"\n\"[]\"\n\"{}\""
@@ -136,7 +142,7 @@ class ProvidersConst(Enum):
 class StabilityConst(Enum):
     KEY = "STABILITY_KEY"
     HOST = "STABILITY_HOST"
-    DEFAULT_HOST = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
+    DEFAULT_HOST = "https://api.stability.ai/v2beta/stable-image/generate/core"
     MULTIPLE = 64
 
 
@@ -176,6 +182,7 @@ class PromptModeConst(Enum):
     RANDOM = 0
     SUBJECT_ARTIST = 1
     PROMPT = 2
+    QUOTE = 3
 
 
 class DisplayShapeConst(Enum):
@@ -201,10 +208,21 @@ class UnitTestConst(Enum):
     ARTISTS_FILE = "test_artists.txt"
     SUBJECTS_FILE = "test_subjects.txt"
     PROMPTS_FILE = "test_prompts.txt"
+    SUBSET_FILE = "test_subset.txt"
+    FILE_BLOCK_FILE = "test_file_block.txt"
+    NESTED_FILE_BLOCK_FILE = "test_nested_file_block.txt"
+    NESTED_FILE_BLOCK_SUBSET_FILE = "test_nested_subset_file_block.txt"
+    BLOCK_MISSING_FILE = "test_block_missing.txt"
+    BLOCK_MISMATCH_FILE = "test_block_mismatch.txt"
+    RECURSIVE_LIMIT_FILE = "test_file_block_recursive.txt"
+    RSS_BLOCK_FILE = "test_rss_block.txt"
+    QUOTE_BLOCK_FILE = "test_quote_block.txt"
     FONT_FILE = "Font.ttc"
     PROVIDER_FOLDER = "test_provider_content"
     PROVIDER_CRED = ".creds-test"
     PROVIDER_CRED_NEW = ".creds-test-new"
+    PROMPT_BLOCK_FOLDER = "test_prompt_block_content"
+    PROMPT_BLOCK_FILE = "test_block.txt"
 
 
 class ImageConst(Enum):
@@ -278,3 +296,26 @@ class PosterConst(Enum):
     MASTODON_PASSWORD_KEYNAME = "MASTODON_PASSWORD"
     MASTODON_IMG_FORMAT = "PNG"
     MASTODON_MIME_FORMAT = "image/png"
+
+
+class BlockConst(Enum):
+    SEPERATOR = ';'
+    DEFAULT = ""
+    FILE = "file"
+    LLM = "llm"
+    RSS = "rss"
+    QUOTE = "quote"
+    WEATHER = "weather"
+
+
+class LLMConst(Enum):
+    MODEL = "gpt-3.5-turbo"
+    TEMPERATURE = 0.7
+    MAX_TOKENS = 80
+    SYSTEM_PROMPT = "You are an expert at writing high-quality, detailed prompts for AI image generation. Enhance " \
+                    "the given prompt to be more descriptive and visually compelling while maintaining its original " \
+                    "intent."
+
+
+class Regex(Enum):
+    FILE_REGEX = r'[\\/*?:\"\'<>|]'

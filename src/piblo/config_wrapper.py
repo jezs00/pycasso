@@ -5,7 +5,7 @@ import configparser
 import logging
 import os
 
-from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst, StabilityConst
+from piblo.constants import ConfigConst, ProvidersConst, AutomaticConst, StabilityConst, LLMConst
 from piblo.file_operations import FileOperations
 
 
@@ -65,12 +65,18 @@ class Configs:
         self.artists_example = self.file.get_full_path(ConfigConst.FILE_ARTISTS_EG.value)
         self.prompts_example = self.file.get_full_path(ConfigConst.FILE_PROMPTS_EG.value)
         self.resize_external = ConfigConst.FILE_RESIZE_EXTERNAL.value
+        self.file_name_max_length = ConfigConst.FILE_NAME_MAX_LENGTH.value
 
         # Text Settings
         self.add_text = ConfigConst.TEXT_ADD_TEXT.value
+        self.use_blocks = ConfigConst.TEXT_USE_BLOCKS.value
+        self.specify_subject = ConfigConst.TEXT_SPECIFY_SUBJECT.value
         self.parse_file_text = ConfigConst.TEXT_PARSE_FILE_TEXT.value
         self.parse_random_text = ConfigConst.TEXT_PARSE_RANDOM_TEXT.value
         self.parse_brackets = ConfigConst.TEXT_PARSE_BRACKETS_LIST.value
+        self.block_brackets = ConfigConst.TEXT_BLOCK_BRACKETS.value
+        self.block_seperator = ConfigConst.TEXT_BLOCK_SEPERATOR.value
+        self.subject_brackets = ConfigConst.TEXT_SUBJECT_BRACKETS.value
         self.preamble_regex = ConfigConst.TEXT_PREAMBLE_REGEX.value
         self.artist_regex = ConfigConst.TEXT_ARTIST_REGEX.value
         self.remove_text = ConfigConst.TEXT_REMOVE_TEXT_LIST.value
@@ -120,6 +126,10 @@ class Configs:
         self.automatic_port = AutomaticConst.DEFAULT_PORT.value
         self.provider_fallback = ProvidersConst.PROVIDER_FALLBACK.value
         self.stable_host = StabilityConst.DEFAULT_HOST.value
+        self.llm_model = LLMConst.MODEL.value
+        self.llm_temperature = LLMConst.TEMPERATURE.value
+        self.llm_max_tokens = LLMConst.MAX_TOKENS.value
+        self.llm_system_prompt = LLMConst.SYSTEM_PROMPT.value
 
         # Logging Settings
         self.log_file = ConfigConst.LOGGING_FILE.value
@@ -193,9 +203,13 @@ class Configs:
         self.prompts_file = self.read_string(self.prompts_file)
         self.resize_external = config.getboolean("File", "resize_external",
                                                  fallback=ConfigConst.FILE_RESIZE_EXTERNAL.value)
+        self.file_name_max_length = config.getint("File", "file_name_max_length",
+                                                      fallback=ConfigConst.FILE_NAME_MAX_LENGTH.value)
 
         # Text Settings
         self.add_text = config.getboolean("Text", "add_text", fallback=ConfigConst.TEXT_ADD_TEXT.value)
+        self.use_blocks = config.getboolean("Text", "use_blocks", fallback=ConfigConst.TEXT_USE_BLOCKS.value)
+        self.specify_subject = config.getboolean("Text", "specify_subject", fallback=ConfigConst.TEXT_SPECIFY_SUBJECT.value)
         self.parse_file_text = config.getboolean("Text", "parse_file_text",
                                                  fallback=ConfigConst.TEXT_PARSE_FILE_TEXT.value)
         self.parse_random_text = config.getboolean("Text", "parse_random_text",
@@ -204,6 +218,13 @@ class Configs:
         for text in config.get("Text", "parse_brackets",
                                fallback=ConfigConst.TEXT_PARSE_BRACKETS.value).split("\n"):
             self.parse_brackets.append(self.read_string(text))
+
+        self.block_brackets = config.get("Text", "block_brackets", fallback=ConfigConst.TEXT_BLOCK_BRACKETS.value)
+        self.block_brackets = self.read_string(self.block_brackets)
+        self.block_seperator = config.get("Text", "block_seperator", fallback=ConfigConst.TEXT_BLOCK_SEPERATOR.value)
+        self.block_seperator = self.read_string(self.block_seperator)
+        self.subject_brackets = config.get("Text", "subject_brackets", fallback=ConfigConst.TEXT_SUBJECT_BRACKETS.value)
+        self.subject_brackets= self.read_string(self.subject_brackets)
         self.preamble_regex = config.get("Text", "preamble_regex",
                                          fallback=ConfigConst.TEXT_PREAMBLE_REGEX.value)
         self.preamble_regex = self.read_string(self.preamble_regex)
@@ -285,6 +306,12 @@ class Configs:
                                                    fallback=ProvidersConst.PROVIDER_FALLBACK.value)
         self.stable_host = config.get("Providers", "stable_host", fallback=StabilityConst.DEFAULT_HOST.value)
         self.stable_host = self.read_string(self.stable_host)
+        self.llm_model = config.get("Providers", "llm_model", fallback=LLMConst.MODEL.value)
+        self.llm_model = self.read_string(self.llm_model)
+        self.llm_temperature = config.getfloat("Providers", "llm_temperature", fallback=LLMConst.TEMPERATURE.value)
+        self.llm_max_tokens = config.getint("Providers", "llm_max_tokens", fallback=LLMConst.MAX_TOKENS.value)
+        self.llm_system_prompt = config.get("Providers", "llm_system_prompt", fallback=LLMConst.SYSTEM_PROMPT.value)
+        self.llm_system_prompt = self.read_string(self.llm_system_prompt)
 
         # Logging Settings
         self.log_file = config.get("Logging", "log_file", fallback=ConfigConst.LOGGING_FILE.value)

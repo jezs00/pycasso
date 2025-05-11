@@ -1,9 +1,11 @@
 git+https://github.com/robweber/omni-epd.git#egg=omni-epd
-git+https://github.com/Stability-AI/stability-sdk.git
 git+https://github.com/openai/openai-python.git
 pillow
 keyring
 requests
 numpy
 webuiapi
-mastodon.py
+mastodon-py
+requests
+responses
+feedparser

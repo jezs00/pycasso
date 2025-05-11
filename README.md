@@ -76,24 +76,24 @@ more information. My preferred configuration is to set a wakeup timer to start a
 * Play around a bit with the `.config` options so that everything on the screen looks good to you and works for your implementation. There is a description of all configuration items in the file. While experimenting, I recommend setting the mode to only fetch images from historic backlog using `historic_amount`, so that you aren't spending credits on your API while setting it up.
 * Configure your prompts to send to providers using /prompts/artists.txt, /prompts/subjects.txt and /prompts/prompts.txt
   * Review the markup of the example prompts to learn how to apply randomisation for interesting effect in your prompt
-  * Have a play around with the prompts and see what works for you. See [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) for more information.
+  * Have a play around with the prompts and see what works for you. See [Bracket wildcards](#bracket-wildcards) and [Prompt Blocks](#prompt-blocks) for more information.
 
 ### Administration
 * Access to the prompt generation files, configuration, and saved images may be complicated through your raspberry pi unit. I recommend setting up an SMB share for easy access to these folders. Feature request to set this up automatically is tracked [here](https://github.com/jezs00/pycasso/issues/19).
 * If you have set `shutdown_on_battery` to true, you should be able to plug your PiJuice into power to ensure it stays on when you start it.
 * If a disaster occurs, and you have `shutdown_on_battery` and `shutdown_on_exception` both set to True and you cannot keep the device on long enough to log in, you might need to unplug the SD card and try to fix the config. If this option is not available to you, it's possible you might need to flash it and start from scratch. A possible solution to these issues while maintaining a priority on extending battery life is being tracked [here](https://github.com/jezs00/pycasso/issues/20).
 
-### Hierarchical Bracket Wildcards
+### Bracket Wildcards
 To enhance dynamic prompt generation within pycasso, many text files and strings in pycasso are parsed to replace wildcard text. This allows more flexibility when defining prompts.
 
-By default, the three types of brackets used are:
+In the past, the three types of brackets used are:
 1. ()
 2. []
 3. {}
 
-These can be added to, removed, or customised in `.config`.
+These can be added to, removed, or customised in `.config`. They are included to keep functionality by default with any old text parsers, however there is no reason to use multiple brackets anymore. It is suggested to just use ().
 
-Different options are separated by a pipe, for example `(Option 1|Option 2|[Option {3|4|5|6}|Option 7])`. The parser will first look for the lowest level of brackets (in this example {}), choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|[B|R]ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
+Different options are separated by a pipe, for example `(Option 1|Option 2|(Option (3|4|5|6)|Option 7))`. The parser will first look for the lowest level of brackets, choose only one random option of the text, and then proceed to the next levels. Unless otherwise specified, each option has an equal chance of being chosen from each bracket pair. This means with nested brackets, you should consider the way the parsing works when thinking about the likelihood of a certain item of text occurring. For example, `A (Good|(B|R)ad) Dog` could return `A Good Dog` `A Bad Dog` or `A Rad Dog`. The option will be picked randomly between each bracket pair, so you have 50% chance of `A Good Dog`, 25% chance of `A Bad Dog` and 25% chance of `A Rad Dog`.
 
 At the start of any segment, you can also provide a weighting for a particular option. For example `(20:Option A|Option B|0:Option C)` should provide `Option A` about 20 times more often than `Option B`. `Option C` would never appear. These weightings can also be used at the start of every line in one of the prompt-building text files to specify the likelihood of that line being chosen.
 
@@ -104,11 +104,43 @@ Here are a few more examples of how one may use these to make simple prompts mor
 `A (|Happy|Sad) (Dog|Cat|Bird)` could result in:
 * `A Dog`, `A Happy Dog`, `A Sad Dog`, `A Cat`, `A Happy Cat`, `A Sad Cat`, `A Cat`, `A Happy Bird` or `A Sad Bird`. All options have the same probability of occurring.
 
-`A (Dog|Cat) (|[Carrying|Stealing] A[n Apple| Banana])` could result in:
+`A (Dog|Cat) (|(Carrying|Stealing) A(n Apple| Banana))` could result in:
 * **1/4** of the time `A Dog`, **1/4** of the time `A Cat`, **1/16** of the time `A Dog Carrying An Apple`, **1/16** of the time `A Dog Carrying A Banana`, **1/16** of the time `A Dog Stealing An Apple`, **1/16** of the time `A Dog Stealing A Banana`, **1/16** of the time `A Cat Carrying An Apple`, **1/16** of the time `A Cat Stealing An Apple`, **1/16** of the time `A Cat Stealing An Apple` or **1/16** of the time `A Cat Stealing A Banana`
 
 `A(5: Friendly|2:n Uncommon| Rare) (3:Dog|Cat)` could result in:
 * **15/32** of the time `A Friendly Dog`, **3/16** of the time `An Uncommon Dog`, **3/32** of the time `A Rare Dog`, **5/32** of the time `A Friendly Cat`, **1/16** of the time `An Uncommon Cat` or **1/32** of the time `A Rare Cat`
+
+### Prompt Blocks
+pycasso now supports "Prompt Blocks" when enabled in config. These allow far more dynamic prompts to be used. By default, this uses the <> characters and specifies a part of the text to process. Detection and processing is performed inside-out, so results of process blocks can be nested and passed as arguments or text to other blocks. Blocks also work with wildcards as defined above, allowing for a great amount of flexibility and diversity in generation options.
+
+* For example, `<llm;<quote>> in the style of Lichtenstein` attempts to load a quote from zenquotes, then pass it to an llm to turn the text into something to be consumed by one of the image generation providers
+* All prompt blocks should return a blank string on failures, so your prompt will still attempt to build itself even if one prompt block fails.
+
+Some prompt blocks accept arguments. By default, the seperator between arguments is ';', however this can be modified in the configuration.
+* For example `<file;path/to/file>` will load a line from the file located at `path/to/file`
+
+As the generated text can be unpredictable and long, we can also specify what we want the subject to be if enabled in config and we are displaying text on the screen. By default, we use {} characters to do this:
+* With the minor modification of `<llm;{<quote>}> in the style of Lichtenstein` we can now ensure that while we still use enriched text by the LLM to request the image, only the quote is displaying as the text on our screen.
+
+Detection and processing of blocks is recursive and all-inclusive. This means prompt blocks located in files, config, and generated by other methods will all be processed. The best way to learn how to use this is to play around and see what is possible. 
+
+#### Block Types
+
+* `<file>`: The file block loads one line of text from a file. Text within the file is also processed with wildcards as defined above. The text is also parsed for process blocks. Requires path to file to be provided as an argument.
+  * Example usage: `<file;path/to/file>` - Loads a line from the file `path/to/file`
+* `<llm>`: The llm block requests an llm to enhance or respond to a provided prompt. Currently openai/chatgpt is the only api available. Instructions for the ai to use to process the text are defined using the variable `llm_system_prompt` available in .config 
+  * Example usage: `<llm;requested prompt>` - Returns the result of an LLM being provided the text `requested prompt` 
+* `<rss>`: The rss block pulls an rss feed from a provided link, and returns text from the feed. Requires path/url to rss feed to be provided as an argument. Optional arguments can be provided to define the tag (defaults to `title`, which works for most news rss providers) to export from the items, and to define the index of items to export (defaults to `0` for most recent item).
+  * Example usage: `<rss;https://testnews.notarealwebsite/feed>` - Returns the title of the most recent news item provided
+  * `<rss;https://testnews.notarealwebsite/feed;description>` - Returns the description of the most recent news item provided
+  * `<rss;https://testnews.notarealwebsite/feed;title;2>` - Returns the title of the 3rd most recent news item provided
+* `<quote>`: The quote block provides an 'inspirational' quote from zenquotes. Best utilised with an llm to massage the quote into the artwork
+  * Example usage: `<quote>` - Returns a quote in its entirety
+
+#### Examples
+
+* `<llm;(<file;path/to/file>|<quote>)>` - Sends either a line from the file `path/to/file` or a quote from zenquotes to the llm, and then returns the response from the llm
+* `<rss;https://testnews.notarealwebsite/feed> in the style of <file;path/to/file>` - Provides a prompt that has a news item modified by an artist or theme provided in `path/to/file`
 
 ## Configuration
 You can run `nano .config` in the pycasso install folder to configure the way pycasso runs. There are a lot of options to configure your experience, and it is highly recommended to play around with these options to find the settings that work best for your setup. If at any time you wish to roll back to the default configuration you can find it is `/examples/.config-example`, or you can delete .config and running pycasso will restore the defaults automatically. If you are running pycasso frequently to see what changes your updates make, it is recommended to either use the test mode by setting all providers to 0, or using external/generated modes so that you are not being charged by your provider for each time you run the program. Below you will find a full explanation of all configuration sections and items.
@@ -126,6 +158,7 @@ Settings related to file operations within pycasso
 * `artists_file`: A file path relative to the pycasso working directory to load 'artists' from when using prompt mode 1. `(String)`
 * `subjects_file`: A file path relative to the pycasso working directory to load 'prompts' from when using prompt mode 2. `(String)`
 * `resize_external`: A boolean flag that instructs pycasso whether to resize external images. If 'True', pycasso will resize images provided to it so that the whole image will fit in the EPD. If 'False', pycasso will fill the whole screen with the image by resizing to a smaller extent, and then cropping. `(Boolean)`
+* `file_name_max_length`: The maximum length in characters a filename can be. `(Integer)`
 
 ### EPD
 These settings are consumed by omni-epd to customise the EPD information. See [omni-epd](https://github.com/robweber/omni-epd) for supported displays for more information on omni-epd options
@@ -158,20 +191,25 @@ Settings related to creation of prompts for submission and requests from AI art 
   * `1` -  (`preamble` - **subjects.txt** - `connector` - **artists.txt** - `postscript`)
   * `2` -  (`preamble` - **prompts.txt** - `postscript`)
   * `0` -  Any of the above (randomly chooses one of the above options)
-* `preamble`: Text that fills in the `preamble` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
-* `connector`: Text that fills in the `connector` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
-* `postscript`: Text that fills in the `postscript` part of the prompt construction above. [Hierarchical bracket wildcards](#hierarchical-bracket-wildcards) supported.`(String)`
+* `preamble`: Text that fills in the `preamble` part of the prompt construction above. [Bracket wildcards](#bracket-wildcards) and [Prompt Blocks](#prompt-blocks) supported.`(String)`
+* `connector`: Text that fills in the `connector` part of the prompt construction above. [Bracket wildcards](#bracket-wildcards) and [Prompt Blocks](#prompt-blocks) supported.`(String)`
+* `postscript`: Text that fills in the `postscript` part of the prompt construction above. [Bracket wildcards](#bracket-wildcards) and [Prompt Blocks](#prompt-blocks) supported.`(String)`
 
 ### Text
 Settings related to parsing text of filenames and strings, and text display on the EPD
 
 * `add_text`: A boolean flag that instructs pycasso whether to display a textbox on the EPD or not. `(Boolean)`
+* `use_blocks`: A boolean flag that instructs pycasso whether to interpret certain strings using [Prompt Blocks](#prompt-blocks) or not. `(Boolean)`
+* `specify_subject`: A boolean flag that instructs pycasso whether to allow specifying of subjects or not. `(Boolean)`
 * `parse_file_text`: A boolean flag that instructs pycasso whether to parse filenames in external image mode or not. `(Boolean)`
 * `preamble_regex`: Normal regex to find the split point between the preamble and the main text in external image names. `(String)`
 * `artist_regex`: Normal regex to find the split point between the subject and artist in external image names. `(String)`
 * `remove_text`: A list of strings to find and completely remove from any file names to parse into pycasso. `(List)`
-* `parse_random_text`: A boolean flag that instructs pycasso whether to interpret certain strings using [hierarchical bracket wildcards](#hierarchical-bracket-wildcards) or not. `(Boolean)`
+* `parse_random_text`: A boolean flag that instructs pycasso whether to interpret certain strings using [bracket wildcards](#bracket-wildcards) or not. `(Boolean)`
 * `parse_brackets`: A list of bracket pairs in order of the highest to the lowest level in hierarchy. `(List)`
+* `block_brackets`: A string with 2 bracket pairs to be used to specify blocks to use in [Prompt Blocks](#prompt-blocks). Recommend using uncommon brackets. `(String)`
+* `block_seperator`: A string with 1 character to be used to separate arguments in blocks from [Prompt Blocks](#prompt-blocks). Recommend using an uncommon character. `(String)`
+* `subject_brackets`: A string with 2 bracket pairs to be used to specify the subject when using [Prompt Blocks](#prompt-blocks). Recommend using uncommon brackets. `(String)`
 * `box_to_floor`: A boolean flag that instructs pycasso whether to draw the text box all the way to the bottom of the image instead of just appearing around the text. `(Boolean)`
 * `box_to_edge`: A boolean flag that instructs pycasso whether to draw the text box all the way to the edges of the image instead of just appearing around the text. `(Boolean)`
 * `artist_loc`: Distance in pixels of the artist text away from the bottom of the image. `(Integer)`
@@ -219,6 +257,10 @@ Settings related to image providers.
 * `automatic_host`: If using `automatic` mode, this is the IP address or host of the Automatic1111 WebUI API. `(String)`
 * `automatic_port`: If using `automatic` mode, this is the port to use for the Automatic1111 WebUI API. `(Integer)`
 * `provider_fallback`: A boolean flag that instructs pycasso to fall back to another random non-zero provider if originally chosen provider fails. `(Boolean)`
+* `llm_model`: The model to use for the llm block `(String)`
+* `llm_temperature`: Controls randomness in the output (0.0-1.0) `(Float)`
+* `llm_max_tokens`: Maximum number of tokens in the response `(Integer)`
+* `llm_system_prompt`: Prompt to encourage the LLM to do what you want it to do `(String)`
 
 ### Generation
 Settings related to generation of images with AI image providers

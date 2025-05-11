@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import warnings
+import re
 from datetime import datetime
 
 import numpy
@@ -15,11 +16,12 @@ from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
 from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst, \
-    IconFileConst, BatteryConst, PosterConst
+    IconFileConst, BatteryConst, PosterConst, BlockConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
+from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock, RSSBlock
 
 
 # noinspection PyTypeChecker
@@ -79,6 +81,15 @@ class Pycasso:
     parse_multiple_brackets(text, bracket_pairs)
         Takes 'text' and applies parsing based on all 2 string bracket strings in 'bracket_pairs' list, sequentially.
         returns updated text
+
+    parse_blocks_nested(text, block_bracket_one="<", block_bracket_two=">", subset_bracket_one="{",
+            subset_bracket_two="}", loop_limit=100):
+        Takes 'text' and applies actions based on blocks defined within brackets, starting inside first.
+        Returns updated text and subset of text if defined
+
+    def process_block():
+        Processes block based on the contents of the text block
+        Returns updated text, returns "" if fails
 
     prep_prompt_text(prompt_mode)
         Function to prepare prompt text based on current state of the class. Prompt mode to select which generation mode
@@ -487,6 +498,19 @@ class Pycasso:
             self.prompt, self.title_text = prompt_gen
             self.artist_text = ""
             self.full_text = self.title_text
+        elif prompt_mode == PromptModeConst.QUOTE.value:
+            # Build prompt based on Quote
+            quote_block = QuoteBlock()
+            prompt_gen = quote_block.generate()
+
+            if prompt_gen is None:
+                warnings.warn("Failed to generate quote prompt. Using default prompt.")
+                prompt_gen = self.prep_normal_prompt(self.config.prompts_file, self.config.prompt_preamble,
+                                                     self.config.prompt_postscript)
+            else:
+                self.prompt = prompt_gen
+                self.title_text = prompt_gen
+                self.full_text = self.title_text
         else:
             warnings.warn("Invalid prompt mode chosen. Using default prompt mode.")
             # Build prompt from prompt file
@@ -504,16 +528,143 @@ class Pycasso:
         self.artist_text = None
         return self.artist_text, self.title_text
 
+    def parse_blocks_nested(self, text="", loop_limit=100):
+        subject = ""
+
+        b_one = self.config.block_brackets[0]
+        b_two = self.config.block_brackets[1]
+        s_one = self.config.subject_brackets[0]
+        s_two = self.config.subject_brackets[1]
+
+        if not FileOperations.check_brackets(text, b_one, b_two):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text, subject
+
+        if self.config.specify_subject and not FileOperations.check_brackets(text, s_one, s_two):
+            logging.warning(f"Mismatching brackets in \"{text}\"")
+            return text, subject
+
+        # Get everything inside brackets (either type) and then handle appropriately after
+        regex = fr"([\{b_one}\{s_one}][^\{b_one}\{s_one}\{b_two}{s_two}]*[\{b_two}\{s_two}])"
+        match = re.search(regex, text)
+
+        while match is not None:
+
+            bracket = match.group()
+            open_bracket = bracket[0]
+            close_bracket = bracket[len(bracket)-1]
+
+            # Check if brackets are mismatching types
+            if open_bracket == b_one and close_bracket != b_two:
+                logging.warning(f"Mismatching brackets in \"{text}\" : \"{bracket}\"")
+                return text, subject
+            if open_bracket == s_one and close_bracket != s_two:
+                logging.warning(f"Mismatching brackets in \"{text}\" : \"{bracket}\"")
+                return text, subject
+
+            if open_bracket == b_one:
+                bracket = bracket.replace(b_one, '').replace(b_two, '')
+                # Process block
+                bracket = self.process_block(bracket)
+            elif open_bracket == s_one:
+                if self.config.specify_subject:
+                    bracket = bracket.replace(s_one, '').replace(s_two, '')
+                    # Process subset
+                    subject = subject + bracket
+                else:
+                    logging.warning(f"Bracket {s_one} found, however specify subject mode not used")
+            else:
+                # Should never happen
+                logging.warning(f"Although processed, brackets \"{b_one}\" or \"{s_one}\" not found in \"{bracket}\"."
+                                f"Logic error processing \"{text}\"")
+
+            # Substitute brackets
+            text = re.sub(regex, bracket, text, 1)
+
+            # Check for matches remaining in the text
+            match = re.search(regex, text)
+
+            # Use loop_limit to stop this going forever due to error.
+            if loop_limit < 0:
+                logging.warning(f"Recursion limit hit while processing blocks for \"{text}\" - check for recursive"
+                                f"references in blocks")
+                return text, subject
+            loop_limit -= 1
+
+        return text, subject
+
+    def process_block(self, block_text="", arg_seperator=BlockConst.SEPERATOR.value):
+        split = block_text.split(arg_seperator)
+        block_function = split[0].lower()
+
+        # If the block came with arguments
+        args = []
+        if len(split) > 1:
+            args = split[1:]
+
+        if block_function == BlockConst.FILE.value:
+            # File block
+            logging.info("Processing file block")
+
+            the_block = FileBlock()
+            if len(args) >= 1:
+                return the_block.generate(args[0])
+            else:
+                logging.warning("File Block found without arguments. Please use the format <file:path> when using file "
+                                "block. Replacing block with blank string.")
+            return ""
+
+        elif block_function == BlockConst.LLM.value:
+            # LLM Block
+            logging.info("Processing LLM block")
+
+            llm_block = LLMBlock(key=self.dalle_key,
+                                 creds_mode=self.config.use_keychain,
+                                 creds_path=self.config.credential_path)
+            return llm_block.generate(args[0])
+
+        elif block_function == BlockConst.RSS.value:
+            # RSS Block
+            logging.info("Processing RSS block")
+
+            the_block = RSSBlock()
+            if len(args) >= 3:
+                return the_block.generate(args[0], args[1], args[2])
+            elif len(args) >= 2:
+                return the_block.generate(args[0], args[1])
+            elif len(args) >= 1:
+                return the_block.generate(args[0])
+            else:
+                logging.warning("RSS Block found without arguments. Please use the format <rss:feed> when using rss "
+                                "block. Replacing block with blank string.")
+            return ""
+
+        elif block_function == BlockConst.QUOTE.value:
+            # Quote Block
+            logging.info("Processing quote block")
+
+            quote_block = QuoteBlock()
+            return quote_block.generate()
+
+        elif block_function == BlockConst.WEATHER.value:
+            # Weather block
+            return ""
+
+        else:
+            logging.warning(f"\"{block_function}\" not found, please check readme for valid blocks. Using blank string."
+                            f"")
+
+        return ""
+
     @staticmethod
     def parse_multiple_brackets(text, bracket_pairs=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value):
         pairs = bracket_pairs.copy()
         pairs.reverse()
         for brackets in pairs:
-            text = FileOperations.parse_text(text, brackets[0], brackets[1])
+            text = FileOperations.parse_text_nested(text, brackets[0], brackets[1])
         return text
 
-    @staticmethod
-    def prep_subject_artist_prompt(artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
+    def prep_subject_artist_prompt(self, artists_file, subjects_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                                    connector=ConfigConst.PROMPT_CONNECTOR.value,
                                    postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
                                    brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
@@ -528,11 +679,32 @@ class Pycasso:
             connector = Pycasso.parse_multiple_brackets(connector, brackets)
             postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
 
+        artist_subset = ""
+        title_subset = ""
+        preamble_subset = ""
+        connector_subset = ""
+        postscript_subset = ""
+
+        if self.config.use_blocks:
+            artist_text, artist_subset = self.parse_blocks_nested(artist_text)
+            title_text, title_subset = self.parse_blocks_nested(title_text)
+            preamble, preamble_subset = self.parse_blocks_nested(preamble)
+            connector, connector_subset = self.parse_blocks_nested(connector)
+            postscript, postscript_subset = self.parse_blocks_nested(postscript)
+
         prompt = (preamble + title_text + connector + artist_text + postscript)
+
+        prompt_subset = title_subset + preamble_subset + connector_subset + postscript_subset
+
+        if prompt_subset != "" and prompt_subset is not None:
+            title_text = prompt_subset
+
+        if artist_subset != "" and artist_subset is not None:
+            artist_text = prompt_subset
+
         return prompt, artist_text, title_text
 
-    @staticmethod
-    def prep_normal_prompt(prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
+    def prep_normal_prompt(self, prompts_file, preamble=ConfigConst.PROMPT_PREAMBLE.value,
                            postscript=ConfigConst.PROMPT_POSTSCRIPT.value,
                            brackets=ConfigConst.TEXT_PARSE_BRACKETS_LIST.value,
                            parse=ConfigConst.TEXT_PARSE_RANDOM_TEXT):
@@ -543,17 +715,34 @@ class Pycasso:
             preamble = Pycasso.parse_multiple_brackets(preamble, brackets)
             postscript = Pycasso.parse_multiple_brackets(postscript, brackets)
 
+        title_subset = ""
+        preamble_subset = ""
+        postscript_subset = ""
+
+        if self.config.use_blocks:
+            title_text, title_subset = self.parse_blocks_nested(title_text)
+            preamble, preamble_subset = self.parse_blocks_nested(preamble)
+            postscript, postscript_subset = self.parse_blocks_nested(postscript)
+
         prompt = preamble + title_text + postscript
+
+        prompt_subset = title_subset + preamble_subset + postscript_subset
+
+        if prompt_subset != "" and prompt_subset is not None:
+            title_text = prompt_subset
+
         return prompt, title_text
 
     @staticmethod
     def save_image(prompt, image, metadata, path="", extension=ConfigConst.FILE_IMAGE_FORMAT.value,
-                   save_date=ConfigConst.FILE_SAVE_DATE.value):
+                   save_date=ConfigConst.FILE_SAVE_DATE.value,
+                   file_name_limit=ConfigConst.FILE_NAME_MAX_LENGTH.value):
         preamble = PropertiesConst.FILE_PREAMBLE.value
         if save_date:
             preamble = f"{datetime.now().strftime('%Y%m%d%H%M%S')} {PropertiesConst.FILE_PREAMBLE.value}"
-        image_name = f"{preamble}{prompt}.{extension}"
-        save_path = os.path.join(path, image_name)
+        image_name = f"{preamble}{prompt}"
+        file_name = f"{image_name[:file_name_limit]}.{extension}"
+        save_path = os.path.join(path, FileOperations.clean_file_name(file_name))
         logging.info(f"Saving image as {save_path}")
 
         # Save the image

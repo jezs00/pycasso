@@ -157,6 +157,41 @@ def test_parse_text():
     assert result in expected
 
 
+def test_parse_text_bad():
+    text = "part1 ((option1|option2) part3"
+    result = FileOperations.parse_text(text)
+    expected = "part1 ((option1|option2) part3"
+    assert result == expected
+
+
+def test_parse_text_nested_simple():
+    text = "part1 (option1|option2) part3"
+    result = FileOperations.parse_text(text)
+    expected = ["part1 option1 part3", "part1 option2 part3"]
+    assert result in expected
+
+
+def test_parse_text_nested_complex():
+    text = "part(|)1 (()(option1|(option2()(|)(||)|(|)((||))option3(|)()))()((())) ((part3))(|)())"
+    result = FileOperations.parse_text_nested(text)
+    expected = ["part1 option1 part3", "part1 option2 part3", "part1 option3 part3"]
+    assert result in expected
+
+
+def test_parse_text_nested_bad():
+    text = "part1 ((option1|option2) part3"
+    result = FileOperations.parse_text_nested(text)
+    expected = "part1 ((option1|option2) part3"
+    assert result == expected
+
+
+def test_parse_text_nested_limit():
+    text = "part1 (option1|(((((option2|option3)))))) part3"
+    result = FileOperations.parse_text_nested(text, loop_limit=5)
+    expected = ["part1 (option1|option3) part3", "part1 (option1|option2) part3"]
+    assert result in expected
+
+
 def test_parse_weighted_lines():
     lines = ["5:Five", "1:One", "0:Zero"]
     result = FileOperations.parse_weighted_lines(lines)
@@ -199,4 +234,32 @@ def test_get_first_line():
     path = os.path.join(directory, "lines.txt")
     result = FileOperations.get_first_line(path)
     expected = "first_line"
+    assert result == expected
+
+
+def test_check_brackets_good():
+    text = "(test((test)(test)(test)))(test)"
+    expected = True
+    result = FileOperations.check_brackets(text)
+    assert result == expected
+
+
+def test_check_brackets_mismatch():
+    text = "test((test)(test)(test)))(test)"
+    expected = False
+    result = FileOperations.check_brackets(text)
+    assert result == expected
+
+
+def test_check_brackets_bad():
+    text = "(test((test)))))(test)(test)))(test)(((("
+    expected = False
+    result = FileOperations.check_brackets(text)
+    assert result == expected
+
+
+def test_clean_file_name():
+    text = "It's a\\ pretty bad\" name?"
+    expected = "Its a pretty bad name"
+    result = FileOperations.clean_file_name(text)
     assert result == expected

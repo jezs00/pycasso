@@ -4,6 +4,7 @@
 
 import os.path
 
+import responses
 from omni_epd import displayfactory
 from piblo.constants import PromptModeConst, PropertiesConst, ConfigConst, ProvidersConst, UnitTestConst, IconConst
 from piblo.file_operations import FileOperations
@@ -105,11 +106,15 @@ def test_prep_subject_artist_prompt():
     preamble = "Preamble"
     connector = "Connector"
     postscript = "Postscript"
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     artist_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.ARTISTS_FILE.value)
     subject_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                 UnitTestConst.SUBJECTS_FILE.value)
-    prompt, artist_text, title_text = Pycasso.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
+    instance = Pycasso(config_path)
+
+    prompt, artist_text, title_text = instance.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
                                                                          postscript)
     expected_prompt = "PreambleTest SubjectConnectorTest ArtistPostscript"
     expected_artist = "Test Artist"
@@ -120,16 +125,172 @@ def test_prep_subject_artist_prompt():
 
 
 def test_prep_normal_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
     preamble = "Preamble"
     postscript = "Postscript"
     prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
                                UnitTestConst.PROMPTS_FILE.value)
-    prompt, title_text = Pycasso.prep_normal_prompt(prompt_path, preamble, postscript)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
     expected_prompt = "PreambleTest PromptPostscript"
     expected_title = "Test Prompt"
 
     assert prompt == expected_prompt
     assert title_text == expected_title
+
+
+def test_subset():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.SUBSET_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleTest Prompt Test SubjectPostscript"
+    expected_title = "Test Subject"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_block_bracket_missing():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.BLOCK_MISSING_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - <<file;{tests/test_pycasso_content/test_nested_subset_file_reference." \
+                      "txt}>Postscript"
+    expected_title = "Nested Subset - <<file;{tests/test_pycasso_content/test_nested_subset_file_reference.txt}>"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_block_bracket_mismatch():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.BLOCK_MISMATCH_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - <file;{tests/test_pycasso_content/test_nested_subset_file_reference." \
+                      "txt>}Postscript"
+    expected_title = "Nested Subset - <file;{tests/test_pycasso_content/test_nested_subset_file_reference.txt>}"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_file_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.FILE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleOpen the file, it says \"I am the block reference\"Postscript"
+    expected_title = "Open the file, it says \"I am the block reference\""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_nested_file_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.NESTED_FILE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested 2 - Open the file, it says \"I am the block reference\"Postscript"
+    expected_title = "Nested 2 - Open the file, it says \"I am the block reference\""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_nested_file_block_subset_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.NESTED_FILE_BLOCK_SUBSET_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNested Subset - Open the file, it says \"I am the block reference\"Postscript"
+    expected_title = "tests/test_pycasso_content/test_file_block.txt"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_recursive_file_block_limit():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    relative_file_path = f"{UnitTestConst.TEST_FOLDER.value}{UnitTestConst.PYCASSO_FOLDER.value}/" \
+                         f"{UnitTestConst.RECURSIVE_LIMIT_FILE.value}"
+    instance = Pycasso(config_path)
+    text = f"R <file;{relative_file_path}>"
+    prompt, title_text = instance.parse_blocks_nested(text=text, loop_limit=20)
+    expected_prompt = "R R R R R R R R R R R R R R R R R R R R R R R " \
+                      "<file;tests/test_pycasso_content/test_file_block_recursive.txt>"
+    expected_title = ""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+def test_rss_block_prompt():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = "Preamble"
+    postscript = "Postscript"
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.RSS_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+    expected_prompt = "PreambleNews - Local woman worried as new Pope is a LeoPostscript"
+    expected_title = "Local woman worried as new Pope is a Leo"
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
+@responses.activate
+def test_quote_block_prompt():
+    mock_response = [{"q": "Life is what happens while you are busy making other plans.", "a": "John Lennon"}]
+    responses.add(
+        responses.GET,
+        "https://zenquotes.io/api/random",
+        json=mock_response,
+        status=200
+    )
+
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    preamble = ""
+    postscript = ""
+    prompt_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.QUOTE_BLOCK_FILE.value)
+    instance = Pycasso(config_path)
+    prompt, title_text = instance.prep_normal_prompt(prompt_path, preamble, postscript)
+
+    expected_prompt = "Words: \"Life is what happens while you are busy making other plans.\" - John Lennon"
+    assert prompt == expected_prompt
 
 
 def test_save_image():
@@ -145,7 +306,31 @@ def test_save_image():
     if os.path.exists(save_path):
         os.remove(save_path)
 
-    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False)
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False,
+                       file_name_limit=500)
+
+    assert os.path.exists(save_path)
+
+    # Cleanup files after
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+
+def test_save_image_file_name_limit():
+    dir_path = os.path.join(os.path.dirname(__file__), UnitTestConst.TEMP_FOLDER.value)
+    file_name = f"{PropertiesConst.FILE_PREAMBLE.value} TestPrompt"
+    save_path = os.path.join(dir_path, file_name[:5] + "." + ConfigConst.FILE_IMAGE_FORMAT.value)
+    img = Image.new(mode="RGBA", size=(600, 400))
+    prompt = "TestPrompt"
+    metadata = PngImagePlugin.PngInfo()
+    metadata.add_text(PropertiesConst.PROMPT.value, prompt)
+
+    # Cleanup files before
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+    Pycasso.save_image(prompt, img, metadata, dir_path, ConfigConst.FILE_IMAGE_FORMAT.value, save_date=False,
+                       file_name_limit=5)
 
     assert os.path.exists(save_path)
 
@@ -321,15 +506,21 @@ def test_major_complete_config():
     assert instance.config.artists_file == file.get_full_path("test_pycasso_content/test_artists.txt")
     assert instance.config.prompts_file == file.get_full_path("test_pycasso_content/test_prompts.txt")
     assert instance.config.resize_external is False
+    assert instance.config.file_name_max_length == 95
 
     # Text Settings
     assert instance.config.add_text is False
+    assert instance.config.use_blocks is False
+    assert instance.config.specify_subject is False
     assert instance.config.parse_file_text is True
     assert instance.config.preamble_regex == " .* - test - "
     assert instance.config.artist_regex == "test_artist"
     assert instance.config.remove_text == ["test _ one", "test element two", "test element 3"]
     assert instance.config.parse_random_text is False
     assert instance.config.parse_brackets == ["{}", "()", "[]"]
+    assert instance.config.block_brackets == "[]"
+    assert instance.config.block_seperator == ":"
+    assert instance.config.subject_brackets == "[]"
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False
     assert instance.config.artist_loc == 50
@@ -391,6 +582,10 @@ def test_major_complete_config():
     assert instance.config.automatic_host == "1.1.1.1"
     assert instance.config.automatic_port == 1337
     assert instance.config.provider_fallback is False
+    assert instance.config.llm_model == "cool model"
+    assert instance.config.llm_temperature == 1.0
+    assert instance.config.llm_max_tokens == 40
+    assert instance.config.llm_system_prompt == "Nice LLM, thank you"
 
     # Logging Settings
     assert instance.config.log_file == "pycasso_test.log"
