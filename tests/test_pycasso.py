@@ -236,6 +236,21 @@ def test_nested_file_block_subset_prompt():
     assert title_text == expected_title
 
 
+def test_recursive_file_block_limit():
+    config_path = os.path.join(os.path.dirname(__file__), UnitTestConst.PYCASSO_FOLDER.value,
+                               UnitTestConst.CONFIG_FILE.value)
+    relative_file_path = f"{UnitTestConst.TEST_FOLDER.value}{UnitTestConst.PYCASSO_FOLDER.value}/{UnitTestConst.RECURSIVE_LIMIT_FILE.value}"
+    instance = Pycasso(config_path)
+    text = f"R <file:{relative_file_path}>"
+    prompt, title_text = instance.parse_blocks_nested(text=text, loop_limit=20)
+    expected_prompt = "R R R R R R R R R R R R R R R R R R R R R R R " \
+                      "<file:tests/test_pycasso_content/test_file_block_recursive.txt>"
+    expected_title = ""
+
+    assert prompt == expected_prompt
+    assert title_text == expected_title
+
+
 @responses.activate
 def test_quote_block_prompt():
     mock_response = [{"q": "Life is what happens while you are busy making other plans.", "a": "John Lennon"}]

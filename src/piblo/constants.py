@@ -213,6 +213,7 @@ class UnitTestConst(Enum):
     NESTED_FILE_BLOCK_SUBSET_FILE = "test_nested_subset_file_block.txt"
     BLOCK_MISSING_FILE = "test_block_missing.txt"
     BLOCK_MISMATCH_FILE = "test_block_mismatch.txt"
+    RECURSIVE_LIMIT_FILE = "test_file_block_recursive.txt"
     QUOTE_BLOCK_FILE = "test_quote_block.txt"
     FONT_FILE = "Font.ttc"
     PROVIDER_FOLDER = "test_provider_content"

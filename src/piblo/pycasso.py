@@ -544,12 +544,12 @@ class Pycasso:
             logging.warning(f"Mismatching brackets in \"{text}\"")
             return text, subject
 
-        # Get everything inside brackets
-        #regex = fr"(\{b_one}[^\{b_one}\{b_two}]*\{b_two})"
+        # Get everything inside brackets (either type) and then handle appropriately after
         regex = fr"([\{b_one}\{s_one}][^\{b_one}\{s_one}\{b_two}{s_two}]*[\{b_two}\{s_two}])"
         match = re.search(regex, text)
 
-        while match is not None and loop_limit > 0:
+        while match is not None:
+
             bracket = match.group()
             open_bracket = bracket[0]
             close_bracket = bracket[len(bracket)-1]
@@ -580,28 +580,16 @@ class Pycasso:
 
             # Substitute brackets
             text = re.sub(regex, bracket, text, 1)
+
+            # Check for matches remaining in the text
             match = re.search(regex, text)
 
-            # Use loop_limit to stop this going forever due to error. Should not happen
+            # Use loop_limit to stop this going forever due to error.
+            if loop_limit < 0:
+                logging.warning(f"Recursion limit hit while processing blocks for \"{text}\" - check for recursive"
+                                f"references in blocks")
+                return text, subject
             loop_limit -= 1
-
-        # Get everything inside brackets
-        # regex = fr"(\{s_one}[^\{s_one}\{s_two}]*\{s_two})"
-        # match = re.search(regex, text)
-        #
-        # if self.config.specify_subject:
-        #     while match is not None and loop_limit > 0:
-        #         bracket = match.group()
-        #         bracket = bracket.replace(s_one, '').replace(s_two, '')
-        #
-        #
-        #
-        #         # Substitute brackets
-        #         text = re.sub(regex, bracket, text, 1)
-        #         match = re.search(regex, text)
-        #
-        #         # Use loop_limit to stop this going forever due to error. Should not happen
-        #         loop_limit -= 1
 
         return text, subject
 
