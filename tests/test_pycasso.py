@@ -535,6 +535,7 @@ def test_major_complete_config():
     assert instance.config.artist_size == 30
     assert instance.config.title_loc == 70
     assert instance.config.title_size == 40
+    assert instance.config.title_min_size == 4
     assert instance.config.padding == 20
     assert instance.config.opacity == 220
     assert instance.config.override_text is True

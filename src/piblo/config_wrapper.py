@@ -91,6 +91,7 @@ class Configs:
         self.artist_size = ConfigConst.TEXT_ARTIST_SIZE.value
         self.title_loc = ConfigConst.TEXT_TITLE_LOC.value
         self.title_size = ConfigConst.TEXT_TITLE_SIZE.value
+        self.title_min_size = ConfigConst.TEXT_TITLE_MIN_SIZE.value
         self.padding = ConfigConst.TEXT_PADDING.value
         self.opacity = ConfigConst.TEXT_OPACITY.value
         self.override_text = ConfigConst.TEXT_OVERRIDE_TEXT.value
@@ -252,6 +253,7 @@ class Configs:
         self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
         self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)
         self.title_size = config.getint("Text", "title_size", fallback=ConfigConst.TEXT_TITLE_SIZE.value)
+        self.title_min_size = config.getint("Text", "title_min_size", fallback=ConfigConst.TEXT_TITLE_MIN_SIZE.value)
         self.padding = config.getint("Text", "padding", fallback=ConfigConst.TEXT_PADDING.value)
         self.opacity = config.getint("Text", "opacity", fallback=ConfigConst.TEXT_OPACITY.value)
         self.override_text = config.getboolean("Text", "override_text", fallback=ConfigConst.TEXT_OVERRIDE_TEXT.value)

@@ -161,7 +161,6 @@ wrap_text = False
 # Maximum characters per line if wrapping text [integer]
 wrap_max = 50
 
-
 # Ratio of line size to text size - defining this helps to extend text box appropriately [float]
 line_ratio = 2.5
 
@@ -176,6 +175,9 @@ artist_loc = 50
 artist_size = 30
 title_loc = 70
 title_size = 40
+
+# Minimum text size of title text, used if text resizing is being used [integer]
+title_min_size = 4
 
 # Padding around the text box for artist and title text box in pixels [integer]
 padding = 20
