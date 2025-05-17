@@ -8,9 +8,10 @@ import os
 import random
 import warnings
 import re
+import numpy
+import textwrap
 from datetime import datetime
 
-import numpy
 from PIL import Image, ImageDraw, ImageFont, PngImagePlugin
 from omni_epd import displayfactory, EPDNotFoundError
 
@@ -336,8 +337,8 @@ class Pycasso:
         text = title_text
 
         # Add text
-        artist_text = f"I could have been '{text}'"
-        title_text = "It Works! Explore .config to customise!"
+        title_text = f"I could have been '{text}'"
+        artist_text = "It Works! Explore .config to customise!"
 
         # Resize to thumbnail size based on epd resolution depending on if option selected
         epd_res = (width, height)
@@ -552,7 +553,7 @@ class Pycasso:
 
             bracket = match.group()
             open_bracket = bracket[0]
-            close_bracket = bracket[len(bracket)-1]
+            close_bracket = bracket[len(bracket) - 1]
 
             # Check if brackets are mismatching types
             if open_bracket == b_one and close_bracket != b_two:
@@ -807,7 +808,10 @@ class Pycasso:
                           padding=ConfigConst.TEXT_PADDING.value, opacity=ConfigConst.TEXT_OPACITY.value,
                           title_size=ConfigConst.TEXT_TITLE_SIZE.value, artist_size=ConfigConst.TEXT_ARTIST_SIZE.value,
                           box_to_floor=ConfigConst.TEXT_BOX_TO_FLOOR.value,
-                          box_to_edge=ConfigConst.TEXT_BOX_TO_EDGE.value, crop_left=0, crop_right=0):
+                          box_to_edge=ConfigConst.TEXT_BOX_TO_EDGE.value, wrap_text=ConfigConst.TEXT_WRAP_TEXT.value,
+                          max_chars=ConfigConst.TEXT_WRAP_MAX.value, line_ratio=ConfigConst.TEXT_LINE_RATIO.value,
+                          resize_text=ConfigConst.TEXT_RESIZE_TEXT.value,
+                          resize_ratio=ConfigConst.TEXT_RESIZE_RATIO.value, crop_left=0, crop_right=0):
         if not os.path.exists(font_file):
             warnings.warn("Font file path does not exist: '" + font_file + "'. Setting default font.")
             title_font = ImageFont.load_default()
@@ -815,6 +819,18 @@ class Pycasso:
         else:
             title_font = ImageFont.truetype(font_file, title_size)
             artist_font = ImageFont.truetype(font_file, artist_size)
+
+        #if resize_text:
+        #    reduction = len(title_text)/resize_ratio
+
+        if wrap_text:
+
+            wrapped_text = textwrap.wrap(title_text, max_chars)
+            title_text = ""
+            title_location -= title_size  # prep for loop below
+            for line in wrapped_text:
+                title_text = title_text + line + "\n"
+                title_location += title_size*line_ratio
 
         # proceed flag only to be set if set by prerequisite requirements
         artist_proceed = False
@@ -828,8 +844,13 @@ class Pycasso:
                                        artist_text, font=artist_font, anchor="mb")
             artist_proceed = True
         if title_text != "" and title_text is not None:
-            title_box = draw.textbbox((epd_width / 2, image_height - title_location),
-                                      title_text, font=title_font, anchor="mb")
+            if len(title_text.split("\n")) > 1:
+                # Multiple lines - draw to edge
+                box_to_edge = True
+                title_box = [0, image_height - title_location, epd_width, image_height]
+            else:
+                title_box = draw.textbbox((epd_width / 2, image_height - title_location), title_text, font=artist_font,
+                                          anchor="mb")
             title_proceed = True
 
         draw_box = ImageFunctions.max_area([artist_box, title_box])
@@ -852,8 +873,12 @@ class Pycasso:
                 draw.text((epd_width / 2, image_height - artist_location), artist_text, font=artist_font, anchor="mb",
                           fill=0)
             if title_proceed is True:
-                draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font, anchor="mb",
-                          fill=0)
+                if wrap_text:
+                    draw.multiline_text((epd_width / 2, image_height - title_location), title_text, font=title_font,
+                                        anchor="ma", align="center", fill=0)
+                else:
+                    draw.text((epd_width / 2, image_height - title_location), title_text, font=title_font, anchor="mb",
+                              fill=0)
         return draw
 
     def get_image(self):
@@ -937,8 +962,9 @@ class Pycasso:
                 # If there's a failure to get the image
                 error = True
                 # Remove provider from possibilities
-                logging.warning(f"Image failed to load on provider '{provider_type}'. Removing from circulation on this "
-                                f"run.")
+                logging.warning(
+                    f"Image failed to load on provider '{provider_type}'. Removing from circulation on this "
+                    f"run.")
                 self.remove_provider_mode(provider_type)
                 self.add_provider_fail_icon(provider_type)
         self.add_provider_icon(provider_type)
@@ -1109,7 +1135,8 @@ class Pycasso:
                                        self.title_text, self.artist_text, self.config.title_loc, self.config.artist_loc,
                                        self.config.padding, self.config.opacity, self.config.title_size,
                                        self.config.artist_size, self.config.box_to_floor, self.config.box_to_edge,
-                                       crop_left, crop_right)
+                                       self.config.wrap_text, self.config.wrap_max, self.config.line_ratio,
+                                       self.config.resize_text, self.config.wrap_max, crop_left, crop_right)
 
             self.display_image_on_epd(self.image_display, self.epd, self.config.image_rotate)
 

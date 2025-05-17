@@ -83,6 +83,10 @@ class Configs:
         self.box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
         self.box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
         self.wrap_text = ConfigConst.TEXT_WRAP_TEXT.value
+        self.wrap_max = ConfigConst.TEXT_WRAP_MAX.value
+        self.line_ratio = ConfigConst.TEXT_LINE_RATIO.value
+        self.resize_text = ConfigConst.TEXT_RESIZE_TEXT.value
+        self.resize_ratio = ConfigConst.TEXT_RESIZE_RATIO.value
         self.artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
         self.artist_size = ConfigConst.TEXT_ARTIST_SIZE.value
         self.title_loc = ConfigConst.TEXT_TITLE_LOC.value
@@ -240,6 +244,10 @@ class Configs:
                                               fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
         self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
         self.wrap_text = config.getboolean("Text", "wrap_text", fallback=ConfigConst.TEXT_WRAP_TEXT.value)
+        self.wrap_max = config.getint("Text", "wrap_max", fallback=ConfigConst.TEXT_WRAP_MAX.value)
+        self.line_ratio = config.getfloat("Text", "line_ratio", fallback=ConfigConst.TEXT_LINE_RATIO.value)
+        self.resize_text = config.getboolean("Text", "resize_text", fallback=ConfigConst.TEXT_RESIZE_TEXT.value)
+        self.resize_ratio = config.getint("Text", "resize_ratio", fallback=ConfigConst.TEXT_RESIZE_RATIO.value)
         self.artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
         self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
         self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)

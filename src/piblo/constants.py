@@ -47,6 +47,10 @@ class ConfigConst(Enum):
     TEXT_BOX_TO_FLOOR = True
     TEXT_BOX_TO_EDGE = True
     TEXT_WRAP_TEXT = True
+    TEXT_WRAP_MAX = 70
+    TEXT_LINE_RATIO = 1.3
+    TEXT_RESIZE_TEXT = True
+    TEXT_RESIZE_RATIO = 100
     TEXT_ARTIST_LOC = 10
     TEXT_ARTIST_SIZE = 14
     TEXT_TITLE_LOC = 30
