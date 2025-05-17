@@ -523,6 +523,7 @@ def test_major_complete_config():
     assert instance.config.subject_brackets == "[]"
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False
+    assert instance.config.wrap_text is False
     assert instance.config.artist_loc == 50
     assert instance.config.artist_size == 30
     assert instance.config.title_loc == 70

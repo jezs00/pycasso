@@ -82,6 +82,7 @@ class Configs:
         self.remove_text = ConfigConst.TEXT_REMOVE_TEXT_LIST.value
         self.box_to_floor = ConfigConst.TEXT_BOX_TO_FLOOR.value
         self.box_to_edge = ConfigConst.TEXT_BOX_TO_EDGE.value
+        self.wrap_text = ConfigConst.TEXT_WRAP_TEXT.value
         self.artist_loc = ConfigConst.TEXT_ARTIST_LOC.value
         self.artist_size = ConfigConst.TEXT_ARTIST_SIZE.value
         self.title_loc = ConfigConst.TEXT_TITLE_LOC.value
@@ -238,6 +239,7 @@ class Configs:
         self.box_to_floor = config.getboolean("Text", "box_to_floor",
                                               fallback=ConfigConst.TEXT_BOX_TO_FLOOR.value)
         self.box_to_edge = config.getboolean("Text", "box_to_edge", fallback=ConfigConst.TEXT_BOX_TO_EDGE.value)
+        self.wrap_text = config.getboolean("Text", "wrap_text", fallback=ConfigConst.TEXT_WRAP_TEXT.value)
         self.artist_loc = config.getint("Text", "artist_loc", fallback=ConfigConst.TEXT_ARTIST_LOC.value)
         self.artist_size = config.getint("Text", "artist_size", fallback=ConfigConst.TEXT_ARTIST_SIZE.value)
         self.title_loc = config.getint("Text", "title_loc", fallback=ConfigConst.TEXT_TITLE_LOC.value)

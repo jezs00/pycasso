@@ -155,6 +155,9 @@ subject_brackets = "{}"
 box_to_floor = True
 box_to_edge = True
 
+# Flag indicating whether enable text wrapping or not. Will resize text box as necessary to fit text. [boolean]
+wrap_text = True
+
 # Locations of the artist and title text boxes from the bottom of the cropped image in pixels [integer]
 artist_loc = 10
 artist_size = 14
