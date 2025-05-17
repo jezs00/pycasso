@@ -306,6 +306,12 @@ class BlockConst(Enum):
     RSS = "rss"
     QUOTE = "quote"
     WEATHER = "weather"
+    JOKE = "joke"
+
+
+class BlockInfoConst(Enum):
+    ZENQUOTE_URL = "https://zenquotes.io/api/random"
+    DADJOKE_URL = "https://icanhazdadjoke.com/"
 
 
 class LLMConst(Enum):

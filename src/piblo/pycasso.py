@@ -21,7 +21,7 @@ from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
 from piblo.post_wrapper import MastodonPoster
-from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock, RSSBlock
+from piblo.prompt_block import FileBlock, QuoteBlock, LLMBlock, RSSBlock, JokeBlock
 
 
 # noinspection PyTypeChecker
@@ -649,6 +649,13 @@ class Pycasso:
         elif block_function == BlockConst.WEATHER.value:
             # Weather block
             return ""
+
+        elif block_function == BlockConst.JOKE.value:
+            # Quote Block
+            logging.info("Processing joke block")
+
+            joke_block = JokeBlock()
+            return joke_block.generate()
 
         else:
             logging.warning(f"\"{block_function}\" not found, please check readme for valid blocks. Using blank string."

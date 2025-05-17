@@ -5,8 +5,8 @@ import os
 
 import pytest
 import responses
-from piblo.prompt_block import PromptBlock, QuoteBlock, FileBlock
-from piblo.constants import UnitTestConst
+from piblo.prompt_block import PromptBlock, QuoteBlock, FileBlock, JokeBlock
+from piblo.constants import UnitTestConst, BlockInfoConst
 
 
 def test_quote_block_str_representation():
@@ -21,7 +21,7 @@ def test_quote_block_successful_response():
     mock_response = [{"q": "Life is what happens while you are busy making other plans.", "a": "John Lennon"}]
     responses.add(
         responses.GET,
-        "https://zenquotes.io/api/random",
+        BlockInfoConst.ZENQUOTE_URL.value,
         json=mock_response,
         status=200
     )
@@ -36,7 +36,7 @@ def test_quote_block_empty_response():
     quote_block = QuoteBlock()
     responses.add(
         responses.GET,
-        "https://zenquotes.io/api/random",
+        BlockInfoConst.ZENQUOTE_URL.value,
         json=[],
         status=200
     )
@@ -50,7 +50,7 @@ def test_quote_block_invalid_response():
     quote_block = QuoteBlock()
     responses.add(
         responses.GET,
-        "https://zenquotes.io/api/random",
+        BlockInfoConst.ZENQUOTE_URL.value,
         json={"error": "Invalid response"},
         status=200
     )
@@ -64,7 +64,7 @@ def test_quote_block_timeout():
     quote_block = QuoteBlock()
     responses.add(
         responses.GET,
-        "https://zenquotes.io/api/random",
+        BlockInfoConst.ZENQUOTE_URL.value,
         body=responses.ConnectionError()
     )
 
@@ -102,3 +102,19 @@ def test_file_block_not_found():
     file = os.path.join(os.path.dirname(__file__), UnitTestConst.PROMPT_BLOCK_FOLDER.value, "badfilepath.bad")
     expected = ""
     assert block.generate(file) == expected
+
+
+@responses.activate
+def test_joke_block():
+    joke_block = JokeBlock()
+    mock_response = [{"id": "ljqzkVKJtrc",
+                      "joke": "How do you get two whales in a car? Start in England and drive West."}]
+    responses.add(
+        responses.GET,
+        BlockInfoConst.DADJOKE_URL.value,
+        json=mock_response,
+        status=200
+    )
+
+    result = joke_block.generate()
+    assert result == ""
