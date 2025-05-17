@@ -260,21 +260,21 @@ class JokeBlock(PromptBlock):
         """
         api_url = BlockInfoConst.DADJOKE_URL.value
         headers = {"Accept": "application/json"}
-        print(f"Fetching dad joke from {api_url}...")
+        logging.info(f"Fetching dad joke from {api_url}...")
         try:
             response = requests.get(api_url, headers=headers, timeout=10)
             response.raise_for_status()
             data = response.json()
             joke = data.get("joke")
             if joke:
-                print(f"Successfully fetched joke: {joke}")
+                logging.info(f"Successfully fetched joke: {joke}")
                 return joke
             else:
-                print("Error: API response did not contain a 'joke' field.")
+                logging.warning("Error: API response did not contain a 'joke' field.")
                 return ""
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching dad joke: {e}")
+            logging.warning(f"Error fetching dad joke: {e}")
             return ""
         except Exception as e:
-            print(f"An error occurred processing the dad joke API response: {e}")
+            logging.warning(f"An error occurred processing the dad joke API response: {e}")
             return ""

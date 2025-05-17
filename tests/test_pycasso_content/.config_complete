@@ -155,11 +155,29 @@ subject_brackets = "[]"
 box_to_floor = False
 box_to_edge = False
 
+# Flag indicating whether enable text wrapping or not. Will resize text box as necessary to fit text. [boolean]
+wrap_text = False
+
+# Maximum characters per line if wrapping text [integer]
+wrap_max = 50
+
+# Ratio of line size to text size - defining this helps to extend text box appropriately [float]
+line_ratio = 2.5
+
+# Flag indicating whether enable text resizing or not. [boolean]
+resize_text = False
+
+# Ratio to reduce text size by (every time characters hit this amount, text size reduces by 1) [integer]
+resize_ratio = 200
+
 # Locations of the artist and title text boxes from the bottom of the cropped image in pixels [integer]
 artist_loc = 50
 artist_size = 30
 title_loc = 70
 title_size = 40
+
+# Minimum text size of title text, used if text resizing is being used [integer]
+title_min_size = 4
 
 # Padding around the text box for artist and title text box in pixels [integer]
 padding = 20

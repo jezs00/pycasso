@@ -114,8 +114,9 @@ def test_prep_subject_artist_prompt():
                                 UnitTestConst.SUBJECTS_FILE.value)
     instance = Pycasso(config_path)
 
-    prompt, artist_text, title_text = instance.prep_subject_artist_prompt(artist_path, subject_path, preamble, connector,
-                                                                         postscript)
+    prompt, artist_text, title_text = instance.prep_subject_artist_prompt(artist_path, subject_path, preamble,
+                                                                          connector,
+                                                                          postscript)
     expected_prompt = "PreambleTest SubjectConnectorTest ArtistPostscript"
     expected_artist = "Test Artist"
     expected_subject = "Test Subject"
@@ -356,7 +357,8 @@ def test_add_text_to_image():
     img = Image.new(mode="RGBA", size=(600, 400))
     draw = ImageDraw.Draw(img, "RGBA")
 
-    Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255)
+    Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255,
+                              wrap_text=False, resize_text=False)
 
     pixel = img.getpixel((10, 350))
     expected = (255, 255, 255, 255)
@@ -372,7 +374,8 @@ def test_add_text_to_image_blank():
     img = Image.new(mode="RGBA", size=(600, 400))
     draw = ImageDraw.Draw(img, "RGBA")
 
-    Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255)
+    Pycasso.add_text_to_image(draw, font_path, img.height, img.width, title_text, artist_text, opacity=255,
+                              wrap_text=False, resize_text=False)
 
     pixel = img.getpixel((10, 350))
     expected = (0, 0, 0, 0)
@@ -523,10 +526,16 @@ def test_major_complete_config():
     assert instance.config.subject_brackets == "[]"
     assert instance.config.box_to_floor is False
     assert instance.config.box_to_edge is False
+    assert instance.config.wrap_text is False
+    assert instance.config.wrap_max == 50
+    assert instance.config.line_ratio == 2.5
+    assert instance.config.resize_text is False
+    assert instance.config.resize_ratio == 200
     assert instance.config.artist_loc == 50
     assert instance.config.artist_size == 30
     assert instance.config.title_loc == 70
     assert instance.config.title_size == 40
+    assert instance.config.title_min_size == 4
     assert instance.config.padding == 20
     assert instance.config.opacity == 220
     assert instance.config.override_text is True
