@@ -234,8 +234,6 @@ function setup_smb(){
 }
 
 function install_pycasso(){
-  # create virtual environment
-  create_venv
 
   # check if service is currently running and stop if it is
   RESTART_SERVICE="FALSE"
@@ -306,6 +304,9 @@ function install_pycasso(){
   if [ ! -f "${LOCAL_DIR}/prompts/prompts.txt" ]; then
     cp "${LOCAL_DIR}/examples/prompts/prompts-example.txt" "${PROMPTS_DIR}/prompts.txt"
   fi
+
+  # create virtual environment if necessary
+  create_venv
 
   if [ "$SKIP_DEPS" = false ]; then
     # install any needed python packages
