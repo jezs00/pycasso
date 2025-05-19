@@ -258,13 +258,13 @@ function install_pycasso(){
   fi
 
   if [ -d "${LOCAL_DIR}" ]; then
-    echo -e "Existing Install Found - Updating Repo"
+    echo -e "Existing Install Found at ${LOCAL_DIR} - Updating Repo"
     cd "${LOCAL_DIR}" || exit
     git fetch
     git checkout $GIT_BRANCH
     git pull
   else
-    echo -e "No Install Found - Cloning Repo"
+    echo -e "No Install Found at ${LOCAL_DIR} - Cloning Repo"
     git clone -b "${GIT_BRANCH}" "${GIT_REPO}" "${LOCAL_DIR}"
     FIRST_TIME=0
   fi
