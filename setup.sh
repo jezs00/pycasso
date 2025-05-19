@@ -6,13 +6,21 @@ GIT_REPO=https://github.com/jezs00/pycasso
 GIT_LATEST_RELEASE=https://api.github.com/repos/jezs00/pycasso/releases/latest
 GIT_BRANCH=main
 SKIP_DEPS=false
+
 # For debugging on the raspberry pi, set this to true to install pycassso in editable mode
 EDITABLE_MODE=false
 
 # Set the local directory
-LOCAL_DIR="$HOME/$(basename $GIT_REPO)"
+MAIN_DIR="$HOME/$(basename $GIT_REPO)"
+VENV_DIR="$MAIN_DIR/venv"
+LOCAL_DIR="$MAIN_DIR"
 PROMPTS_DIR="${LOCAL_DIR}/prompts"
 IMAGES_DIR="${LOCAL_DIR}/images"
+PYTHON_LOCAL="python3"
+PIP_LOCAL="pip3"
+
+# For debugging on the raspberry pi, this is set to false if using legacy install
+LOCAL_VENV_FLAG=true
 
 # File paths
 SERVICE_DIR=/etc/systemd/system
@@ -30,6 +38,25 @@ YELLOW="\e[0;93m"
 GREEN='\033[0;32m'
 RESET="\e[0m"
 
+function create_venv(){
+  if $LOCAL_VENV_FLAG; then
+    if [ -d "${VENV_DIR}" ]; then
+      echo -e "${VENV_DIR} already exists"
+    else
+      python3 -m venv --system-site-packages "${VENV_DIR}"
+    fi
+    source "${VENV_DIR}"/bin/activate
+  else
+      echo -e "Using legacy venv"
+  fi
+}
+
+function use_legacy_venv(){
+  PYTHON_LOCAL="sudo python3"
+  PIP_LOCAL="sudo pip3"
+  LOCAL_VENV_FLAG=false
+}
+
 function install_linux_packages(){
   sudo apt-get update
   sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2 jq libopenjp2-7
@@ -44,53 +71,53 @@ function install_pijuice_package(){
 function install_python_packages(){
   
   if [ "$EDITABLE_MODE" = true ]; then
-    sudo pip3 install -e .
+    $PIP_LOCAL install -e .
   else
-    sudo pip3 install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")"
+    $PIP_LOCAL install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")"
   fi
-  sudo pip3 install stability-sdk@git+https://github.com/Stability-AI/stability-sdk.git
-  sudo pip3 install openai@git+https://github.com/openai/openai-python.git
+  # pip3 install stability-sdk@git+https://github.com/Stability-AI/stability-sdk.git
+  $PIP_LOCAL install openai@git+https://github.com/openai/openai-python.git
 }
 
 function install_python_minimal(){
   if [ "$EDITABLE_MODE" = true ]; then
-    sudo pip3 install -e . --no-dependencies
+    $PIP_LOCAL install -e . --no-dependencies
   else
-    sudo pip3 install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")" --no-dependencies
+    $PIP_LOCAL install "git+$GIT_REPO@$(curl -s $GIT_LATEST_RELEASE | jq -r ".tag_name")" --no-dependencies
   fi
 }
 
 function uninstall_python_packages(){
-  sudo pip3 uninstall piblo -y
+  $PIP_LOCAL uninstall piblo -y
   echo -e "pycasso (piblo) package uninstalled"
 }
 
 function fix_grpcio(){
   echo -e "${YELLOW}This might take a while... Be patient...${RESET}"
-  sudo pip3 uninstall grpcio grpcio-tools -y
-  sudo pip3 install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
+  $PIP_LOCAL uninstall grpcio grpcio-tools -y
+  $PIP_LOCAL install grpcio==1.44.0 --no-binary=grpcio grpcio-tools==1.44.0 --no-binary=grpcio-tools
   echo -e "GRPCIO fix applied"
 }
 
 function update_grpcio(){
-  sudo pip3 uninstall grpcio grpcio-tools -y
-  sudo pip3 install grpcio grpcio-tools --upgrade
+  $PIP_LOCAL uninstall grpcio grpcio-tools -y
+  $PIP_LOCAL install grpcio grpcio-tools --upgrade
   echo -e "GRPCIO update applied"
 }
 
 function set_key(){
   cd "${LOCAL_DIR}" || exit
-  sudo dbus-run-session python3 "${LOCAL_DIR}/${KEY_SCRIPT}"
+  dbus-run-session "$PYTHON_LOCAL" "${LOCAL_DIR}/${KEY_SCRIPT}"
 }
 
 function migrate_config(){
   cd "${LOCAL_DIR}" || exit
-  sudo python3 "${LOCAL_DIR}/${CONFIG_SCRIPT}"
+  "$PYTHON_LOCAL" "${LOCAL_DIR}/${CONFIG_SCRIPT}"
 }
 
 function disable_leds(){
   cd "${LOCAL_DIR}" || exit
-  sudo python3 "${LOCAL_DIR}/${LED_SCRIPT}"
+  "$PYTHON_LOCAL" "${LOCAL_DIR}/${LED_SCRIPT}"
   echo -e "PiJuice LEDS disabled"
 }
 
@@ -207,6 +234,8 @@ function setup_smb(){
 }
 
 function install_pycasso(){
+  # create virtual environment
+  create_venv
 
   # check if service is currently running and stop if it is
   RESTART_SERVICE="FALSE"
@@ -325,6 +354,7 @@ do
  10 "Install SMB and default shares" \
  11 "Uninstall pycasso" \
  12 "Uninstall pycasso Service" \
+ 13 "Do not use local environment (use for legacy installs)" \
  0 "Exit Setup" \
  3>&1 1>&2 2>&3)
 
@@ -399,9 +429,11 @@ do
  elif [ $INSTALL_OPTION -eq 12 ]; then
    # Uninstall the service
    uninstall_service
+ elif [ $INSTALL_OPTION -eq 13 ]; then
+   # Uninstall the service
+   use_legacy_venv
  fi
 done
-
 
 if [ "${RESTART_SERVICE}" = "TRUE" ] && (service_installed); then
   sudo systemctl start pycasso
