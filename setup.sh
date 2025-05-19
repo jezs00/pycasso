@@ -276,19 +276,19 @@ function install_pycasso(){
     cp "${LOCAL_DIR}/examples/.creds-example" "${LOCAL_DIR}/.creds"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/prompts" ]; then
+  if [ ! -d "${LOCAL_DIR}/prompts" ]; then
     mkdir "${LOCAL_DIR}/prompts"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images" ]; then
+  if [ ! -d "${LOCAL_DIR}/images" ]; then
     mkdir "${LOCAL_DIR}/images"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images/generated" ]; then
+  if [ ! -d "${LOCAL_DIR}/images/generated" ]; then
     mkdir "${LOCAL_DIR}/images/generated"
   fi
 
-  if [ ! -f "${LOCAL_DIR}/images/external" ]; then
+  if [ ! -d "${LOCAL_DIR}/images/external" ]; then
     mkdir "${LOCAL_DIR}/images/external"
   fi
 
