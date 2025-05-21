@@ -1,8 +1,9 @@
 #! /usr/bin/bash
 
 PARENT_DIR=$( dirname -- "${BASH_SOURCE[0]}")
-VENV_DIR=$(realpath "${PARENT_DIR}")/venv
+APP_DIR=$( dirname -- "${PARENT_DIR}")
 SCRIPT_DIR=$( cd -- "${PARENT_DIR}" &> /dev/null && pwd )
+VENV_DIR=$(realpath "${APP_DIR}")/venv
 
 #Run from venv if available
 if [ -d "${VENV_DIR}" ]; then
