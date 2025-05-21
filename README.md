@@ -36,6 +36,7 @@ more information. You can always do this later if you don't want to use PiJuice 
 bash <(curl https://raw.githubusercontent.com/jezs00/pycasso/main/setup.sh)
 ```
 * Take note of the proposed installation directory
+* Please note this installer has many options. See [Bash Install](#bash-install) to find more information on what each menu item does. The below instructions only advise on installing from scratch.
 * Select `Option 1` - Install/Upgrade pycasso
 * Select "Yes" to enable service on boot if that is what you want to do _(it is probably what you want to do)_
 * (Optional) If you want to use pijuice, select "Yes" to install PiJuice
@@ -291,6 +292,43 @@ Settings related to posting and sharing pycasso output on the web. Use set_keys.
 The following settings are only relevant for development. Only use them if you know what you're doing.
 * `test_epd_width`: Width in pixels to set the mock EPD to. Mostly for testing purposes. `(Integer)`
 * `test_epd_height`: Height in pixels to set the mock EPD to. Mostly for testing purposes. `(Integer)`
+
+## Reference
+
+### Bash Install
+
+There are many items to choose from when installing/upgrading pycasso using the script. Please see notable information below.
+* Important Update - The script has been updated to create its own virtual environment located in the install folder, and no longer uses sudo to run the Python install. If you need to update an old install:
+  * My first recommendation is to back up your config, folders and prompts, reinstall your operating system using the most recent release (Bookworm at time of writing), and then reinstall pycasso using the default settings
+  * If you wish to retain your old install, just run option 13 "Do not use local environment (use for legacy installs)" before you install or update.
+#### 1 - Install/Upgrade pycasso (Full)
+This is the main and recommended way to install pycasso. It will either install or upgrade your pycasso, fetching and updating all project requirements as necessary. 
+#### 2 - Upgrade pycasso minimally (Do not update requirements)
+If you need to upgrade pycasso and it is just a minor release, you can use this to not spend as much time fetching requirements. It is recommended to use option 1 instead, however this may save time if troubleshooting or testing.
+#### 3 - Install pycasso Service
+This adds the pycasso service to systemctl and enables it so that pycasso will start on boot.
+#### 4 - Install pijuice
+This installs pijuice for those projects using the pijuice battery system
+#### 5 - Apply GRPCIO Fix (Rollback to version 1.44)
+This applies a fix to GRPCIO by rolling back to version 1.44, which sometimes can alleviate issues with keyring 
+#### 6 - Apply GRPCIO Update (Update to most recent version)
+This updates GRPCIO to the most recent version. In opposition to the above, sometimes the most recent version will work better.
+#### 7 - Set an API key or connect website
+Runs a command line python script to allow you to set API keys or logins to utilised web services.
+#### 8 - Migrate config file
+After an update, run this option to move your current config to a new .config file, keeping your old configuration but adding any new configuration options that have been created. Please note that this will remove any comments from the .config file, which may make navigating the file more difficult. Refer to the [Configuration](#configuration) section for more information on what all configuration does if necessary. Configuration migration utility will create backups of recently migrated configuration in the installation folder.
+#### 9 - Disable pijuice LEDs
+Pijuice has LEDs that are on by default. This can be an unnecessary battery drain and it is recommended that this option is selected to turn them off.
+#### 10 - Install SMB and default shares
+This option sets up recommended folders (prompts and images) within the pycasso folder to allow easy modification of prompt text files and viewing of generated images.
+#### 11 - Uninstall pycasso
+Uninstalls pycasso by deleting the install folder and removing packages.
+#### 12 - Uninstall pycasso Service
+Disables pycasso service, stopping it from being run on boot or from systemctl.
+#### 13 - Do not use local environment (use for legacy installs)
+In the past pycasso used the default virtual environment for python, and was run using sudo. This is not the best practise and externally managed environments became more difficult to utilise in later rapsbian releases. As such, the bash install program was updated to properly utilise a application-specific virtual environment and remove sudo from install commands. For those running old versions, using this command before installing or uninstalling pycasso, or running any scripts will be required.
+#### 0 - Exit Setup
+This closes the bash installer. You can also use ctrl+c on most systems to achieve the same thing.
 
 ## Troubleshooting
 

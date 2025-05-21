@@ -57,6 +57,16 @@ function use_legacy_venv(){
   LOCAL_VENV_FLAG=false
 }
 
+function activate_venv(){
+  #Run from venv if available
+  if [ -d "${VENV_DIR}" ]; then
+    source "${VENV_DIR}"/bin/activate
+    echo -e "Activated virtual environment from ${VENV_DIR}/bin/activate"
+  else
+    echo -e "${VENV_DIR}/bin/activate not found to create virtual environment"
+  fi
+}
+
 function install_linux_packages(){
   sudo apt-get update
   sudo apt-get install -y git python3-pip libatlas-base-dev pass gnupg2 jq libopenjp2-7
@@ -107,16 +117,19 @@ function update_grpcio(){
 
 function set_key(){
   cd "${LOCAL_DIR}" || exit
+  activate_venv
   dbus-run-session "$PYTHON_LOCAL" "${LOCAL_DIR}/${KEY_SCRIPT}"
 }
 
 function migrate_config(){
   cd "${LOCAL_DIR}" || exit
+  activate_venv
   "$PYTHON_LOCAL" "${LOCAL_DIR}/${CONFIG_SCRIPT}"
 }
 
 function disable_leds(){
   cd "${LOCAL_DIR}" || exit
+  activate_venv
   "$PYTHON_LOCAL" "${LOCAL_DIR}/${LED_SCRIPT}"
   echo -e "PiJuice LEDS disabled"
 }
@@ -430,7 +443,7 @@ do
    # Uninstall the service
    uninstall_service
  elif [ $INSTALL_OPTION -eq 13 ]; then
-   # Uninstall the service
+   # Use the legacy venv install. Not recommended for new installs
    use_legacy_venv
  fi
 done
