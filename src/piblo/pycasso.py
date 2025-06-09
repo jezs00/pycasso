@@ -609,7 +609,7 @@ class Pycasso:
 
             the_block = FileBlock()
             if len(args) >= 1:
-                return the_block.generate(args[0])
+                return the_block.generate(args[0], self.config.parse_random_text)
             else:
                 logging.warning("File Block found without arguments. Please use the format <file:path> when using file "
                                 "block. Replacing block with blank string.")

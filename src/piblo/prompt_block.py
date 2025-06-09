@@ -110,7 +110,7 @@ class FileBlock(PromptBlock):
         # No specific initialization needed for this block
         pass
 
-    def generate(self, path) -> str:
+    def generate(self, path, parse_lines=True, brackets="()") -> str:
         """
         Fetches a line from a file available at 'path'
 
@@ -119,6 +119,8 @@ class FileBlock(PromptBlock):
         """
         try:
             line = FileOperations.get_random_line(path)
+            if parse_lines:
+                line = FileOperations.parse_text_nested(line, brackets[0], brackets[1])
             return line
 
         except FileNotFoundError as e:

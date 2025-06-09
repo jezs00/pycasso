@@ -229,6 +229,7 @@ class UnitTestConst(Enum):
     PROVIDER_CRED_NEW = ".creds-test-new"
     PROMPT_BLOCK_FOLDER = "test_prompt_block_content"
     PROMPT_BLOCK_FILE = "test_block.txt"
+    PROMPT_BLOCK_FILE_PARSE_BRACKETS = "test_block_parse_brackets.txt"
 
 
 class ImageConst(Enum):

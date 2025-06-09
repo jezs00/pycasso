@@ -104,6 +104,14 @@ def test_file_block_not_found():
     assert block.generate(file) == expected
 
 
+def test_file_block_parse_brackets():
+    block = FileBlock()
+    file = os.path.join(os.path.dirname(__file__), UnitTestConst.PROMPT_BLOCK_FOLDER.value,
+                        UnitTestConst.PROMPT_BLOCK_FILE_PARSE_BRACKETS.value)
+    expected = ["Test Block","2","T3"]
+    assert block.generate(file) in expected
+
+
 @responses.activate
 def test_joke_block():
     joke_block = JokeBlock()
