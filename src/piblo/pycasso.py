@@ -567,6 +567,7 @@ class Pycasso:
                 bracket = bracket.replace(b_one, '').replace(b_two, '')
                 # Process block
                 bracket = self.process_block(bracket)
+                bracket = FileOperations.clean_block_text(bracket)
             elif open_bracket == s_one:
                 if self.config.specify_subject:
                     bracket = bracket.replace(s_one, '').replace(s_two, '')
@@ -622,7 +623,7 @@ class Pycasso:
             llm_block = LLMBlock(key=self.dalle_key,
                                  creds_mode=self.config.use_keychain,
                                  creds_path=self.config.credential_path)
-            return llm_block.generate(args[0])
+            return llm_block.generate(args[0],system_prompt=self.config.llm_system_prompt)
 
         elif block_function == BlockConst.RSS.value:
             # RSS Block

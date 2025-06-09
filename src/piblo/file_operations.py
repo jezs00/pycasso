@@ -289,7 +289,13 @@ class FileOperations:
 
         os.rename(file_path, new_path)
         return new_path
+
     @staticmethod
     def clean_file_name(text):
         # Cleans file names of forbidden characters
         return re.sub(Regex.FILE_REGEX.value, "", text)
+
+    @staticmethod
+    def clean_block_text(text):
+        # Replaces problematic characters with nicer text for image processing
+        return re.sub(Regex.APOSTROPHE_REGEX.value, Regex.APOSTROPHE.value, text)

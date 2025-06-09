@@ -332,3 +332,5 @@ class LLMConst(Enum):
 
 class Regex(Enum):
     FILE_REGEX = r'[\\/*?:\"\'<>|]'
+    APOSTROPHE = '\''
+    APOSTROPHE_REGEX = r'[‘’]'

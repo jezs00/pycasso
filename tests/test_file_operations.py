@@ -263,3 +263,10 @@ def test_clean_file_name():
     expected = "Its a pretty bad name"
     result = FileOperations.clean_file_name(text)
     assert result == expected
+
+def test_clean_block_text():
+    text = "‘This quote‘s bad‘"
+    expected = "'This quote's bad'"
+    result = FileOperations.clean_block_text(text)
+    assert result == expected
+
