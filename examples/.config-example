@@ -270,6 +270,9 @@ test_enabled = True
 # Host to use for Stable Diffusion online API
 stable_host = "https://api.stability.ai/v2beta/stable-image/generate/core"
 
+# Aspect ratio to request from Stable Diffusion online API (required for some models, see https://platform.stability.ai/docs/api-reference)
+aspect_ratio = "16:9"
+
 # IP Address/host and port to use with Automatic1111 Stable Diffusion WebUI API
 automatic_host = 127.0.0.1
 automatic_port = 7860

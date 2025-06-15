@@ -17,7 +17,7 @@ from omni_epd import displayfactory, EPDNotFoundError
 
 from piblo.config_wrapper import Configs
 from piblo.constants import ProvidersConst, ConfigConst, PropertiesConst, PromptModeConst, ImageConst, AutomaticConst, \
-    IconFileConst, BatteryConst, PosterConst, BlockConst
+    IconFileConst, BatteryConst, PosterConst, BlockConst, StabilityConst
 from piblo.file_operations import FileOperations
 from piblo.image_functions import ImageFunctions
 from piblo.provider import StabilityProvider, DalleProvider, AutomaticProvider
@@ -436,13 +436,14 @@ class Pycasso:
 
     @staticmethod
     def load_stability_image(prompt, width, height, stability_key=None, creds_mode=ProvidersConst.USE_KEYCHAIN,
-                             creds_path=ProvidersConst.CREDENTIAL_PATH.value, stability_host=None):
+                             creds_path=ProvidersConst.CREDENTIAL_PATH.value, stability_host=None,
+                             aspect_ratio=StabilityConst.ASPECT_RATIO.value):
         logging.info("Loading Stability API")
         stability_provider = StabilityProvider(key=stability_key, host=stability_host, creds_mode=creds_mode,
                                                creds_path=creds_path)
 
         logging.info("Getting Image")
-        image = stability_provider.get_image_from_string(prompt, height, width)
+        image = stability_provider.get_image_from_string(prompt, height, width, aspect_ratio=aspect_ratio)
         return image
 
     @staticmethod
@@ -933,7 +934,8 @@ class Pycasso:
                                                             stability_key=self.stability_key,
                                                             creds_mode=self.config.use_keychain,
                                                             creds_path=self.config.credential_path,
-                                                            stability_host=self.config.stable_host)
+                                                            stability_host=self.config.stable_host,
+                                                            aspect_ratio=self.config.aspect_ratio)
 
             elif provider_type == ProvidersConst.DALLE.value:
                 # Dalle

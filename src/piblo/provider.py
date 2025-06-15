@@ -172,7 +172,7 @@ class StabilityProvider(Provider):
 
         return
 
-    def get_image_from_string(self, text, height=0, width=0):
+    def get_image_from_string(self, text, height=0, width=0, aspect_ratio=StabilityConst.ASPECT_RATIO.value):
         try:
             fetch_height = ImageFunctions.ceiling_multiple(height, StabilityConst.MULTIPLE.value)
             fetch_width = ImageFunctions.ceiling_multiple(width, StabilityConst.MULTIPLE.value)
@@ -187,6 +187,7 @@ class StabilityProvider(Provider):
                 data={
                     "width": fetch_width,
                     "height" : fetch_height,
+                    "aspect_ratio" : aspect_ratio,
                     "seed": "0",
                     "style_preset": "enhance",
                     "prompt": text,

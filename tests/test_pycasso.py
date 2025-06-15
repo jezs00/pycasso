@@ -588,6 +588,7 @@ def test_major_complete_config():
     assert instance.config.credential_path == file.get_full_path(".test_creds")
     assert instance.config.test_enabled is False
     assert instance.config.stable_host == "https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image"
+    assert instance.config.aspect_ratio == "1:1"
     assert instance.config.automatic_host == "1.1.1.1"
     assert instance.config.automatic_port == 1337
     assert instance.config.provider_fallback is False

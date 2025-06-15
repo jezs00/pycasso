@@ -150,6 +150,7 @@ class StabilityConst(Enum):
     HOST = "STABILITY_HOST"
     DEFAULT_HOST = "https://api.stability.ai/v2beta/stable-image/generate/core"
     MULTIPLE = 64
+    ASPECT_RATIO = "16:9"
 
 
 class AutomaticConst(Enum):

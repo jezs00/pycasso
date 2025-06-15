@@ -132,6 +132,7 @@ class Configs:
         self.automatic_port = AutomaticConst.DEFAULT_PORT.value
         self.provider_fallback = ProvidersConst.PROVIDER_FALLBACK.value
         self.stable_host = StabilityConst.DEFAULT_HOST.value
+        self.aspect_ratio = StabilityConst.ASPECT_RATIO.value
         self.llm_model = LLMConst.MODEL.value
         self.llm_temperature = LLMConst.TEMPERATURE.value
         self.llm_max_tokens = LLMConst.MAX_TOKENS.value
@@ -318,6 +319,8 @@ class Configs:
                                                    fallback=ProvidersConst.PROVIDER_FALLBACK.value)
         self.stable_host = config.get("Providers", "stable_host", fallback=StabilityConst.DEFAULT_HOST.value)
         self.stable_host = self.read_string(self.stable_host)
+        self.aspect_ratio = config.get("Providers", "aspect_ratio", fallback=StabilityConst.ASPECT_RATIO.value)
+        self.aspect_ratio = self.read_string(self.aspect_ratio )
         self.llm_model = config.get("Providers", "llm_model", fallback=LLMConst.MODEL.value)
         self.llm_model = self.read_string(self.llm_model)
         self.llm_temperature = config.getfloat("Providers", "llm_temperature", fallback=LLMConst.TEMPERATURE.value)
