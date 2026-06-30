@@ -385,8 +385,12 @@ class Pycasso:
             # Resize to thumbnail size based on epd resolution depending on if option selected
             epd_res = (width, height)
             if not resize_external:
-                epd_res = ImageFunctions.max_tup(epd_res)
-            image_base.thumbnail(epd_res)
+                crop_min = min(image_base.height, image_base.width)
+                image_crop = ImageFunctions.get_crop_size(image_base.width, image_base.height, crop_min, crop_min)
+                image_base = image_base.crop(image_crop)
+                image_base.thumbnail(ImageFunctions.max_tup(epd_res))
+            else:
+                image_base.thumbnail(epd_res)
         except AttributeError as e:
             logging.warning(e)
             logging.warning("Unable to open external image. Check if you have any files in the folder.")
